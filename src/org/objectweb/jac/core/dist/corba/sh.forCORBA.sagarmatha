@@ -1,0 +1,5 @@
+jdklibs="/usr/local/softs/jdk1.2.2/jre/lib/rt.jar"
+corbalibs="/usr/local/softs/JacORB-1.0b12/classes/jacorb.jar"
+corbabin="/usr/local/softs/JacORB-1.0b12/bin"
+
+javacmdforcorba="java -Xbootclasspath:$corbalibs:$jdklibs"

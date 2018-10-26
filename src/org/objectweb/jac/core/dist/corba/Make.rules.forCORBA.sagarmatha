@@ -1,0 +1,6 @@
+JDKLIBS = /usr/local/softs/jdk1.2.2/jre/lib/rt.jar
+CORBALIBS = /usr/local/softs/JacORB-1.0b12/classes/jacorb.jar
+
+JAVACMDFORCORBA = java -Xbootclasspath:$(CORBALIBS):$(JDKLIBS)
+JAVACCMDFORCORBA = javac -bootclasspath $(CORBALIBS):$(JDKLIBS)
+IDLCMD = $(JAVACMDFORCORBA) jacorb.idl.parser

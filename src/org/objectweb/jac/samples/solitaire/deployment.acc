@@ -1,0 +1,14 @@
+replicate ".*s0" "configuration0" ".*";
+
+replicate ".*s0" "configuration0/children/0" ".*";
+createTypedStubsFor "configuration0/children/0" ".*1" ".*0" "org.objectweb.jac.core.dist.NonBlockingStubWrapper";
+
+replicate ".*s0" "configuration0/children/1" ".*";
+createTypedStubsFor "configuration0/children/1" ".*2" ".*0" "org.objectweb.jac.core.dist.NonBlockingStubWrapper";
+
+replicate ".*s0" "configuration0/children/5" ".*";
+createTypedStubsFor "configuration0/children/5" ".*1" ".*0" "org.objectweb.jac.core.dist.NonBlockingStubWrapper";
+
+replicate ".*s0" "configuration0/children/6" ".*";
+createTypedStubsFor "configuration0/children/6" ".*2" ".*0" "org.objectweb.jac.core.dist.NonBlockingStubWrapper";
+

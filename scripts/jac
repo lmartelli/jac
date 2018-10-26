@@ -1,0 +1,73 @@
+#!/bin/sh
+
+# jac startup script
+
+# Determine JAC_ROOT
+progname=$0
+case $progname in 
+   /*)  ;;
+   ./*) progname=$(pwd)/$(echo $progname | cut -c 3-) ;;
+   *) progname=$(pwd)/$progname ;;
+esac
+progname=$(dirname $progname)
+JAC_ROOT=$(dirname $progname)
+
+# Setup CLASSPATH
+CLASSPATH="."
+if [ -d "$JAC_ROOT/src" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/src"
+fi
+if [ -d "$JAC_ROOT/classes" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/classes"
+fi
+
+JAR=$JAC_ROOT/jac.jar
+if  [ -r "$JAR" ]; then
+    CLASSPATH="$CLASSPATH:$JAR"
+fi
+for jar in `find $JAC_ROOT/lib -name "*.jar" | sort`; do
+    CLASSPATH="$CLASSPATH:$jar"
+done
+
+if [ -z "$JAVA_HOME" ]; then
+    echo "Error: JAVA_HOME environment variable is not initialized..."
+    exit 1
+fi
+
+CLASSPATH="$CLASSPATH:$JAVA_HOME/lib/tools.jar"
+
+export CLASSPATH
+
+ARGS=""
+while [ $# -gt 0 ]; do
+    case $1 in 
+	--swingwt) 
+	    JVM_OPTS="$JVM_OPTS -Xbootclasspath/p:$JAC_ROOT/lib/swingwt.jar:$JAC_ROOT/lib/swt.jar:$JAC_ROOT/lib/swt-pi.jar:$JAC_ROOT/lib/swt-mozilla.jar";;
+	--debug)
+	    JVM_OPTS="$JVM_OPTS -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=4444 -Djava.compiler=NONE";;
+	--debug-suspend)
+	    JVM_OPTS="$JVM_OPTS -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=4444 -Djava.compiler=NONE";;
+	--jmp)
+	    JVM_OPTS="$JVM_OPTS -Xrunjmp:noobjects,nomethods,nomonitors";;
+	*)
+	    ARGS="$ARGS $1";;
+    esac
+    shift
+done
+
+#echo JAC_ROOT=$JAC_ROOT
+#echo CLASSPATH=$CLASSPATH
+
+ # Use this to profile CPU usage
+#JVM_OPTS="-Xrunhprof:cpu=times"
+
+#JVM_OPTS="-Xruntracer:enabled=true"
+#CLASSPATH=$CLASSPATH:/usr/local/share/java/tracerapi.jar
+JAVA="$JAVA_HOME/bin/java"
+# alternatives for JAVA
+
+export LANG=fr_FR@euro
+# $JAVA -Djava.security.policy=$JAC_ROOT/jac.policy org.objectweb.jac.core.Jac -w -R $JAC_ROOT $*
+
+# start with distribution enabled
+exec $JAVA  $JVM_OPTS -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel -Djava.security.policy=$JAC_ROOT/jac.policy org.objectweb.jac.core.Jac -w -R $JAC_ROOT $ARGS

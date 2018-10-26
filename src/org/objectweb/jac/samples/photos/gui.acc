@@ -1,0 +1,206 @@
+defineResource ICON photo_icon "org/objectweb/jac/aspects/gui/resources/photo.png";
+
+// So that we can call the methods from the GUI and have a nice dialog
+// box to enter the parameters
+askForParameters "org.objectweb.jac.samples.photos.*";
+
+// Person
+class org.objectweb.jac.samples.photos.Person {
+    // Defines a default string representation of a Person
+    setToString "%firstName% %lastName%";
+
+    // Methods to show in popup menu (only for the swing GUI)
+    setMenu {setFirstName,setLastName,setEmail,setProfile};
+    setAttributesOrder { firstName, lastName, profile, email, password, photos };
+    setTableMembersOrder { firstName, lastName, profile, email };
+    setCreationAttributesOrder { firstName, lastName, profile, email, password };
+    attribute photos {
+        // Display this collection as table instead of a list
+        setTableView;
+        // When the user clicks on "add", create a new Photo instead
+        // of offering to choose from existing Photo instances
+        setAutoCreate;
+        // Show "title" and "image" columns in the table
+        setMembersOrder org.objectweb.jac.samples.photos.Photo {title,image};
+        // Sort photos by title
+        setDefaultSortedColumn title;
+    }
+    attribute email {
+        // Use a 30 characters wide editor
+        setEditorWidth 30ex;
+    }
+    attribute profile {
+        // Call the getProfile() method of PhotoRepository to get the
+        // list of available profiles (instead of showing all Profile instances
+        setDynamicFieldChoice false /* uneditable */
+            org.objectweb.jac.samples.photos.PhotoRepository getProfiles;
+    }
+}
+
+// Photo
+class org.objectweb.jac.samples.photos.Photo {
+    setToString "%title%";
+    setMenu {setTitle,setAuthor,setImage};
+    // Tells which attributes to show for the default view
+    setAttributesOrder {title,image,author,rate,date,comments};
+    // Tells which attributes to show for a new instance
+    setCreationAttributesOrder {title,image};
+    // Sets the attributes to diplay in a table
+    setTableMembersOrder {title,image,author,date};
+    
+    attribute rate {
+        // When editing a rate, show a non-editable combobox with the
+        // following values
+        setFieldChoice false { 1, 2, 3, 4, 5, 0 };
+    }
+
+    // Create two tabs
+    setCategories { "main","comments" };
+    // Some fields go in tab "main"
+    attribute title,image,author,rate,date {
+        setCategory "main";
+    }
+    attribute title {
+        setEditorWidth 40ex;
+    }
+    attribute comments {
+        // Comments go in tab "comments"
+        setCategory "comments";
+        setAutoCreate;
+        setTableView;
+    }
+    attribute image {
+        setEmbeddedView true;
+    }
+}
+
+class org.objectweb.jac.samples.photos.Comment {
+    setToString "%text%";
+    setCreationAttributesOrder { comment };
+    setTableMembersOrder { date, author, comment };
+    setEditorWidth comment 60ex;
+}
+
+// PhotoRepository
+class org.objectweb.jac.samples.photos.PhotoRepository {
+    // Sets the names of parameters of the searchTitle() method
+    setParameterNames searchTitle(java.lang.String) { "string to search" };
+    setAttributesOrder { photos };
+    //   setMethodsOrder { searchTitle, clearPhotos };
+    attribute photos {
+        setTableView;
+        setMembersOrder org.objectweb.jac.samples.photos.Photo {title,image,author,date};
+        setAutoCreate;
+        // When a photo is selected, display a view of it
+        setViewOnSelection;
+        // Sort photos by date in reverse order
+        setDefaultSortedColumn -date;
+    }
+}
+
+class org.objectweb.jac.samples.photos.Users {
+    attribute users {
+        setTableView;
+        setAutoCreate;
+        setViewOnSelection;
+    }
+}
+
+
+// Specifying to the user that the username is his e-mail
+class org.objectweb.jac.aspects.authentication.PasswordAuthenticator {
+    method askUsernameAndPassword {
+        setParameterNames { "E-mail","Password" };
+    }
+}
+
+class org.objectweb.jac.samples.photos.Run {
+    // Sets some icons for methods viewUsers and viewPhotos
+    setIcon viewUsers users_icon;
+    setIcon viewPhotos photo_icon;
+}
+
+// Common configuration for "web" and "main"(swing) windows
+window "main","web" {
+    registerCustomized;
+    setTitle "Photos";
+    
+    // Add a menu bar
+    menu "main" {
+        // Add an "Photos" item in menu "View"
+        // When it's selected, execute Run.viewPhotos("0");
+        addMenuItem { "View", "Photos" } 
+      		org.objectweb.jac.samples.photos.Run.viewPhotos { 0 };
+        addMenuItem { "View", "Users" } 
+      		org.objectweb.jac.samples.photos.Run.viewUsers { 0 };
+        addMenuItem { "View", "Profiles" } 
+      		org.objectweb.jac.aspects.user.UserAC.viewProfiles { 0 };
+        addMenuItem { "Session", "Logout" } 
+        	org.objectweb.jac.aspects.gui.Actions.logout;
+    }
+}
+
+// The GUI main window configuration (for swing)
+window "main" {
+    // Split window vertically in two, with no scroll panes in the
+    // resulting subpanels
+    //  ,---+---.
+    //  | 0 | 1 |
+    //  `---+---'
+    setSubPanesGeometry 2 VERTICAL { false, false };
+    // Initialize panel "0" with a "default" "Object" view of the
+    // object named "photorepository#0"
+    setPaneContent 0 Object { "default", "photorepository#0" };
+    // When the user selects of photo from the repository, display its
+    // view in panel "1"
+    addReferenceToPane org.objectweb.jac.samples.photos.PhotoRepository photos "1";
+    addReferenceToPane org.objectweb.jac.aspects.user.UserManager profiles "1";
+    addReferenceToPane org.objectweb.jac.samples.photos.Users users "1";
+    // Sets initial position of upper-left corner of window to (0,0)
+    // and dimension to 80% or the screen's width and height
+    setPosition 0 0 80 80;
+    // Set splitter "0" initial position at "0.4"
+    setSplitterLocation 0 0.4;
+    // When the window is closed, call this method
+    setOnCloseHandler org.objectweb.jac.aspects.gui.Actions.exit;
+
+    menu "main" {
+        addMenuItem { "Session", "Quit" } 
+        	org.objectweb.jac.aspects.gui.Actions.exit;
+    }
+}
+
+// "web" window specific configuration
+window "web" {   
+	// Just one panel with no scroll pane
+    setSubPanesGeometry 1 NONE { false };
+    setPaneContent 0 Object { "default" , "photorepository#0" };
+    addReferenceToPane org.objectweb.jac.samples.photos.PhotoRepository photos "0";
+    addReferenceToPane org.objectweb.jac.samples.photos.Photo author "0";
+    addReferenceToPane org.objectweb.jac.samples.photos.Photo comments "0";
+    addReferenceToPane org.objectweb.jac.samples.photos.Person photos "0";
+    addReferenceToPane org.objectweb.jac.samples.photos.Person profile "0";
+    addReferenceToPane org.objectweb.jac.samples.photos.Users users "0";
+    addReferenceToPane org.objectweb.jac.aspects.user.UserManager profiles "0";
+
+    // When a photo of the PhotoRepository is selected and displayed,
+    // show a navigation bar with pvious,next and up buttons
+    setNavBar org.objectweb.jac.samples.photos.PhotoRepository photos;
+}
+
+class org.objectweb.jac.samples.photos.Bench {
+    setParameterNames createPhotos {"Number of photos to create"};
+}
+
+window "bench" {
+    registerCustomized;
+    setTitle "Bench";
+    menu "main" {
+        addMenuItem {"Create photos"} org.objectweb.jac.samples.photos.Bench.createPhotos;
+    }
+    setOnCloseHandler org.objectweb.jac.aspects.gui.Actions.exit;
+}
+
+// Local Variables:
+// mode: java
+// End:

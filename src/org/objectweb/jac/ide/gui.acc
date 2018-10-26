@@ -1,0 +1,1037 @@
+// Define some resources
+defineResource ICON icon_class "org/objectweb/jac/aspects/gui/resources/base/class.gif";
+defineResource ICON icon_interface "org/objectweb/jac/aspects/gui/resources/interface.gif";
+defineResource ICON icon_import_class "org/objectweb/jac/aspects/gui/resources/import.gif";
+defineResource ICON icon_aspect "org/objectweb/jac/aspects/gui/resources/aspect.gif";
+defineResource ICON icon_import_aspect "org/objectweb/jac/aspects/gui/resources/importAspect.gif";
+defineResource ICON icon_package "org/objectweb/jac/aspects/gui/resources/Package.gif";
+defineResource ICON icon_project "org/objectweb/jac/aspects/gui/resources/project.gif";
+defineResource ICON icon_class_diagram "org/objectweb/jac/aspects/gui/resources/ClassDiagram.gif";
+defineResource ICON icon_instance "org/objectweb/jac/aspects/gui/resources/instance.gif";
+defineResource ICON icon_import_instance "org/objectweb/jac/aspects/gui/resources/importInstance.gif";
+defineResource ICON icon_group "org/objectweb/jac/aspects/gui/resources/group2.gif";
+defineResource ICON icon_import_group "org/objectweb/jac/aspects/gui/resources/hotdraw/importGroup2.gif";
+defineResource ICON icon_field "org/objectweb/jac/aspects/gui/resources/attribute.gif";
+defineResource ICON icon_method "org/objectweb/jac/aspects/gui/resources/method.gif";
+defineResource ICON icon_aspect_method "org/objectweb/jac/aspects/gui/resources/method.gif";
+defineResource ICON icon_relation "org/objectweb/jac/aspects/gui/resources/relation.gif";
+defineResource ICON icon_see_relation "org/objectweb/jac/aspects/gui/resources/see.gif";
+defineResource ICON icon_relation_card "org/objectweb/jac/aspects/gui/resources/relationCard.gif";
+defineResource ICON icon_pointcut "org/objectweb/jac/aspects/gui/resources/pointcut.gif";
+defineResource ICON icon_see_pointcut "org/objectweb/jac/aspects/gui/resources/seePointcut.gif";
+defineResource ICON icon_application "org/objectweb/jac/aspects/gui/resources/stock_exec-16.png";
+defineResource ICON icon_aconf "org/objectweb/jac/aspects/gui/resources/configAspect.gif";
+defineResource ICON icon_add_point "org/objectweb/jac/aspects/gui/resources/addPoint.gif";
+defineResource ICON icon_text "org/objectweb/jac/aspects/gui/resources/text.gif";
+defineResource ICON icon_selection "org/objectweb/jac/aspects/gui/resources/arrow_cursor.gif";
+defineResource ICON icon_inheritance "org/objectweb/jac/aspects/gui/resources/inheritancelink.gif";
+
+defineResource ICON compile "org/objectweb/jac/ide/icons/compile.png";
+defineResource ICON generate "org/objectweb/jac/ide/icons/generate.png";
+
+defineResource ICON umlaf "org/objectweb/jac/ide/icons/jac.png";
+
+import org.objectweb.jac.ide.*;
+import org.objectweb.jac.aspects.gui.Actions;
+
+setFontAttribute family SansSerif;
+setFontAttribute size 12;
+
+setDefaultEditorWidth javaCode 40ex;
+setDefaultEditorHeight javaCode 10em;
+
+defineEnum visibility {"public","protected","private"} 0 1;
+
+// Say which classes can be called interactively
+askForParameters "org.objectweb.jac.ide.*";
+askForParameters "org.objectweb.jac.lib.Attachment";
+askForParameters "org.objectweb.jac.aspects.gui.swing.SHEditorConfig";
+
+setViewConstructor swing editor:accCode swing.AccCodeEditor;
+setViewConstructor swing editor:javaCode swing.MethodBodyCodeEditor;
+
+class Project, Aspect, RelationLink {
+    setEmbeddedEditors;
+    setAutoCreateAll;
+}
+
+class Projects {
+    setMenu {addProject,setCurrentApplication,startCurrentApplication,stopCurrentApplication};
+    setToString "projects";
+    setEmbeddedEditors;
+    setAutoCreate projects;
+    setAttributesOrder {currentApplication,projects};
+    setTreeAttributesOrder {projects};
+    setIcon generateCode generate;
+    setIcon compile compile;
+    setIcon generateAndCompile compile;
+    method startCurrentApplication {
+        setCondition isNotStarted;
+        setIcon icon_application;
+    }
+    method stopCurrentApplication {
+        setCondition isStarted;
+        setIcon stop_icon;
+    }
+    method setCurrentApplication {
+        setCreationAllowedParameters {false};
+    }
+    method export {
+        setLabel "Export projects";
+        setParameterNames {"File"};
+        setIcon export_icon;
+    }
+    method importObjects {
+        setLabel "Import projects";
+        setParameterNames {"File"};
+        setIcon import_icon;
+    }
+}
+
+class Project {
+    setIcon icon_project;
+    setMenu {addPackage,addApplication,setGenerationPath,"",
+             generateCode,compile,generateAndCompile,createJAR};
+    setAttributesOrder {name,generationPath,useToolsJavac,compilerCommand,compilerOptions,classpath,
+                        packages,applications,configItems,description,externalFiles};
+    setTreeAttributesOrder {packages,applications};
+    setCategories {"Project","Packages","Applications","Documentation", "Files"/*,"Config"*/};
+    attribute name,generationPath,useToolsJavac,compilerCommand,compilerOptions,classpath {
+        setCategory "Project";
+    }
+    setCategory packages "Packages";
+    setCategory applications "Applications";
+    attribute description {
+        setCategory "Documentation";
+    }
+    attribute externalFiles {
+        setCategory "Files";
+    }
+    setIcon compile compile;
+    setIcon generateAndCompile compile;
+    setIcon generateCode generate;
+    method createJAR {
+        setIcon jar_icon;
+        setMnemonics "j";
+    }
+    setMnemonics generationPath "p";
+    method addExternalFile {
+        setParameterNames { "Name", "File" };
+    }
+}
+
+class ModelElement {
+    setToString "%name%";
+    setVisible endingLinks false;
+    setMenu { setName };
+    attribute description {
+        setBorder LEFT LINE;
+    }
+    attribute configItems {
+        setTableView;
+        setCategory "config";
+        setAutoCreate;
+    }
+}
+
+class Package {
+    setIcon icon_package;
+    setToString "%fullName%";
+    setToString "Package.subPackages" "%name%";
+    setMenu {addSubPackage,addClass,addInterface,addRepository,
+                 addAspect,addInstance,addGroup,
+                 "",addDiagram,addResource,
+                 generateCode,"",setProject};
+    //setCreationAttributesOrder {"name"};
+    setAttributesOrder {name,project,classes,diagrams,subPackages,configItems,description};
+    setTreeAttributesOrder {subPackages,diagrams,classes,resources};
+    setEmbeddedEditors;
+    method addRepository {
+        setParameterNames {"Contained item class"};
+    }
+    setCategories {"package","classes","diagrams","sub-packages",
+                       "documentation"/*,"Config"*/};
+    attribute name,project {
+        setCategory "package";
+    }
+    attribute description {
+        setBorder;
+        setCategory "documentation";
+    }
+    attribute classes {
+        setDisplayLabel false;
+        setAutoCreate;
+        setCategory "classes";
+    }
+    attribute diagrams {
+        setDisplayLabel false;
+        setAutoCreate;
+        setCategory "diagrams";
+    }
+    attribute subPackages {
+        setDisplayLabel false;
+        setAutoCreate;
+        setCategory "sub-packages";
+    }
+    setIcon generateCode generate;
+}
+
+class Diagram {
+    setToString "%name%";
+    setIcon icon_class_diagram;
+    setMenu { "", setContainer };
+    setCreationAttributesOrder {name};
+    setAttributesOrder { name, container, figures };
+    setAutoCreate figures;
+    //setTreeAttributesOrder { figures };
+}
+
+class Type {
+    setToString "%name%";
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setMenu {};
+    setAttributesOrder {name,packagePath,description};
+    setTableMembersOrder {packagePath,name};
+}
+
+class ExtendedType {
+    setAttributesOrder {name,realType,description};
+    setTableMembersOrder {name,realType};
+}
+
+class EnumeratedType {
+    setAttributesOrder {name,startValue,step,packagePath,names,description};
+    setMethodsOrder {importFromFile};
+    setCategories {"type","description"};
+    setLineBreaks {name,packagePath,names,description};
+    attribute startValue,packagePath,step,names,importFromFile {
+        setCategory "type";
+    }
+    attribute startValue,step {
+        setEmbeddedEditor;
+        setEditorWidth 2ex;
+    }
+    attribute description {
+        setCategory "description";
+    }
+    attribute name {
+        setCategories { "type", "description" };
+    }
+    method importFromFile {
+        setParameterNames {"File"};
+    }
+}
+
+class Interface {
+    setIcon icon_interface;
+}
+
+class Class, Repository {
+    setIcon icon_class;
+    setToString "%fullName%";
+    setToString Package.classes "%name%";
+    setEmbeddedEditors;
+    setMenu { addField, addMethod, addMainMethod, overrideMethod, implementMethod,
+              implementInterface, setContainer,"", generateCode, gotoLine };
+    block "small" {
+        setAttributesOrder {name,isAbstract,container,superClass,interfaces,description};
+    }
+    setAttributesOrder {name,isAbstract,container,superClass,interfaces,description,
+                            fields,allMethods,relationRoles,imports
+                            /*,configItems*/ /*,endingLinks, links*/ };
+    setCreationAttributesOrder {name,isAbstract,superClass,description};
+    setTreeAttributesOrder {fields,allMethods,navigableRoles/*,endingLinks*/};
+    setCategories {"type","fields","methods","relations","imports","documentation"
+                       ,"config","links"};
+    attribute links, endingLinks {
+        setCategory "links";
+    }
+    setCategory relationRoles "relations";
+    setCategory container "type";
+    attribute fields,methods,relationRoles {
+        setAutoCreate;
+    }
+    method addMethodIntf, removeMethodIntf {
+        setAutoCreateParameters;
+    }
+    method implementInterface {
+        setParameterNames {"Interface"};
+    }
+    method overrideMethod {
+        setParameterNames {"Method to override"};
+        setMethodDynamicParameterChoice {Class} {getInheritedMethods} {false};
+    }
+    method implementMethod {
+        setParameterNames {"Abstract method to implement"};
+        setMethodDynamicParameterChoice {Class} {getAbstractMethods} {false};
+    }
+    method addMainMethod {
+        setIcon icon_application;
+    }
+    attribute imports {
+        setCategory "imports";
+    }
+
+    attribute name,isAbstract,container,interfaces {
+        setCategory "type";
+    }
+    attribute  container {
+        setLabel "Package";
+        setCreationAllowed false;
+    }
+    attribute superClass {
+        setCategory "type";
+        //setBorder true;
+        setCreationAllowed false;
+        setDynamicFieldChoice false Gui.getAvailableClasses;
+    }
+    attribute fields {
+        setTableView;
+        setCategory "fields";
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+    }
+    attribute allMethods {
+        setTableView;
+        setCategory "methods";
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+    }
+    attribute navigableRoles,relationRoles {
+        setTableView;
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+        setMembersOrder RelationRole { generationName, end, cardinality };
+        setSelectionTarget RelationRole link;
+    }
+    attribute endingLinks,links {
+        //setTableView;
+        setDisplayLabel true;
+        setViewOnSelection;
+        //      setMembersOrder RelationRole { generationName, end, cardinality };
+        setSelectionTarget RelationRole link;
+    }
+    attribute description {
+        setDisplayLabel false;
+        setCategory "documentation";
+    }
+    setIcon generateCode generate;
+    method gotoLine {
+        setParameterNames { "Display context", "Line number"};
+    }
+    attribute configItems {
+        setCategory "config";
+    }
+}
+
+class Repository {
+    setAttributesOrder {name,isAbstract,container,superClass,itemsRole,
+                            interfaces,description,
+                            fields,allMethods,relationRoles,imports};
+    attribute itemsRole {
+        setCategory "type";
+        setDynamicFieldChoice false Repository.getRelationRoles;
+    }
+}
+
+class Aspect {
+    setIcon icon_aspect;
+    setMenu {};
+    setCategories {"type","fields","methods","aspect methods",
+                       "relations","pointcuts","documentation"};
+    setTreeAttributesOrder {fields,methods,links,pointcutLinks};
+    attribute name {
+        setCategory "type";
+    }
+    attribute superClass {
+        setCategory "type";
+        //setBorder true;
+    }
+    attribute fields {
+        setTableView;
+        setCategory "fields";
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+    }
+    attribute methods, aspectMethods {
+        setTableView;
+        setCategory "methods";
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+    }
+    attribute links {
+        setTableView;
+        setCategory "relations";
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+    }
+    attribute pointcutLinks {
+        setTableView;
+        setCategory "pointcuts";
+        setPreferredWidth 90px;
+        setDisplayLabel false;
+        setViewOnSelection;
+    }
+    attribute description {
+        setDisplayLabel false;
+        setCategory "documentation";
+    }
+}
+
+class Application {
+    setToString "%name%";
+    setEmbeddedEditors;
+    setIcon icon_application;
+    setMenu {setMainClass,addAspectConfiguration,"",generateCode,"",start,stop,setTrace,"",startSlaves};
+    setCategories {"description","wrapping","paths","deployment","run options"};
+    setTreeAttributesOrder {aspectConfigurations};
+    setAttributesOrder { name, mainClass, aspectConfigurations, ignoredClasses,
+                             externalPaths, hosts,
+                             enableDistribution, serverName,
+                             startSwingGUI, swingGUIs, startWebGUI, webGUIs,
+                             enableDebugging, debugPort,
+                             otherOptions,jvmOptions,properties };
+    setCreationAttributesOrder { name, mainClass, aspectConfigurations,
+                                     externalPaths, hosts };
+    attribute name,mainClass,aspectConfigurations {
+        setCategory "description";
+    }
+    attribute externalPaths {
+        setDisplayLabel false;
+        setCategory "paths";
+    }
+    attribute ignoredClasses {
+        setCategory "wrapping";
+    }
+    attribute hosts {
+        setCategory "deployment";
+    }
+    attribute aspectConfigurations {
+        setAutoCreate;
+        setTableView;
+        setPreferredHeight 300px;
+        setDirectCollectionMethods {"reload"};
+    }
+    attribute startSwingGUI, startWebGUI, swingGUIs, webGUIs, 
+        enableDistribution, serverName, otherOptions, jvmOptions, properties, 
+        enableDebugging, debugPort {
+        setCategory "run options";
+    }
+    setIcon generateCode generate;
+    method start {
+        setCondition isNotStarted;
+        setIcon icon_application;
+    }
+    method startSlaves {
+        setCondition canStartSlaves;
+        setIcon icon_application;
+    }
+    method stop {
+        setCondition isStarted;
+        setIcon stop_icon;
+    }
+    attribute mainClass {
+        setDynamicFieldChoice false Application.getMainClasses;
+    }
+
+    method setTrace {
+        setCondition isStarted;
+        setMethodDynamicParameterChoice 
+            {Actions.getLoggerNames,null} 
+            {true,false};
+        setParameterNames {"Category","level"};
+    }
+}
+
+class AspectConfiguration {
+    setToString "%toString()%";
+    setAutoCreateAll;
+    setIcon icon_aconf;
+    setMenu { setWoven, reload, generateCode, generateCode, generateAndReload };
+    setAttributesOrder {name,woven,aspect,defaultConfigurationCode,
+                            configurationCode};
+    setMethodsOrder { generateCode, reload, generateAndReload };
+    setLineBreaks {name,aspect,defaultConfigurationCode,configurationCode};
+    setCreationAttributesOrder {name,woven,aspect,defaultConfigurationCode,
+                                    configurationCode};
+    setTableMembersOrder {name,woven};
+    attribute name {
+        setDynamicFieldChoice false AspectConfiguration "getDeclaredAspects";
+    }
+    setCategories {"aspect","default configuration"};
+
+    block name,woven,aspect {
+        setCategory "aspect";
+    }
+
+    setEmbeddedEditor woven;
+
+    attribute configurationCode {
+        setCategory "aspect";
+        setDisplayLabel false;
+        setEmbeddedEditor;
+    }
+    attribute defaultConfigurationCode {
+        setCategory "default configuration";
+        setDisplayLabel false;
+        setEmbeddedEditor;
+    }
+    method reload, generateAndReload {
+        setIcon reload_icon;
+        setCondition canReload;
+        setCategories {"aspect","default configuration"};
+    }
+    method generateCode {
+        setIcon generate;
+        setCategories {"aspect","default configuration"};
+    }
+}
+
+defineEnum orientation { "end->start", "both", "start->end" } -1 1;
+
+class RelationRole {
+    setEmbeddedEditors;
+    //   setAutoCreateAll;
+    setToString "%start%.%roleName%";
+    setToString Class.navigableRoles "%roleName%:%end%";
+    setToString RelationRole.primaryKey "%roleName%";
+    setToString Repository.itemsRole "%roleName%";
+    setIcon icon_relation;
+    setFieldChoice cardinality false {"1","0-1","0-*","1-*"};
+    setAttributesOrder {name,generationName,cardinality/*,start*/,end,primaryKey};
+    setDisplayLabel generationName false;
+    setLineBreaks {name,cardinality,end,primaryKey};
+    setDynamicFieldChoice end false RelationLink endChoices;
+    setDynamicFieldChoice start false RelationLink endChoices;
+    attribute primaryKey {
+        setDynamicFieldChoice false RelationRole primaryKeyChoices;
+    }
+    attribute getter {
+        setAutoCreate;
+        setAutoCreateInitializer RelationRole.initGetter;
+        setDynamicFieldChoice true RelationRole.methodChoices;
+    }
+    attribute adder {
+        setAutoCreate;
+        setAutoCreateInitializer RelationRole.initAdder;
+        setDynamicFieldChoice true RelationRole.methodChoices;
+    }
+    attribute remover {
+        setAutoCreate;
+        setAutoCreateInitializer RelationRole.initRemover;
+        setDynamicFieldChoice true RelationRole.methodChoices;
+    }
+    attribute clearer {
+        setAutoCreate;
+        setAutoCreateInitializer RelationRole.initClearer;
+        setDynamicFieldChoice true RelationRole.methodChoices;
+    }
+}
+
+class Role {
+    setToString "%start% -> %end%";
+}
+
+class RelationLink {
+    setToString "%startRole% -> %endRole%";
+    setIcon icon_relation;
+    setMenu { /*reverse*/ };
+    setTableMembersOrder {name,endRole};
+    setAttributesOrder {name,startRole,
+                        endRole,aggregation,calculated,orientation,description,
+                        startRole.getter, startRole.adder, startRole.remover, startRole.clearer,
+                        endRole.getter, endRole.adder, endRole.remover, endRole.clearer,
+                        startRole.configItems,endRole.configItems};
+    setLineBreaks {name,startRole,aggregation,description,
+                       startRole.getter, startRole.adder, startRole.remover, startRole.clearer,
+                       endRole.getter, endRole.adder, endRole.remover, endRole.clearer};
+    setCategories {"relation","start methods","end methods","documentation"
+                       /*,"config"*/};
+    attribute name,startRole,endRole,orientation,aggregation,calculated {
+        setCategory "relation";
+    }
+    attribute startRole, endRole {
+        setEmbeddedView;
+        setBorder LEFT LINE;
+    }
+    attribute description {
+        //setBorder true;
+        setCategory "documentation";
+    }
+    attribute startRole.getter, startRole.adder, startRole.remover, startRole.clearer {
+        setCategory "start methods";
+    }
+    attribute endRole.getter, endRole.adder, endRole.remover, endRole.clearer {
+        setCategory "end methods";
+    }
+    attribute endRole.configItems, startRole.configItems {
+        setCategory "config";
+    }
+    setFieldEnum orientation orientation;
+}
+
+/*
+class PointcutLink {
+   setIcon icon_pointcut;
+   setMenu {};
+   setTableMembersOrder {name,end};
+   //setAttributesOrder {name",startCardinality,startRole,
+   //	end,endRole,endCardinality};
+   setAttributesOrder {name,end,aspectRole,methodPCD,hostPCD,description};
+   setCategories {"pointcut","documentation"};
+   attribute name,aspectRole,methodPCD,hostPCD {
+      setCategory "pointcut";
+   }
+   attribute description {
+      //setBorder true;
+      setCategory "documentation";
+   }
+   //   setDynamicFieldChoice end false RelationLink endChoices;
+   //setFieldChoice startCardinality false {"1","0-1","0-*","1-*"};
+   //setFieldChoice endCardinality false {"1","0-1","0-*","1-*"};
+}
+*/
+
+class InheritanceLink {
+    setToString "%start% extends %end%";
+}
+
+class TypedElement {
+    setToString "%getToString()%";
+    attribute type {
+        hideTreeRelation;
+        setDynamicFieldChoice false Gui.getAvailableTypes;
+    }
+}
+
+class Field {
+    setIcon icon_field;
+    setToString RelationRole.primaryKey "%name%";
+    setMenu {};
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setAttributesOrder {parent,name,type,isStatic,readOnly,calculated,isTransient,
+                            defaultValue,configItems,description,getter,setter};
+    setCreationAttributesOrder {name,type,isStatic,readOnly,calculated,isTransient,
+                                    defaultValue,configItems,description,getter,setter};
+    setTableMembersOrder {name,type};
+    setCategories {"field","methods","documentation"/*,"Config"*/};
+    attribute parent,name,type,isStatic,isTransient,readOnly,calculated,defaultValue {
+        setCategory "field";
+    }
+    attribute description {
+        setCategory "documentation";
+    }
+    setLineBreaks {name,isStatic,defaultValue,description,getter,setter};
+    attribute getter,setter {
+        setCategory "methods";
+    }
+    setAutoCreateInitializer getter Field.initGetter;
+    setAutoCreateInitializer setter Field.initSetter;
+    attribute description {
+        //setBorder true;
+        //      setCategory "documentation";
+    }
+    attribute type {
+        setDynamicFieldChoice false Field.getAvailableTypes;
+    }
+}
+
+class Getter {
+    attribute type {
+        setDynamicFieldChoice false Field.getAvailableTypes;
+    }
+}
+
+class Instance {
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setIcon icon_instance;
+    setMenu {};
+    setAttributesOrder {name, type};
+}
+
+class Group {
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setIcon icon_group;
+    setMenu {};
+    setEditorWidth objectPCD 30ex;
+    setEditorWidth classPCD 30ex;
+    setAttributesOrder {name, objectPCD, classPCD};
+}
+
+class Method {
+    setToString "%name%(%paramStr%):%type%";
+    setToString Class.allMethods "%name%(%paramNames%):%type%";
+    setToolTipText Class.allMethods "%name%(%paramStr%):%type%";
+    setIcon icon_method;
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setMenu {};
+    setAttributesOrder {name,type,visibility,isStatic,isAbstract,isSynchronized,
+                            parameters,prototype,body,exceptions,configItems,description};
+    setLineBreaks {name,visibility,parameters,body,description};
+    setTableMembersOrder {name,type};
+    setCategories {"method","body","exceptions","documentation"/*,"Config"*/};
+    attribute name,type,isStatic,isAbstract,isSynchronized,visibility {
+        setCategory "method";
+    }
+    setFieldEnum visibility visibility;
+    attribute parameters {
+        setTableView;
+        setCategory "method";
+        setDisplayLabel true;
+    }
+    attribute prototype {
+        setDisplayLabel false;
+        setCategory "body";
+    }
+    attribute exceptions {
+        setDisplayLabel false;
+        setCategory "exceptions";
+    }
+    attribute body {
+        setDisplayLabel false;
+        setCategory "body";
+    }
+    attribute description {
+        setCategory "documentation";
+    }
+}
+
+class Constructor {
+    setCreationAttributesOrder {
+        visibility,parameters,prototype,body,exceptions,
+            configItems,description };
+}
+
+class AspectMethod {
+    setIcon icon_aspect_method;
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setMenu {};
+    setAttributesOrder {name,type,parameters,body,description};
+    setTableMembersOrder {name,type};
+    setCategories {"method","body","documentation"};
+    setCategory name "method";
+    setCategory type "method";
+    attribute parameters {
+        //setTableView;
+        setCategory "method";
+    }
+    attribute body {
+        //setBorder true;
+        setCategory "body";
+    }
+    attribute description {
+        //setBorder true;
+        setCategory "documentation";
+    }
+}
+
+class Parameter {
+    setIcon icon_field;
+    setMenu {};
+    setAutoCreateAll;
+    setEmbeddedEditors;
+    setAttributesOrder {name,type,array,description};
+    setLineBreaks {name,description};
+    setTableMembersOrder {name,type,description};
+    attribute description {
+        //setBorder true;
+    }
+}
+
+class TypeRepository {
+    setAutoCreateAll;
+    setCategories {"primitive types","external classes","extended types","enumerated types"};
+    attribute primitiveTypes, primitiveTypes, extendedTypes, enumeratedTypes, externalClasses {
+        setDisplayLabel false;
+        setPreferredHeight 100px;
+        setViewOnSelection;
+    }
+    attribute primitiveTypes {
+        setCategory "primitive types";
+    }
+    attribute externalClasses {
+        setCategory "external classes";
+        setTableView;
+    }
+    attribute extendedTypes {
+        setCategory "extended types";
+        setTableView;
+    }
+    attribute enumeratedTypes {
+        setCategory "enumerated types";
+    }
+}
+
+class Plurals {
+    setAttributesOrder { plurals };
+    setParameterNames addPlural {"Singular","Plural"};
+    attribute plurals {
+        setTableView;
+    }
+}
+
+class java.util.Map$Entry {
+    attribute key {
+        setLabel Plurals.plurals "Singular";
+        setLabel Project.externalFiles "Name";
+    }
+    attribute value {
+        setLabel Plurals.plurals "Plural";
+        setLabel Project.externalFiles "File";
+    }
+}
+
+class Figure {
+    setToString "figure %element%";
+}
+
+class GenericFigure {
+    setToString "figure %element% %corner%";
+}
+
+class ClassFigure {
+    setToString "class %element% %corner%";
+    setMenu {setHideMethods,setHideFields};
+}
+
+class LinkFigure {
+    setToString "link %element% %nameCorner% %startRoleCorner% %startCardinalityCorner% %endRoleCorner% %endCardinalityCorner%";
+    setParameterNames addPoint {"Position","Point"};
+}
+
+class diagrams.ClassFigureCreationTool {
+    method importClass {
+        setParameterNames {"Choose the class to insert","Import relations"};
+        setMethodDynamicParameterChoice 
+            { diagrams.ClassFigureCreationTool,null} {importClassChoice,null} {false,false};
+    }
+}
+
+class diagrams.NewClassFigureCreationTool {
+    setParameterNames createNewClass {"Name"};
+}
+
+class diagrams.AspectFigureCreationTool {
+    setParameterNames importAspect {"Choose the aspect to insert"};
+}
+
+class diagrams.NewAspectFigureCreationTool {
+    setParameterNames createNewAspect {"Name"};
+}
+
+class diagrams.NewInstanceFigureCreationTool {
+    setParameterNames createNewInstance {"Name"};
+}
+
+class diagrams.PointcutLinkShowTool {
+    setParameterNames choosePointcut {"Choose the pointcut to show"};
+    setMethodDynamicParameterChoice choosePointcut {diagrams.PointcutLinkShowTool}
+    {pointcuts} {false};
+}
+
+class diagrams.RelationLinkShowTool {
+    method showRelation {
+        setParameterNames {"Choose the relation to show"};
+        setMethodDynamicParameterChoice {diagrams.RelationLinkShowTool}
+        {relations} {false};
+    }
+}
+
+class Errors {
+    attribute errors {
+        setViewOnSelection;
+        setOnSelection Errors.selectionHandler;
+    }
+    setAttributesOrder {errors};
+}
+
+class Error {
+    setToString "%message%";
+}
+
+class ConfigItem {
+    setAttributesOrder {aspectConfiguration,"method",param};
+    addViewFieldDependency aspectConfiguration;
+    attribute "method" {
+        setDynamicFieldChoice false ConfigItem getValidMethods;
+        setEmbeddedEditor;
+    }
+    attribute aspectConfiguration {
+        setDynamicFieldChoice false ConfigItem getAvailableAspects;
+    }
+    setEmbeddedEditor aspectConfiguration;
+}
+
+setViewConstructor swing Diagram diagrams.DiagramView;
+
+class java.lang.Throwable {
+    setAttributesOrder {cause,detailMessage,stack};
+    setDisplayLabel cause false;
+    setDisplayLabel detailMessage false;
+}
+
+class org.objectweb.jac.core.rtti.AbstractMethodItem {
+    setToString "%getCompactFullName()%";
+}
+
+class org.objectweb.jac.lib.Attachment {
+    setEmbeddedEditor name;
+    setEmbeddedEditor data;
+    setDynamicIcon Gui.getAttachmentIcon;
+    setMenu {setName, setMimeType, "", edit, editWith};
+    method editWith {
+        setParameterNames {"","editor"};
+    }
+}
+
+class Preferences {
+    setIcon prefs_icon;
+    setToString "Preferences";
+    setAttributesOrder {externalEditor, editorPrefs.autoComplete};
+    setEmbeddedEditors;
+    attribute editorPrefs {
+        setLabel "Internal editor preferences";
+        setEmbeddedView;
+        setBorder;
+    }
+    setEmbeddedEditors;
+}
+
+// The GUI main window configuration
+window ide {
+    registerCustomized;
+    setCustomizedIcon "umlaf";
+    setTitle "UMLAF";
+
+    setOnCloseHandler Actions.exit;
+
+    setSubPanesGeometry 4 VERTICAL {false,false,false,false};
+    setPaneContent 0 Tree { "projects#0", false};
+    //   setPaneContent 0 Object { "projects#0" };
+    //   setPaneContainer 3 Desktop;
+    addReferenceToPane Package classes 1;
+    addReferenceToPane Package resources 3;
+    addReferenceToPane Package diagrams Diagram {} false 2;
+    addReferenceToPane Package instances 3;
+    addReferenceToPane Package groups 3;
+    addReferenceToPane Class fields 3;
+    addReferenceToPane Class methods 3;
+    addReferenceToPane Class allMethods 3;
+    addReferenceToPane Class links 3;
+    addReferenceToPane Class relationRoles 3;
+    addReferenceToPane Class navigableRoles 3;
+    addReferenceToPane Class endingLinks 3;
+    addReferenceToPane Aspect fields 3;
+    addReferenceToPane Aspect methods 3;
+    addReferenceToPane Aspect links 3;
+    addReferenceToPane Aspect pointcutLinks 3;
+    addReferenceToPane Application aspectConfigurations 3;
+
+    setPosition 0 0 70 70;
+    setSplitterLocation 0 0.4;
+    setSplitterLocation 1 0.5;
+    setSplitterLocation 2 0.5;
+    addStatusBar BOTTOM;
+
+    menu "main" {
+        addMenuItem { "Projects", "New project" } 
+        	"projects#0" Projects.addProject;
+
+        addMenuSeparator { "Projects" };
+
+        addMenuItem { "Projects", "Generate code" } 
+        	"projects#0" Projects.generateCode;
+        addMenuItem { "Projects", "Compile" } 
+        	"projects#0" Projects.compile;
+        addMenuItem { "Projects", "Generate & Compile" } 
+        	"projects#0" Projects.generateAndCompile;
+        addMenuItem { "Projects", "Set current application" }
+        	"projects#0" Projects.setCurrentApplication;
+
+        addMenuSeparator { "Projects" };
+        
+        addMenuItem { "Projects", "Export" } 
+        	Projects.export;
+        addMenuItem { "Projects", "Import" } 
+        	Projects.importObjects;
+
+        addMenuSeparator { "Projects" };
+
+        addMenuItem { "Projects", "Exit" } 
+        	Actions.exit;
+
+        addMenuItem { "Tools", "Type repository" }
+        	Actions.showWindow {"type-repository-gui"};
+        addMenuItem { "Tools", "Plurals" }
+        	Actions.showWindow {"plurals-gui"};
+        addMenuItem { "Tools", "Clear code generation cache" }
+        	Gui.invalidateCache;
+
+        addMenuItem { "Options", "Set trace" } 
+        	Actions.setTrace;
+        addMenuItem { "Options", "Reload aspect" } 
+        	Actions.reloadAspect;
+        addMenuItem { "Options", "Preferences" } 
+        	Actions.openView {"preferences#0"};
+
+        /*
+          addMenuItem { "Profiling", "Enable" } 
+          Actions.enableProfiling;
+          addMenuItem { "Profiling", "Disable" } 
+          Actions.disableProfiling;
+        */
+    }
+
+    addToolbarAction Actions.exit;
+    addToolbarAction "projects#0" Projects.generateCode;
+    addToolbarAction "projects#0" Projects.generateAndCompile;
+    addToolbarAction "projects#0" Projects.startCurrentApplication;
+    addToolbarAction "projects#0" Projects.stopCurrentApplication;
+}
+
+// The type repository window configuration
+window "type-repository-gui" {
+    registerCustomized;
+    setCustomizedIcon "umlaf";
+    setTitle "Type repository";
+
+    //   setSubPanesGeometry 4 VERTICAL {false,true,false,false};
+    setSubPanesGeometry 2 HORIZONTAL {false,false};
+    setPaneContent 0 Object { "default", "typerepository#0" };
+    addReferenceToPane TypeRepository primitiveTypes 1;
+    addReferenceToPane TypeRepository externalClasses 1;
+    addReferenceToPane TypeRepository extendedTypes 1;
+    addReferenceToPane TypeRepository enumeratedTypes 1;
+    setPosition 0 0 50 60;
+    setSplitterLocation 0 0.3;
+}
+
+// The plurals window configuration
+window "plurals-gui" {
+    registerCustomized;
+    setCustomizedIcon "umlaf";
+    setTitle "Plurals";
+
+    setSubPanesGeometry 1 HORIZONTAL {false};
+    setPaneContent 0 Object { "default", "plurals#0" };
+    setPosition 0 0 50 60;
+}
+
+setViewConstructor swing editor:fieldName swing.FieldNameEditor;
+
+// Tell emacs to use java-mode when editing
+// Local Variables:
+// mode: java
+// End:

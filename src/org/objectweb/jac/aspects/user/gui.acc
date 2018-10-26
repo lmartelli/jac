@@ -1,0 +1,43 @@
+defineResource ICON profiles_icon "org/objectweb/jac/aspects/gui/resources/profiles.gif";
+
+setIcon org.objectweb.jac.aspects.user.UserAC viewProfiles profiles_icon;
+
+askForParameters "org.objectweb.jac.aspects.user.Profile || org.objectweb.jac.aspects.user.UserManager || org.objectweb.jac.aspects.user.Rule";
+
+class org.objectweb.jac.aspects.user.Profile {
+   setToString "%name%";
+   setAttributesOrder {name,parent,readRules,writeRules,addRules,removeRules,createRules};
+   attribute readRules, writeRules, addRules, removeRules {
+      setAutoCreate;
+   }
+   setTableMembersOrder {name,parent};
+   setEmbeddedEditor parent;
+
+   setCategories {"Name","Fields","Collections","Create"};
+   attribute name,parent { setCategory "Name"; }
+   attribute readRules,writeRules { setCategory "Fields"; }
+   attribute addRules,removeRules { setCategory "Collections"; }
+   attribute createRules { setCategory "Create"; }
+}
+
+class org.objectweb.jac.aspects.user.UserManager {
+   attribute profiles {
+      setTableView;
+      setViewOnSelection;
+      setAutoCreate;
+      setMembersOrder org.objectweb.jac.aspects.user.Profile {name,parent};
+   }
+}
+
+class org.objectweb.jac.aspects.user.Rule {
+   setToString "%resourceExpression% %allow%";
+   setAttributesOrder {resourceExpression,allow};
+   attribute resourceExpression {
+      setEditorWidth 40ex;
+   }
+}
+
+
+// Local Variables:
+// mode: java
+// End:

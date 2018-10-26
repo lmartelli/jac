@@ -1,0 +1,5 @@
+
+addStrongPushConsistency "bank[0-9]*" "addAccount.*" ".*";
+//addStrongPushConsistency "calcul0" "MODIFIERS" ".*";
+addStrongPushConsistency "account[0-9]*" "MODIFIERS" ".*";
+

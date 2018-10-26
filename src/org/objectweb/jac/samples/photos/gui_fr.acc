@@ -1,0 +1,16 @@
+class org.objectweb.jac.samples.photos.Photo {
+   setLabel rate "Note";
+   setLabel title "Titre";
+   setLabel imageURL "Image";
+   setLabel author "Auteur";
+   setLabel date "Date";
+}
+
+class org.objectweb.jac.samples.photos.Person {
+   setLabel name "Nom";
+}
+
+
+// Local Variables:
+// tab-width: 4
+// End:

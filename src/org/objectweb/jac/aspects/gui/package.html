@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Gui Aspect</title>
+  </head>
+
+  <body>
+
+    <p>Provides a simple and generic GUI (Graphical User Interface)
+      aspect.</p>
+
+    <p>This aspect is based on a MVC (Model-View-Controller)
+      pattern. The GUI aspect component wrapps all the objects of the
+      application that need to be displayed with a view wrapper that
+      plays the controller role. The view is generic and is
+      implemented by the <code>View</code> class. It simply displays
+      the objects fields values and add some buttons for the commands
+      that correspond to the class methods.</p>
+
+    <p>It supports arrays, collections, and maps displaying.</p>
+
+    <p>The configuration file lets you specify how objects should be
+      displayed. You can control which fields are shown and in which
+      order for instance. You can also specify the name of methods
+      parameters.</p>
+
+    <p>Two guis are available : a swing gui, based on Java's swing
+      components, and a web gui which generates HTML pages. They both
+      use the configuration of the gui aspect, which means that you do
+      not have to write two configuration files, however due to
+      constraint of each implementation, some gui may not use all
+      settings of the gui aspect. For instance, the
+      <code>setRender</code> configuration method only has an effect
+      in the swing gui.</p>
+
+    <p>If you want to create a customized GUI for a given application,
+    you must implement the org.objectweb.jac.core.Display interface and use the
+    <code>setDisplay</code> configuration method to launch it.
+
+    <h3>Configuration methods for the GUI aspect</h3>
+
+
+    <h2>Related Documentation</h2>
+    
+    <p>For overviews, sources, tutorials, examples, guides, and tool
+      documentation, please see:</p>
+
+    <ul>
+      <li><a href="../../../../j2h.nojdk">HTML sources</a>
+      <li><a href="../../../../">HTML overview</a>
+    </ul>
+
+<!-- Put @see and @since tags down here. 
+@see org.objectweb.jac.aspects.gui.GuiConf    
+-->
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+addTrustedUser "renaud" "renaud";
+addTrustedUser "laurent" "laurent";
+
+class org.objectweb.jac.samples.contacts.Contact {
+	addRestrictedMethod setFirstName;
+	addRestrictedMethod setLastName;
+	addRestrictedMethod setPhone;
+}

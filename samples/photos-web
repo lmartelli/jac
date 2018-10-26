@@ -1,0 +1,3 @@
+#!/bin/sh
+
+$(dirname $0)/run_sample org/objectweb/jac/samples/photos/photos.jac web web $*

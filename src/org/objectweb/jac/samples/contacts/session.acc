@@ -1,0 +1,7 @@
+
+declareStoredAttributes {"AuthenticationAC.USER"};
+
+class org.objectweb.jac.samples.contacts.FilteredContacts {
+	defineSessionHandlers ALL "filteredcontacts0";
+	definePerSessionObjects "filteredcontacts0";
+}

@@ -1,0 +1,48 @@
+#!/bin/sh
+
+cd $HOME
+
+# sart_remote $name
+start_remote() {
+    name=$1
+    xterm -rightbar -sl 1000 -title "Jac - $name" -e jac $jac_args -D $name &
+}
+
+# sart_remote_slave $name
+start_remote_slave() {
+    name=$1
+    xterm -rightbar -sl 1000 -title "Jac - $name (slave)" -e jac $jac_args -D $name &
+}
+
+
+if [ $# -lt 1 ]; then
+    echo "usage: go <nb containers> [jac arguments]"
+    exit 1
+fi
+
+n=$1
+shift
+
+jac_args=""
+server_args=""
+while [ $# -gt 0 ]; do
+#    if [ $1 = "--" ]; then
+#	shift
+#	server_args=$*
+#	break
+#    else 
+	jac_args="$jac_args $1"
+	shift
+#    fi
+done
+#echo "jac_args=$jac_args"
+#echo "server_args=$server_args"
+
+    while [ $n -gt 0 ]; do
+
+
+	start_remote s$n $jac_args
+	n=$(( $n - 1 ))
+    done
+ 
+

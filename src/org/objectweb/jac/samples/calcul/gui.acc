@@ -1,0 +1,31 @@
+class org.objectweb.jac.samples.calcul.Calcul {
+   setAttributesOrder { value, ops };
+   setTableView ops;
+   setParameterNames add(int) { "Value to add" };
+   setParameterNames sub { "Value to sub" };
+   setDefaultValues add { 1 };
+   setMethodsOrder { add, sub, getValue };
+}
+
+class org.objectweb.jac.samples.calcul.Op {
+   setAttributesOrder { name, arg };
+   setEditable name false;
+   setEditable arg false;
+   setTableMembersOrder { name, arg };
+}
+
+askForParameters org.objectweb.jac.samples.calcul.Calcul;
+
+// The GUI main window configuration
+block default {
+   registerCustomized;
+   setTitle "Calculator";
+
+   // The real simple GUI
+   setSubPanesGeometry 1 VERTICAL { false };
+   setPaneContent 0 Object { "default", "calcul#0" };
+}
+
+// Local Variables:
+// mode: java
+// End:

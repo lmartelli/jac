@@ -1,0 +1,7 @@
+
+deploy "accountmanager0" ".*s1";
+createStubsFor "accountmanager0" ".*s1" ".*";
+replicate "bank[0-9]*" ".*";
+replicate "bank[0-9]*" ".*";
+
+

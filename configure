@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# create some directories
+mkdir -p classes
+
+# create the makefiles
+./scripts/create_makefiles
+
+# locate .jar of libraries
+./scripts/find_libs

@@ -1,0 +1,18 @@
+// "photos.user" is the "fully qualified" name of the user aspect
+// we'll work with (<app_name>.<aspect_name>)
+setAuthenticator 
+	org.objectweb.jac.aspects.authentication.UserPasswordAuthenticator 
+	{"photos.user"};
+
+// We require authentication on a few methods of the display so that
+// when a user ask for the window of the application, it is
+// authenticated.
+setDisplayController org.objectweb.jac.aspects.user.UserAC.userController;
+
+// Customized error message in case of authentication failure
+setAccessDeniedMessage "Access not granted.";
+
+
+// Local Variables:
+// mode: java
+// End:

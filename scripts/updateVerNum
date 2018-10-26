@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# This shell script is for internal use only.
+# Do not use it if you don't know what you are doing.
+#
+# It updates the @version pragma for all the .java and .idl files of
+# this directory and its subdirectories (and recursively).
+# See the sed argument below.
+
+if [ $# != 2 ]; then
+    prog=`basename $0`
+    echo "usage: $prog old_version new_version"
+    exit 1;
+fi
+
+OLD_VERSION=$1
+VERSION=$2
+
+javaFiles=`find . -name "*.java" -print`
+
+echo $javaFiles
+
+for i in $javaFiles
+do
+   sed "s/version $OLD_VERSION/version $VERSION/" < "$i" > "$i.tmp"
+   mv $i.tmp $i
+done

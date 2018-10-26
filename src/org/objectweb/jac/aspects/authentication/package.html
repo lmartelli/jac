@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides an aspect to handle authentication in JAC applications.
+
+<p>Aspect-Oriented Programming allows authentication to be defined in a
+very simple way. The authentication aspect components handles lists of
+users and their access rights and lists of methods that have
+restricted access characteristics.
+
+<p>These last methods are wrapped by an authentication wrapper (see
+<code>AuthenticationWrapper</code> that checks if the collaboration's
+context tells that the current user is authenticated. If not, the
+wrapper uses the current display to ask to the user to input the
+authentication informations defined in some special classes as
+<code>ThrustingAuthentication</code>.
+
+<p>Here is a sample configuration file for this aspect:
+
+<pre class=code>
+addTrustedUser "renaud" "renaud"
+addRestrictedMethod "org.objectweb.jac.samples.calcul.Calcul" "add"
+addRestrictedMethod "org.objectweb.jac.samples.calcul.Calcul" "sub"
+</pre>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

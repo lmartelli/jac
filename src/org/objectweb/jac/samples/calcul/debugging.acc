@@ -1,0 +1,4 @@
+
+//stepAll
+step ".*" ".*" ".* && !getValue():float";
+

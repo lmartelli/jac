@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+  <head>
+  </head>
+  <body bgcolor="white">
+    
+    <p>Provides JAC system core classes. </p>
+    
+    <p>The JAC generic framework can be summarized as following:</p>
+      
+    <ul> 
+      
+      <li>Wrappable JAC objects (wrappees) automatically implement the
+	<code>Wrappee</code> interface during the class loading
+	(transformation are implemented with BCEL).
+	
+      <li>Classes can be excluded from translation (see the
+      <code>$JAC_ROOT/org.objectweb.jac.prop</code> file).
+	
+      <li>The wrapper classes must extend <code>Wrapper</code> and
+	can provide 3 kinds of methods:
+	
+	<ul>
+	  <li><b>wrapping methods</b> that extends existing wrappees
+	    methods by executing some code <i>before</i> and <i>after</i>
+	    
+	  <li><b>role methods</b> that add methods to the wrappees
+	    
+	  <li><b>exception handlers</b> that handle exceptions thrown by
+	    the program
+	    
+	</ul>
+
+      <li>At runtime, any wrappee can be wrapped and unwrapped by any
+      wrapper
+
+      <li>Wrapping a set of wrappee with a set of wrappers must be
+      defined in well-located components: <b>Aspect Components</b>
+
+      <li>An aspect component (instance of
+      <code>AspectComponent</code>) defines pointcuts so that it can
+      wrap the JAC object when needed. It implements a program
+      extension called an <b>Aspect</b>, e.g. authentication,
+      persistence, distribution.
+
+      <li>The aspect components set registered in the system is
+      managed in the <code>ACManager</code> class.
+
+    </ul>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+<p>For overviews, sources, tutorials, examples, guides, and tool documentation, please see:</p>
+<ul>
+  <li><a href="../../../JAC.pdf">A JAC technical overview (PDF)</a>
+  <li><a href="../../../programmer_guide.html">The JAC programmer's guide</a>
+  <li><a href="../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

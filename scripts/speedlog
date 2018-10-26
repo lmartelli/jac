@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Determine JAC_ROOT
+progname=$0
+case $progname in 
+   /*)  ;;
+   ./*) progname=$(pwd)/$(echo $progname | cut -c 3-) ;;
+   *) progname=$(pwd)/$progname ;;
+esac
+progname=$(dirname $progname)
+JAC_ROOT=$(dirname $progname)
+
+if [ -d "$JAC_ROOT/classes" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/classes"
+fi
+
+for jar in `find $JAC_ROOT/lib -name "*.jar" | sort`; do
+    CLASSPATH="$CLASSPATH:$jar"
+done
+
+export CLASSPATH
+echo $CLASSPATH
+
+exec java org.objectweb.jac.util.SpeedLog $JAC_ROOT/classes

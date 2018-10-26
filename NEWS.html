@@ -1,0 +1,966 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+  <head>
+    <title>What's new in JAC</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="basic.css" title="basic style" media="all">
+  </head>
+
+  <body>
+
+    <h1><a name="0.12">What's new in JAC 0.12</a></h1>
+
+    <p class="important">Because of some internal changes in the way
+      RTTI information is cached, you must clear you <span
+	class="directory">classes_BCEL</span> directory.</p>
+
+    <h2>Core/Aspect programming model</h2>
+    
+    <ul>
+      <li>
+    	<a href="http://sourceforge.net/projects/aopalliance">AOP Alliance</a> API support<br/>
+    	as a consequence:
+    	<ul>
+	  <li>wrappers must now implement two methods:
+	    <a href="http://aopalliance.sourceforge.net/doc/org/aopalliance/intercept/MethodInterceptor.html"><i>invoke</i></a> and
+	    <a href="http://aopalliance.sourceforge.net/doc/org/aopalliance/intercept/ConstructorInterceptor.html"><i>construct</i></a>.
+	    <i>invoke</i> wraps method executions and
+	    <i>construct</i> wraps constructor executions.</li>
+    		
+	  <li>the <i>pointcut</i> method signature has changed
+	    (no more wrapping method name).</li>
+    	</ul>
+      </li>
+    </ul>
+    
+    
+    <h2>Core/RTTI</h2>
+
+    <ul>
+      <li>Added support for <em>import</em> statement in .acc files</li>
+      <li>New configuration method in RTTI: defineRepository. It
+	allows to specify that when the instances of a class are
+	requested (with ObjectRepository.getObjects(ClassItem), instead
+	of returning all instances of the class known by the system,
+	just return a collection of a so-called repository
+	object.</li>
+      <li>Fixed some bytecode analysis bugs with doubles.</li>
+      <li>Added clone() utility method to clone an object and it's
+	relations if they are aggregations (see
+	o.o.jac.core.Utils.clone)</li>
+      <li>Field dependencies can be declared for expression
+	fields. See RttiConf.addFieldDependency() configuration
+	method.</li>
+      <li>Log messages contain date and time.</li>
+      <li>acc files: Fixed a bug in negated( those with a "!") 
+	expression parsing</li>
+      <li>log4j is used so that we can we just4log and not suffer a
+	performance loss for unactivated logs</li>
+      <li>defineRepository can be used with any expression field for
+	the collection.</li>
+    </ul>
+
+    <h2>New aspect: timestamp</h2>
+
+    <p>Register last modification dates of objects.</p>
+
+    <h2>Cache</h2>
+
+    <p>Can now work with the timestamp aspect.</p>
+
+    <h2>New aspect: export</h2>
+
+    <p>It's not really an aspect since it does not use any wrapper,
+      but it's configured like an aspect. It can export object to an
+      XML file and, of course, import the objects back from that kind
+      of file.</p>
+
+    <h2>IDE</h2>
+
+    <ul>
+      <li>Packages can contain resources, which can be edited with an
+	external program</li>
+      <li>Introduced per user config</li>
+      <li>Fixed application main class setting</li>
+      <li>Can build a jar containing classes, aspect configuration
+	files and jac application descriptors.</li>
+      <li>Added "goto line" feature on classes.</li>
+      <li>Add export/import</li>
+      <li>com.sun.tools.javac can be used as the compiler for better 
+	performances</li>
+      <li>Added options to debug applications with standard java debugger</li>
+    </ul>
+
+    <h2>GUI</h2>
+
+    <ul>
+      <li>Enhanced calculated field refresh (see RttiConf.addFieldDependency)</li>
+      <li>Web: pressing enter in an editor of the embedded to add
+	object of a table adds the object (javascript)</li>
+      <li>Web: Double clicking on a table's row views the object
+	(equivalent to clicking the "view" link)</li>
+      <li>Swing: in the file editor, "~" at the beginning of a
+	filename is replaced by the user's home directory</li>
+      <li>Added percentage editor and viewer</li>
+      <li>new config method setSlowOperation() to display "please wait"
+	message for slow methods</li>
+      <li>Dialog boxes now have OK/Cancel/Refresh buttons</li>
+      <li>Use local format to edit and display floating point
+      numbers</li>
+      <li>Tree nodes are sorted</li>
+      <li>Length are specified using units such px, ex or em
+	instead of dual pixels/characters values.</li>
+    </ul>
+
+    <h2>Persistence</h2>
+
+    <ul>
+      <li>Added support for multiple storages</li>
+      <li>FSStorage: do not create empty files</li>
+      <li>FSStorage: encoding of files can be specified</li>
+    </ul>
+
+    <h2>Confirmation</h2>
+    
+    <ul>
+      <li>Confirmation messages can be customized</li>
+    </ul>
+
+    <h1><a name="0.11">What's new in JAC 0.11</a></h1>
+
+    <h2>New aspects</h2>
+    
+    <dl>
+      <dt>Distrans</dt><dd>Handles transactional behavior, based on <a href="http://jotm.objectweb.org">JOTM</a></dd>
+      <dt>Hibernate</dt><dd>A persistence aspect based on <a href="http://hibernate.bluemars.net">Hibernate</a></dd>
+    </dl>
+
+    <h2>GUI</h2>
+    <ul>
+      <li>Swing: object's popup menus can be merged into one menu</li>
+      <li>Swing: mnemonics are automatically generated for menus and
+      toolbars</li>
+      <li>Swing: added tooltips</li>
+      <li>Swing: automatically generate mnemonics for menus and
+      toolbars</li>
+      <li>Swing: added "move up" and "move down" buttons for lists</li>
+    </ul>
+
+    <h2>IDE</h2>
+    <ul>
+      <li>Methods and fields can be hidden in diagrams</li>
+    </ul>
+
+    <h2>Persistence</h2>
+    <ul>
+      <li>Fixed collections preload bug</li>
+    </ul>
+
+    <h1><a name="0.10.2">What's new in JAC 0.10.2</a></h1>
+
+    <h2>Core</h2>
+    <ul>
+      <li>Overriding methods which call super are detected as
+	setter/adder/remover</li>
+    </ul>
+
+    <h2>GUI</h2>
+    <ul>
+      <li>Method parameters can be declared to be of enum type</li>
+      <li>Added per class default sort order</li>
+      <li>Use can choose the class to instantiate when a parameter is
+	autocreated</li>
+      <li>Fixed navbar prev/next display bug</li>
+    </ul>
+
+    <h2>IDE</h2>
+    <ul>
+      <li>Classes can be abstract</li>
+      <li>Methods have a visibility and throws exceptions</li>
+      <li>Added interfaces</li>
+      <li>Can set trace levels while an application is running</li>
+      <li>Can set system properties for applications</li>
+    </ul>
+
+    <h1><a name="0.10.1">What's new in JAC 0.10.1</a></h1>
+
+    <h2>IDE</h2>
+    <ul>
+      <li>Enhanced inheritance links handling in class diagram</li>
+      <li>Generate correct getter/setter for static fields</li>
+      <li>Inheritance links can be imported into diagrams</li>
+      <li>Fixed refresh bugs</li>
+    </ul>
+
+    <h2>Persistence</h2>
+    <ul>
+      <li>Fixed bugs in PostgresStorage</li>
+    </ul>
+
+
+    <h1><a name="0.10">What's new in JAC 0.10</a></h1>
+
+    <h2>IDE</h2>
+
+    <ul>
+      <li>Fixed attached text drifting</li>
+      <li>Fixed "Relation link show tool"</li>
+      <li>Fixed inheritance link creation in diagram</li>
+      <li>Initialize getter/setter/adder/remover/clearer with default
+      name,return type and parameters</li>
+      <li>gui.acc: Generate setAutoCreate for aggregations</li>
+      <li>gui.acc: Generate askForParamaters</li>
+      <li>gui.acc: Generate setParameterNames</li>
+      <li>Added support for enumerated types</li>
+      <li>Improved completion performance for method's bodies</li>
+      <li>Added per class imports and automatically generate imports
+	for the type of fields</li>
+      <li>Only show classes of the current project in combo-boxes</li>
+      <li>Enhanced attached text location (cardinalities and role names)</li>
+      <li>Created relations are selected</li>
+      <li>Show adders,setters,etc in methods list (but it does not
+	refresh correctly)</li>
+      <li>Handle array types</li>
+      <li>Use main class instead of just launching code</li>
+    </ul>
+
+    <h2>GUI</h2>
+
+    <ul>
+      <li>Basic reports can be generated with JasperReports</li>
+      <li>Added first/last buttons on collections (Web)</li>
+      <li>Added support for contextual settings (� la css)</li>
+      <li>Added support for custom icons for windows</li>
+      <li>Embedded methods are supported on the web. Adders of
+	autocreate collections are embedded into tables.</li>
+    </ul>
+
+    <h2>Core</h2>
+
+    <ul>
+      <li>Attributes are defined persistent in a centralized way</li>
+    </ul>
+
+    <h1><a name="0.9.4">What's new in JAC 0.9.4</a></h1>
+
+    <h2>Core</h2>
+
+    <ul>
+      <li>Expression fields can be used in acc configuration
+      files. For instance, you can use "customer.name" to designated
+      the name of the customer of an order.</li>
+    </ul>
+    
+    <h2>GUI</h2>
+
+    <ul>
+      <li>Web: you can build URLs to display any object you want by
+	its name</li>
+      <li>Methods can be dynamically enabled/disabled in swing menus</li>
+    </ul>
+
+    <h2>IDE</h2>
+
+    <ul>
+      <li>Improved java code editor</li>
+      <li>Improved acc code editor</li>
+      <li>Generate declareAssociation code for integrity.acc</li>
+      <li>Generate setNullAllowed code for rtti.acc</li>
+      <li>Aspect configurations can be reloaded from the IDE</li>
+      <li>Automatically add an rtti aspect configuration to applications</li>
+    </ul>
+
+    <h1><a name="0.9.3">What's new in JAC 0.9.3</a></h1>
+
+    <h2>Integrity aspect</h2>
+
+    <ul>
+      <li>Primary key checking</li>
+    </ul>
+
+    <h2>JAC Core</h2>
+
+    <ul>
+      <li>JAC properties are also read from application descriptors
+	(.jac files)</li>
+    </ul>
+
+    <h2>Message Queue</h2>
+
+    <p>This is a new aspect that provides a simple asynchronous
+      notification mechanism.</p>
+
+    <h2>IDE</h2>
+
+    <ul>
+      <li>Do not display error box if there is no error.</li>
+      <li>Draw arrows on relations.</li>
+      <li>Aggregation of relations can be edited.</li>
+      <li>Added popup menus on diagram.</li>
+      <li>Show dialog when adding field or method from the
+	diagram</li>
+      <li>Methods and fields can now be selected from the diagram</li>
+      <li>Support static fields and methods</li>
+      <li>Support default values for fields</li>
+      <li>Basic support for calculated fields and custom get/set methods</li>
+      <li>Java source code syntax highlighting</li>
+    </ul>
+
+    <h2>GUI aspect</h2>
+
+    <ul>
+      <li>Tables can be sorted by default.</li>
+      <li>ComboxBoxes are sorted.</li>
+      <li>Fixed refresh bug</li>
+    </ul>
+
+    <h2>User aspect</h2>
+
+    <ul>
+      <li>Access rights can be controlled through a callback</li>
+    </ul>
+
+    <h1><a name="0.9.2">What's new in JAC 0.9.2</a></h1>
+
+    <h2>IDE</h2>
+
+    <p>Fixed generation of relations</p>
+
+    <h2>GUI</h2>
+
+    <p>Fixed concurrency problems that ocurred on images in the photos
+      sample</p>
+
+    <p>When an object is removed from a collection, its views are removed.</p>
+
+    <h1><a name="0.9.1">What's new in JAC 0.9.1</a></h1>
+
+    <h2>IDE</h2>
+
+    <p>Fixed windows related bugs.</p>
+
+    <h2>Docs</h2>
+
+    <p>Tutorial updates.</p>
+
+    <h1><a name="0.9">What's new in JAC 0.9</a></h1>
+
+    <h2>General</h2>
+
+    <p>Transformed classes are now cached on the local file system for
+      faster start-up.</p>
+
+    <p>Enhanced bytecode analysis to find out getters,setters,adders
+      and removers.</p>
+
+    <p>Standard java.util collections can now be used.</p>
+
+    <p>Added command-line option to set the trace level of a remote
+      server.</p>
+
+
+    <h2>GUI</h2>
+
+    <p>Added menus, trees and tabs to the web gui.</p>
+
+    <p>Added "next" and "prev" for collections on the web.</p>
+
+    <p>Added toolbars.</p>
+
+    <p>Methods can now be displayed in tables.</p>
+
+    <p>Added DateHour format for <span class="class">java.util.Date</span></p>
+
+    <p>Added Enums</p>
+
+    <p>"Next" and "Prev" buttons for object views from a collection.</p>
+
+    <p>Format of floats and doubles.</p>
+
+
+    <h2>IDE</h2>
+
+    <p>Diagrams are not saved in a file any more. The standard
+    persistence aspect is used.</p>
+
+
+    <h2>Authentication</h2>
+
+    <p>Can select the authenticator (Trusting, System)</p>
+
+    <p>Custom access control policies can be implemented.</p>
+
+
+    <h2>User</h2>
+
+    <p>This is a new aspect.</p>
+
+
+
+    <h1><a name="0.8.1">What's new in JAC 0.8.1</a></h1>
+
+    <h2>General</h2>
+
+    <p>Configuration methods of aspect components are now grouped
+      in interfaces (such as GuiConf, PersistenceConf) so that it's
+      easier to find them.</p>
+
+    <h2>IDE</h2>
+
+    <ul>
+      <li>Reengineering of the class diagrams</li>
+      <li>Better consistency between subpanels selections</li>
+      <li>Compilation errors are shown in a window, and clicking on
+	them jumps to location of the error (well, almost, there's a
+	little focus problem)</li>
+    </ul>
+    
+    <h2>GUI</h2>
+
+    <ul>
+      <li>Image editors display the image</li>
+      <li>attributes order can be configured for each collection
+	(webgui)</li>
+      <li>save the state of forms (webgui)</li>
+      <li>TreeView nodes have configurable menus</li>
+      <li>The TreeView does not show invisible relations</li>
+      <li>The TreeView automatically selects and expands newly added nodes</li>
+      <li>TextEditor can have a scroll bar (swing)</li>
+      <li>Added a configuration method (setOnSelection) to set a
+	callback that is called when an item of a colleciton is
+	selected (swing)</li>
+    </ul>
+
+    <h2>DOCUMENTATIONS</h2>
+
+    <ul>
+      <li>Tutorial and Programmer's Guide indexes in frames</li>
+      <li>Added the IDE howto to the tutorial</li>
+    </ul>
+
+
+    <h1><a name="0.8">What's new in JAC 0.8</a></h1>
+
+    <h2>IDE</h2>
+
+    <p>An IDE in a very first beta version is added (not documented
+    yet). The idea it to allow the programmer to model its
+    applications in a UML-like formalism. The diagrams editors are
+    implemented by using the excellent JHotDraw framework.
+
+    <p>See the <code>org/objectweb/jac/src/org/objectweb/jac/ide</code> directory of the
+    distribution (launch with <code>jac ide.jac</code>).
+
+    <p>For the moment, the IDE supports (still in a very beta state):
+      
+    <ul>
+      <li>Modeling of base programs (classes, relations)</li>
+      <li>Modeling of aspects (aspect, pointcut links)</li>
+      <li>Code generation: once modeled, the code can be generated and
+      compiled</li>
+      <li>Applications definitions and aspects configuration</li>
+    </ul>
+
+    <h2>Swing GUI</h2>
+
+    <ul>
+      <li>The state of tree views is not lost anymore</li>
+      <li>fixed lots of bugs (refresh problems and exceptions)</li>
+      <li>be more clever when wrapping with askForParamaters</li> 
+      <li>columns of table can be configured per collection</li>
+      <li>Added support for menus (see setMenuBar and addMenuItem in GuiAC)</li>
+    </ul>
+
+    <h2>Web GUI</h2>
+
+    <p>Introduced a component architecture similar to the one used for
+      Swing. See setHTMLTypeViewer and setHTMLTypeEditor of
+      org.objectweb.jac.aspect.gui.GuiAC.</p>
+
+    <h2>Association</h2>
+
+    <p>There's a new association aspect. It can be used to
+      automatically updated opposite roles. See the declareAssociation
+      of org.objectweb.jac.core.rtti.RttiAC.</p>
+    
+    <h2>Configuration files</h2>
+
+    <ul>
+      <li>Fixed empty file and missing last ";" bugs</li>
+      <li>FieldItem can be used in configuration methods.</li>
+    </ul>
+
+    <h2>Windows</h2>
+
+    <p>There's now a jac2000.bat for Windows2000 and a jac98.bat for
+      Windows98.</p>
+    
+    <h1><a name="0.7">What's new in JAC 0.7</a></h1>
+
+    <h2>Configuration files parsing</h2>
+
+    <p>Better error reporting : line numbers should be accurate.</p>
+
+    <p>The <a href="/doc/aspects_config.html#grouping">syntax for
+    blocks</a> was improved to allow multiple values.</p>
+
+    <p>Multi-line C-style comments are allowed (/* comments
+    .... */).</p>
+
+    <h2>Persistence</h2>
+    
+    <p>A filesystem storage was implemented. It allows you to store
+      objects without having to setup a database.</p>
+
+    <p>It is no longer necessary to declare wrapped collections in
+    configuration files.</p>
+
+    <h2>Transactions</h2>
+
+    <p>There is a new aspect to manage transactions. See the bank
+      sample application for an example how to use it. It is still
+      very basic. Expect problems when concurrent transactions
+      occur for instance (the collections modifications merging is not
+      implemented yet).</p>
+
+    <h2>Synchronization</h2>
+
+    <p>Added a simple synchronization aspect.</p>
+
+    <h2>GUI</h2>
+
+    <p>You can now embbed views in the Swing GUI.</p>
+
+    <p>A customized GUI (with up to 4 panels) can easily be created.</p>
+
+    <p>Added a tree view.</p>
+
+    <p>Better handling of multiple modal boxes.</p>
+
+    <p>By default, changes in embedded editor are automatically
+    updated when the editor losts its focus.</p>
+
+    <p>Possiblity to have commit/cancel buttons for view with embedded
+    editors (when you do not want implicit updates).</p>
+
+    <h2>Core</h2>
+
+    <p>Garbage collector (not activated for the moment).</p>
+
+    <h1><a name="0.6">What's new in JAC 0.6</a></h1>
+
+    <h2>Configuration files parsing</h2>
+
+    <p>We have changed the syntax of the *.acc files to make it
+    cleaner (there is now a real parser -- Cup -- with a real grammar
+    behind). JAC also supports *.xml parsing thanks to Zac's
+    contribution. For more details, see <a
+    href="doc/aspects_config.html"> documentation on configuration
+    syntaxes.</a>
+
+    <h2>Application descriptors (*.jac)</h2>
+
+    <p>The application and the aspects it contains are not declared
+    anymore in a launching class but in a JAC application descriptor
+    (*.jac).
+
+    <p>For instance, if you had a calcul application defined as
+      following:
+
+<pre class=code>
+import org.objectweb.jac.core.*;
+public class Run {
+   public static void main( String[] args )
+   {
+      Application app = new Application("calcul",null,
+                                        "Run",null);
+      app.addAcConfiguration( 
+         new ACConfiguration( app, "rtti", 
+                              "rtti.acc", true ) );
+      app.addAcConfiguration( 
+         new ACConfiguration( app, "gui", 
+                              "gui.acc", true ) );
+      ApplicationRepository.get().addApplication( app );
+      Calcul myCalcul = new Calcul();
+   }
+}
+</pre>
+
+    <p>The new way of defining this is:
+
+<pre class=code>
+// calcul.jac file
+applicationName: calcul
+launchingClass: Run
+aspects: \
+  rtti mydirectory/rtti.acc true \
+  gui mydirectory/gui.acc true
+</pre>
+
+<pre class=code>
+public class Run {
+   public static void main( String[] args ) {
+      Calcul myCalcul = new Calcul();
+   }
+}
+</pre>
+
+    <p>Consequently, launching a JAC application have changed to:
+
+<pre class=code>
+jac [options] calcul.jac
+</pre>
+
+    <p>What is interesting about this new feature is that you do
+      not need to compile again the launching program even when you
+      want to change the way the application declares its aspects.
+      
+    <h2>Distribution enhancements</h2>
+
+    <p>Distribution is now more flexible since each application can
+    defines its own topology in the corresponding application
+    descriptor. For instance:
+
+<pre class=code>
+// calcul.jac file
+applicationName: calcul
+launchingClass: Run
+aspects: \
+  rtti mydirectory/rtti.acc true \
+  gui mydirectory/gui.acc true \
+  deployment mydirectory/deployment.acc true
+topology: //localhost/s2
+</pre>
+
+    <p>This means that the <code>org.objectweb.jac.topology</code> property of the
+    <code>org.objectweb.jac.prop</code> file is not effective anymore.
+
+    <p>Furthermore, the application that defines a topology
+    automatically binds its launching container to the containers of
+    the topology (creating an aspect-space). This topology can be
+    dynamically modified if the aspects allow it thanks to a new event
+    that notifies all the aspects when the topology is changed. 
+
+    <h2>New launching options</h2>
+
+<pre class=code>    
+// launches an administration GUI on the container //localhost/s2
+jac -A //localhost/s2
+
+// write all the logs (here the gui logs) into a log file
+jac -V gui -L org.objectweb.jac.log -G myapp.jac
+
+// the -D option can take a container name as argument (the 
+// default value is still //localhost/s0
+jac -D s3
+</pre>
+
+    <p>As a consequence of the last improvement of the -D option and
+    of the distribution enhancement, the -S (slave) option has been
+    removed.
+
+    <h2>GUI</h2>
+
+    <p>Some bugs fixed, added embedded editors in a general way.
+
+    <p>Auto-creation configuration methods added (See
+    org.objectweb.jac.aspects.gui.GuiAC), available on the WEB or for Swing).
+
+    <h1><a name="0.5.2">What's new in JAC 0.5.2</a></h1>
+
+    <h2>Fixings</h2>
+
+    <p>It appeared that JAC 0.5.1 had several bugs in the GUI and the
+    distribution. Most of them should be fixed.
+
+    <h2>GUI</h2>
+
+    <p>Multi-line text editor added in the GUI.
+      
+    <p>We also added a WEB GUI sample reachable from the WEB on the
+ 8081 port: 
+      <a
+      href="http://org.objectweb.jac.aopsys.com:8081/org/objectweb/jac/servlet/JacServlet?action=view&jid=photorepository0">Live
+      demo of the photos sample (still unstable)</a>.
+
+    <h2>Distribution</h2>
+    
+    <p>A remote access aspect
+    (org.objectweb.jac.aspects.distribution.RemoteAccessAC) allows JAC clients to
+    seamlessly access JAC servers.
+
+<h2>Samples</h2>
+
+    <p>A simple but full application added. See the
+    org.objectweb.jac.samples.contacts package.
+
+    <p>It is an application that defines its own SWING GUI. It can be
+    very useful to refer to it since several used features are
+    not yet documented in the tutorial.
+
+<p>It can also be launched in a server mode:
+
+<pre class=code>
+jac -D org.objectweb.jac.samples.contacts.Run serverMode
+</pre>
+
+<p>And in a client mode that uses the data of the launched server
+      instead of local objects (this is a demo on how to use the
+      remote access aspect).
+
+<pre class=code>
+jac org.objectweb.jac.samples.contacts.Run clientMode
+</pre>
+
+    <h1><a name="0.5.1">What's new in JAC 0.5.1</a></h1>
+
+    <h2>Configuration files</h2>
+
+    <p>Error messages for configuration files should now make more sense. </p>
+    
+    <p>Quoting values in configuration files is not mandatory any more,
+      and you can declare configuration methods with parameters of type
+      double, int, long, float, boolean, short, Class, ClassItem and
+      AbstractMethodItem.</p>
+
+
+    <h2>Pointcuts</h2>
+
+    <p>Pointcuts were enhanced to support path expressions.  This new
+      feature is called an OPath and is widely inspired from
+      XPath... For instance, if you have the following program:</p>
+
+<pre class=code>
+class Bank {
+    Vector accounts;  // Account instances
+     ....
+}
+class Account {
+    Vector owners;  // Person instances
+    ....
+}
+class Person {
+    ...
+}
+</pre>
+
+    <p>Imagine you do not know the names of the accounts or persons
+      objects but that you want to apply an aspect (e.g. a debugging
+      aspect) to the accounts that belong to a bank called
+      "bank0". Then, in the object expression of the pointcut
+      definition, you simply write:</p>
+
+<pre class=code>
+bank0/accounts/.*
+
+Same if you need to denote all the persons that owns an account in "bank0":
+
+bank0/accounts/.*/owners/.*
+
+This is powerful. Each path element is a regular expression. Thus, if
+you want to get all the objects related to "bank0" by any relation:
+
+bank0/.*/.*
+</pre>
+
+    <p>See <a href="doc/programmer_guide.html">
+	the JAC programmer's guide for more details.</a>
+
+
+      <h2>GUI aspect</h2>
+
+    <p>It is now easier to add custom editors and viewers for new
+      types of values. See GuiAC.setTypeViewer and
+      GuiAC.setTypeEditor.</p>
+
+    <p>Introduced currency handling. You can declare a default
+      currency and secondary currencies with their change rate. Then
+      if you declare an attibute to be of type "currency" (see
+      RttiAC.setFieldType) it's editor will allow you to enter the
+      value in one a the declared currencies and will do the
+      conversion. See GuiAC.setDefaultCurrency and
+      GuiAC.declareCurrency.</p>
+
+    <p>The format to be used for dates can be set once for all (see
+      GuiAC.setDateFormat). It is use by the date viewer and the date
+      editor for more consistency.</p>
+
+    <p>Tables are refreshed (more or less :-).</p>
+
+    <p>The layout of swing components is tighter so views take less
+      room.</p>
+
+    <p>And the usual bunch of bug fixes.</p>
+
+
+    <h1><a name="0.5">What's new in JAC 0.5</h1>
+    
+    <p><em>First, considering several remarks, we have decided to now
+      furnish JAC under the LGPL. This clarifies the fact that, for
+      us, all the developped aspects and application classes that run
+      with JAC are NOT submitted to the license. Of course,
+      modifications of the JAC system classes or of the furnished
+      aspects a subject to the LGPL.</em></p>
+
+    <h2>Big changes in distribution</h2>
+
+    <p>The distribution aspect has been removed and replaced by a set
+      of useful aspects to perform distribution (all these aspects are
+      still in the distribution package):</p>
+
+    <p>The core aspect for ditribution is DeploymentAC. It allows the
+      user to easily define various deployment schemes by defining
+      deployment rules (see DeploymentRule) on the objects of the
+      application.</p>
+
+    <p>Here is a sample deployment configuration:</p>
+
+<pre class=code>
+    // deploys 4 instances of Calcul on a remote JAC server 
+    // called //oil/s3
+    deploy "calcul[1-3]" "//oil/s3"
+
+    // replicates calcul0 on all the hosts of the topology
+    replicate "calcul0" ".*"
+
+    // create remote access stubs for calcul2 on all the hosts 
+    // of the topology
+    createStubsFor "calcul2" "//oil/s3" ".*"
+</pre>
+
+    <p>Note that, to be accessible, the JAC servers must be declared
+      in the org.objectweb.jac.prop of the application by defining the org.objectweb.jac.topology
+      property.</p>
+
+    <p>Other aspects enables the programmer to install various
+      protocols once the objects are deployed on a topology (the
+      deployment aspect is always applied first).</p>
+
+    <ul>
+      <li>the consistency aspect (ConsistencyAC): if several objects
+	of the same name are deployed on several hosts of the
+	topology, they can be regarded as replicas and made consistent
+	with various protocols</li>
+
+      <li>the broadcasting aspect (BroadcastingAC): allows the user to
+	define a broadcasted object on a given host that will
+	broadcast all the recieved calls to a set of remote objects
+	(of the same name)</li>
+
+      <li>the load-balancing aspect (LoadBalancingAC): quite the same
+	principles as the broadcasting but the load-balancer only
+	picks up one remote object that is different for each
+	invocation (then, if sevral clients use the object, the load
+	is statistically equally distributed over the set of remote
+	hosts).</li>
+    </ul>
+
+    <p>Other useful aspects will be provided in next release (and
+      these ones will be enhanced).</p>
+
+    <h2>Other new feature</h2>
+    
+    <p>The aspect configurations are fetched from the JAC server that
+      is the class repository (note: the classes are fetched from it
+      so that the .class files of the application do not have to be
+      installed on the remote hosts).</p>
+
+    <p>Hence, the aspect configurations are consistent all over the
+      topology and you do not need to deploy them.</p>
+
+    <h2>Pointcut expressions enhanced!</h2>
+
+    <p>A pointcut expression defines a set of base objects and methods
+      that need to be wrapped by a given wrapping method.</p>
+
+    <p>In JAC 0.4.3, these expressions where standard regular
+      expressions that were quite uneasy to write and read. We have
+      changed this.</p>
+
+    <p>A pointcut expression is still based on regular expressions but
+      you can compose them with the && (logical and), || (logical or),
+      and the !  (NOT) operators. Moreover, you can use keywords in
+      the expressions so that it is most of the time very easy to
+      denote a set of methods. Some small examples are better than a
+      long description of the syntax. So, let's give some
+      configuration example of the tracing aspect that uses pointcut
+      expression as an input for the "trace" configuration method:</p>
+      
+<pre class=code>
+    // traces all the calls on all the objects of the system
+    trace ".*" ".*" ".*"
+</pre>
+<p>OR:</p>
+
+<pre class=code>
+    trace "ALL" "ALL" "ALL"
+  
+    // traces all the calls on all the methods of all the instances of
+    // classes A and B
+    trace ".*" "A || B" ".*"
+
+    // traces all the calls on all the methods of the first instances
+    // of classes A and B (their names ends with 0)
+    trace ".*0" "A || B" ".*"
+
+    // restricts the trace to the f field setters and the f field
+    // getter
+    trace ".*0" "A || B" "GETTER(f) || SETTER(f)"
+
+    // restricts the trace to all the methods minus the methods that
+    // modify the state of the instances
+    trace ".*0" "A || B" ".* && !MODIFIERS"
+
+    // traces all the instances of all classes except a0 and only the
+    // methods that read the state of the instances or the getName
+    // method
+    trace ".* && !a0" ".*" "ACCESSORS || getName():String"
+</pre>
+
+    <p>Note: the GETTER, SETTER, MODIFIERS and ACCESSORS keywords are
+      using the naming conventions and the RTTI aspect to resolve the
+      actual methods.</p>
+
+
+    <h2>Performance improved</h2>
+
+    <p>Jac should now be faster to load, and invocation of wrapped
+      methods is also much faster.</p>
+
+
+    <h2>GUI aspect</h2>
+
+    <p>The Gui aspect was sligthly improved. Editor components now get
+      the focus so that you do not have to click on them in order to
+      start entering values.</p>
+
+    <p>New configuration methods captureSystemOut and captureSystemErr
+      to control wether stdout and stderr are captured and redirected
+      into a tab of the GUI.</p>
+    
+    <p>The Swing GUI now use sessions so that for instance, you do not
+      have to enter your username and password each time you invoke a
+      method restricted by the authentication aspect.</p>
+    
+    <p>ComboBoxes can now be editable (see
+      <code>GuiAC.setFieldChoice</code> and
+      <code>GuiAC.setMethodDynamicParameterChoice</code>). Also, items
+      are sorted.</p>
+    
+    <p>The trace editor now accepts regular expressions in put(). For
+      instance, <code>put("gui.*",1)</code> enables all trace
+      categories starting with "gui".</p>
+    
+    <p>InputCanceledExceptions are now silently discarded.</p>
+
+
+    <h2>Session aspect</h2>
+
+    <p>It is now configurable; you can specify which attributes must
+      be saved and restored (See
+      <code>SessionAC.declareStoredAttributes</code>).</p>
+
+  </body>
+</html>
+

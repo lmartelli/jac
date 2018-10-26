@@ -1,0 +1,3 @@
+Note: all persistent classes must have a valid default constuctor
+      (which takes no argument). This is because objects loaded from
+      the storage are instanciated with this constructor.

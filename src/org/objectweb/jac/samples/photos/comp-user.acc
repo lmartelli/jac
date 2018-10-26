@@ -1,0 +1,69 @@
+
+// "photos.user" is the "fully qualified" name of the user aspect
+// we'll work with (<app_name>.<aspect_name>)
+//setAuthenticator 
+//	org.objectweb.jac.aspects.authentication.UserPasswordAuthenticator 
+//	{"photos.user"};
+
+// We require authentication on a few methods of the display so that
+// when a user ask for the window of the application, it is
+// authenticated.
+//setDisplayController org.objectweb.jac.aspects.user.UserAC.userController;
+
+// Customized error message in case of authentication failure
+setAccessDeniedMessage "Access not granted.";
+
+// Instances of Person are users of the system
+// field "email" contains the id of a user
+// field "password" contains the password of a user
+// field "profile"  contains the profile of a user
+setUserClass org.objectweb.jac.samples.photos.Person email password "profile";
+
+//When an instance of Photo is added to the PhotoRepository, set the
+//fields of type "Person" to the current user (the owner).
+autoInitClasses org.objectweb.jac.samples.photos.Photo 
+   org.objectweb.jac.samples.photos.PhotoRepository ADDERS(photos);
+
+// Set the fields of type "Person" to the current user (the owner) for
+// all new instances of Comment
+autoInitClasses org.objectweb.jac.samples.photos.Comment;
+
+// Sets the username and password of the administrator, who has all
+// the rights
+defineAdministrator "admin" "admin";
+
+profile "default" {
+    // Declare de new profile named "default"
+    declareProfile;
+    // Makes some methods and fields available to users of this profile
+    addReadable "org.objectweb.jac.aspects.gui.Actions.logout";
+    addReadable "org.objectweb.jac.samples.photos.Photo.*";
+    addReadable "org.objectweb.jac.samples.photos.Comment.*";
+    addReadable "org.objectweb.jac.samples.photos.Person.firstName";
+    addReadable "org.objectweb.jac.samples.photos.Person.lastName";
+    addReadable "org.objectweb.jac.samples.photos.Person.photos";
+}
+
+profile "user" {
+    // Declare a "user" profile which extends the "default" profile
+    declareProfile "default";
+    addReadable "org.objectweb.jac.aspects.gui.Actions.*";
+    addReadable "org.objectweb.jac.samples.photos.Run.viewPhotos.*";
+    // Users with profile "user" are allowed to add photos and comments
+    addAddable "org.objectweb.jac.samples.photos.PhotoRepository.photos";
+    addAddable "org.objectweb.jac.samples.photos.Photo.comments";
+}
+
+// Special profile "owner"
+profile "owner" {
+    declareProfile;
+    // The owner of a photo is allowed to set any field
+    addWritable "org.objectweb.jac.samples.photos.Photo.*";
+    // The owner of a comment is allowed to set the comment field
+    addWritable "org.objectweb.jac.samples.photos.Comment.comment";
+}
+
+// Tell emacs to use java-mode when editing
+// Local Variables:
+// mode: java
+// End:

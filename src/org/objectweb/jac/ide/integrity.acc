@@ -1,0 +1,40 @@
+updateAssociations;
+
+class org.objectweb.jac.ide.Class {
+   addPostCondition
+	name org.objectweb.jac.aspects.integrity.GenericConditions.isBeginingWithUpperCaseChar
+	{} "The name must begin with an upper case letter";
+
+   addPostCondition
+	name org.objectweb.jac.aspects.integrity.GenericConditions.isJavaIdentifier
+	{} "The name is not a valid Java identifier";
+
+   addPostCondition
+	name org.objectweb.jac.ide.Projects.notPrimitiveType
+	{} "The name is not a valid identifier (primitive type)";
+
+   addPostCondition
+	name org.objectweb.jac.aspects.integrity.GenericConditions.forbiddenValues
+	{"try", "catch", "finally", "this", "super", "if", "while", "switch", "do", "return", "static", "public", "private", "protected", "class", "interface", "extends", "implements"}
+	"This name is forbidden because it is a Java reserved keyword";
+}
+
+class org.objectweb.jac.ide.Member {
+   addPostCondition
+	name org.objectweb.jac.aspects.integrity.GenericConditions.isJavaIdentifier
+	{} "The name is not a valid Java identifier";
+
+   addPostCondition
+	name org.objectweb.jac.ide.Projects.notPrimitiveType
+	{} "The name is not a valid identifier (primitive type)";
+
+   addPostCondition
+	name org.objectweb.jac.aspects.integrity.GenericConditions.forbiddenValues
+	{"try", "catch", "finally", "this", "super", "if", "while", "switch", "do", "return", "static", "public", "private", "protected", "class", "interface", "extends", "implements"}
+	"This name is forbidden because it is a Java reserved keyword";
+}
+
+// Tell emacs to use java-mode when editing
+// Local Variables:
+// mode: java
+// End:

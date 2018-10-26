@@ -1,0 +1,18 @@
+// Use the file-system storage, and store files in $JAC_ROOT/data/photos
+configureStorage org.objectweb.jac.aspects.persistence.FSStorage { "~/jac/data/photos" };
+
+// All instances of classes of package o.o.j.s.photos are persistent
+makePersistent "org.objectweb.jac.samples.photos.*" ALL;
+
+// The instance named "photorepository#0" is static. If an instance
+// with that name is created by the program, and there is an object
+// with the same name in the storage, we restore it's state
+registerStatics org.objectweb.jac.samples.photos.PhotoRepository "photorepository#0";
+
+registerStatics org.objectweb.jac.samples.photos.Users "users#0";
+
+
+//disableCache org.objectweb.jac.samples.photos.PhotoRepository.photos;
+//maxIdle org.objectweb.jac.samples.photos.PhotoRepository.photos 20000;
+//defineMaxIdleCheckPeriod 5000;
+

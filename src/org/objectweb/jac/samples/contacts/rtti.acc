@@ -1,0 +1,8 @@
+setFieldType org.objectweb.jac.samples.contacts.Person notes text;
+setFieldType org.objectweb.jac.samples.contacts.Company notes text;
+
+setNullAllowedParameters org.objectweb.jac.samples.contacts.FilteredContacts 
+	search {false, true};
+
+setNullAllowed org.objectweb.jac.samples.contacts.Person company;
+

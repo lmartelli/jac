@@ -1,0 +1,2 @@
+declareTimestampedClasses "org.objectweb.jac.ide.ModelElement" "ALL" "timestamps#0";
+followLink org.objectweb.jac.ide.Role.start true;

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+    <p>Provides an aspect that allows to define methods that
+      will be executed transactionaly.</p>
+
+    <p>A transaction is either performed completely or its effects are
+      erased. In the former case, we say that the transaction is committed.
+      In the latter case, the transaction is said to be rollbacked.
+      A transaction is used when a critical computation
+      comes into play, and that one wants to have guarantees on the
+      state of the application if the computation fails. Transactions
+      guarantee that in such a case, the state of the application prior
+      to the begining of the transaction will be restored. Properties
+      in term of isolation between concurrent transactions are
+      also provided: basically, the effects (data updates) of a transaction
+      are not made visible to the other transactions, before the former
+      one commits. A transaction works on persistent data, i.e. data
+      saved in a DBMS. Other non persistent data (object fields, local
+      variables) are not affected by the transaction.</p>
+
+    <p>This aspect encapsulates the ObjectWeb
+     <a href="http://www.objectweb.org/jotm">JOTM</a>
+     transaction monitor. Whereas standard JDBC connections also provide
+     transactional properties, the added value of JOTM is to enable
+     transactions that span other several distributed JDBC-accessible
+     DBMS. This aspect requires the
+     <code>org.objectweb.jac.aspects.distrans-persistence.PersistenceAC</code>
+     that defines which persistent data must be involved in the transaction.</p>
+     
+    <p>This AC defines an unique configuration method
+     (<code>delimitTransaction</code>) that gives two pointcuts and
+     a decision procedure. The join points associated with the two pointcuts
+     demark the begining and the end of the transaction. Most of the time,
+     a single method is concerned (such as in the example below), and hence
+     the transaction starts at the beginning of the method and ends when
+     the method returns. Nevertheless, any other execution flow designated
+     by two JAC pointcuts can be associated with a transaction. The decision
+     procedure says whether the transaction must be commited or rollbacked.
+     This must be a subclass of the abstract class
+     <code>org.objectweb.jac.aspects.distrans.EndTransactionWrapper</code>
+     that implements the <code>decide</code> method.
+     The typical usage scenario of this AC is illustrated below
+     (the example can also be found in the
+     <code>org.objectweb.jac.samples.distransbank</code> application).</p>
+
+<pre class=code>
+/**
+ * Delimit the transaction t0.
+ * It begins before Account#transfert().
+ * It ends after Account#transfert().
+ * The last parameter (jac.samples.distransbank.SampleEndTransactionWrapper)
+ * is the name of the class defining the method for deciding whether the
+ * transaction is to be commited or rollbacked.
+ */
+delimitTransaction t0 Account ".*" "transfert.*" Account ".*" "transfert.*" SampleEndTransactionWrapper;
+</pre>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

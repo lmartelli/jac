@@ -1,0 +1,7 @@
+confirm org.objectweb.jac.aspects.gui.Actions ".*exit.*" ALL;
+confirm org.objectweb.jac.ide.Project "REMOVERS" ALL;
+confirm org.objectweb.jac.ide.Projects "REMOVERS" ALL;
+confirm org.objectweb.jac.ide.Package "REMOVERS" ALL;
+confirm org.objectweb.jac.ide.Class "REMOVERS" ALL;
+confirm org.objectweb.jac.ide.Projects "importObjects.*" ALL 
+	"Importing projects from a file will completely erase you current projects. Consider saving your current projects before doing that. So do you really want to continue ?";

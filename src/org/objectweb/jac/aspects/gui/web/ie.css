@@ -1,0 +1,35 @@
+.BORDER_LINE .label,
+.BORDER_ETCHED .label,
+.BORDER_RAISED .label,
+.BORDER_LOWERED .label { 
+  background-color: white;
+  position: static;
+}
+.BORDER_LINE .Container, 
+.BORDER_ETCHED .Container,
+.BORDER_RAISED .Container,
+.BORDER_LOWERED .Container { 
+  margin-top: 0;
+}
+A, A:hover { 
+  border:none;
+}
+
+.Tabbed .ieheader TD { 
+  position: relative;
+  top: 1px;
+  font-weight: bold;
+}
+.Tabbed .ieheader .td { 
+  background-color: #bbb;
+}
+
+.Tabbed .ieheader .td-selected { 
+  border-bottom: white;
+  background-color: white;
+}
+
+.actions .method A { 
+  padding: 1ex;
+}
+

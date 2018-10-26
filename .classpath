@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry
+        excluding="org/objectweb/jac/core/dist/corba/|org/objectweb/jac/samples/solitaire/|org/objectweb/jac/aspects/speedo/"
+        kind="src" path="src"/>
+    <classpathentry kind="lib" path="lib/bcel.jar"/>
+    <classpathentry kind="lib" path="lib/cup.jar"/>
+    <classpathentry kind="lib" path="lib/gnu-regexp.jar"/>
+    <classpathentry kind="lib" path="lib/opt/objectweb/carol.jar"/>
+    <classpathentry kind="lib" path="lib/opt/objectweb/jonas_timer.jar"/>
+    <classpathentry kind="lib" path="lib/opt/objectweb/jotm_jrmp_stubs.jar"/>
+    <classpathentry kind="lib" path="lib/opt/objectweb/jotm.jar"/>
+    <classpathentry kind="lib" path="lib/opt/objectweb/jta-spec1_0_1.jar"/>
+    <classpathentry kind="lib" path="lib/opt/objectweb/xapool.jar"/>
+    <classpathentry kind="lib" path="lib/opt/hibernate2/cglib-asm.jar"/>
+    <classpathentry kind="lib" path="lib/opt/hibernate2/commons-lang.jar"/>
+    <classpathentry kind="lib" path="lib/opt/hibernate2/dom4j.jar"/>
+    <classpathentry kind="lib" path="lib/opt/hibernate2/hibernate2.jar"/>
+    <classpathentry kind="lib" path="lib/opt/hibernate2/log4j-1.2.8.jar"/>
+    <classpathentry kind="lib" path="lib/opt/commons-beanutils.jar"/>
+    <classpathentry kind="lib" path="lib/opt/commons-collections.jar"/>
+    <classpathentry kind="lib" path="lib/opt/commons-digester.jar"/>
+    <classpathentry kind="lib" path="lib/opt/commons-logging.jar"/>
+    <classpathentry kind="lib" path="lib/opt/itext.jar"/>
+    <classpathentry kind="lib" path="lib/opt/jasper-reports.jar"/>
+    <classpathentry kind="lib" path="lib/opt/jhotdraw.jar"/>
+    <classpathentry kind="lib" path="lib/opt/org.mortbay.jetty.jar"/>
+    <classpathentry kind="lib" path="lib/opt/postgresql.jar"/>
+    <classpathentry kind="lib" path="lib/opt/servlet-2.3.jar"/>
+    <classpathentry kind="lib" path="lib/opt/xerces.jar"/>
+    <classpathentry kind="lib" path="C:/Documents and Settings/pawlakr/eclipse/plugins/org.apache.ant_1.5.3/ant.jar"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre-sdk"/>
+    <classpathentry kind="lib" path="/aop-alliance/classes"/>
+    <classpathentry kind="output" path="src"/>
+</classpath>

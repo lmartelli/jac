@@ -1,0 +1,2 @@
+addRoundTripLoadBalancer calcul0 "ALL" ".*s0" ".*[1-2]";
+

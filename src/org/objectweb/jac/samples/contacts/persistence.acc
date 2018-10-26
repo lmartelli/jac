@@ -1,0 +1,5 @@
+
+registerStatics org.objectweb.jac.samples.contacts.ContactRepository "contactrepository#0";
+makePersistent "org.objectweb.jac.samples.contacts.* && !org.objectweb.jac.samples.contacts.FilteredContacts" ALL;
+
+configureStorage org.objectweb.jac.aspects.persistence.FSStorage { "~/jac/data/contacts" };

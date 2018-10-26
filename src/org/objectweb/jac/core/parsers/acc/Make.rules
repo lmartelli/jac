@@ -1,0 +1,27 @@
+# -*- makefile -*-
+#AccLexer.java AccParser.java AccParserTokenTypes.java: acc.g
+#	$(ANTLR) -trace $<
+
+
+
+AccScanner.compiled ParserTest.compiled: CLASSPATH:=$(CLASSPATH):$(CUP_JAR)
+AccParser.compiled: CLASSPATH:=$(CLASSPATH):$(CUP_JAR)
+
+AccScanner.class AccParser.class: AccSymbols.java
+
+CUP=java -classpath $(JAC_ROOT)/lib/cup.jar java_cup.Main
+
+AccParser.modif AccSymbols.modif AccParser.java AccSymbols.java: acc.cup
+#	$(CUP) -nosummary -dump -nonterms -parser AccParser -symbols AccSymbols < $<
+	$(CUP) -expect 6 -nonterms -parser AccParser -symbols AccSymbols < $<
+
+ToolParser.modif ToolSymbols.modif ToolParser.java ToolSymbols.java: tool.cup
+#	$(CUP) -nosummary -dump -nonterms -parser AccParser -symbols AccSymbols < $<
+	$(CUP) -expect 8 -nonterms -parser ToolParser -symbols ToolSymbols < $<
+
+other=AccScanner.java AccParser.java AccSymbols.java ParserTest.java 
+test: $(other:.java=.class)
+
+clean::
+	rm -f AccLexer.java AccParser.java AccSymbols.java AccParserTokenTypes.java ToolParser.java ToolSymbols.java
+

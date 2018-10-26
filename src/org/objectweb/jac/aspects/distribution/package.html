@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides a highly configurable set of aspects to distribute JAC
+applications.
+
+<p>The core aspect for ditribution is <code>DeploymentAC</code>. It
+allows the user to easily define various deployment schemes by
+defining deployment rules (see <code>DeploymentRule</code>) on the
+objects of the application.
+
+<p>Here is a sample deployment configuration:
+
+<pre class=code>
+// deploys 4 instances of Calcul on a remote JAC server 
+// called //oil/s3
+deploy "calcul[1-3]" "//oil/s3"
+
+// replicates calcul0 on all the hosts of the topology
+replicate "calcul0" ".*"
+
+// create remote access stubs for calcul2 on all the hosts 
+// of the topology
+createStubsFor "calcul2" "//oil/s3" ".*"
+</pre>
+
+<p>Note that, to be accessible, the JAC servers must be declared in
+      the <code>org.objectweb.jac.prop</code> of the application by defining the
+      <code>org.objectweb.jac.topology</code> property.
+
+<p>Other aspects enables the programmer to install various protocols
+      when the objects are deployed on a topology.
+
+<ul><li>the consistency aspect (ConsistencyAC): if several objects of
+	the same name are deployed on several hosts of the topology,
+	they can be regarded as replicas and made consistent with
+	various protocols</li>
+<li>the broadcasting aspect (BroadcastingAC): allows the user to
+	define a broadcasted object on a given host that will
+	broadcast all the received calls to a set of remote objects
+	(of the same name)</li>
+<li>the load-balancing aspect (LoadBalancingAC): quite the same
+	principles as the broadcasting but the load-balancer only
+	picks up one remote object that is different for each
+	invocation (then, if sevral clients use the object, the load
+	is statistically equally distributed over the set of remote
+	hosts).<li>
+</ul>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>
+

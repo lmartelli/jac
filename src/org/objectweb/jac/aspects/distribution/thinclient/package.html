@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides a basic and generic support for JAC thin clients.
+
+<p>The main class of this package is the <code>AbstractServer</code>
+class. It defines all the methods that a programmer should implement
+to support any kind of thin client that respects the Jac Thinclient
+Protocol (JTP) specifications.
+
+<p>The JTP defines 6 requests. All of them takes as a first
+parameter the session ID (sid) that must be unique for each client.
+
+<ul>
+<li><b>viewRequest(sid,jid)</b>: allows the client to open a view 
+on an object called "jid" within the accessed JAC container
+<li><b>refreshRequest(sid)</b>: allows the client to refresh the 
+current  view
+<li><b>newRequest(sid,className)</b>: allows the client to 
+instantiate a new object of the given class and opens a view on 
+this new object 
+<li><b>closeRequest(sid)</b>: allows the client to close the current
+wiew (the previous view is re-opened) 
+<li><b>invokeRequest(sid,jid,methodName)</b>: allows the client to 
+invoke a method called "method" on an object called "jid" within the 
+accesed JAC container; if some parameters are needed by the invoked
+method, the server will automatically open an input form to allow 
+the user to fill their values and that invocation process is 
+suspended until an input request occurs
+<li><b>inputRequest(sid,methodName,params)</b>: allows the client 
+to give to the server the parameters values that correspond to the 
+given method invocation (this request should be send when the 
+invoke request ask the client for the parameters); it then restart
+the waiting invocation request
+<li><b>cancelInputRequest(sid,methodName)</b>: allows the client 
+to cancel the current invocation during the parameters imput
+process 
+</ul>
+
+<p>As a simple instance, you can refer to the
+<code>org.objectweb.jac.aspects.gui.WebGui</code> class that implements a server for
+WEB clients (a simple kind of thin clients).
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

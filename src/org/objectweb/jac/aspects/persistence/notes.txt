@@ -1,0 +1,144 @@
+Types de données
+================
+
+2 types d'attributs dans un objets : 
+
+  1. les types "primitifs" (string, integer ...)
+
+  2. les relations avec d'autres objets,
+
+Les types primitifs sont typiquement implémentés par un attribut dans
+une table de la base. Se pose donc la question de savoir de quel type
+doit être l'attribut de la base en fonction du type natif Java. On
+peut choisir de n'avoir qu'un type SQL (varchar) et de convertir tout
+les types Java en chaînes de caractères.
+
+Les relations sont implémentés par un "lien"/oid qui identifient le ou
+les objets en relation. 
+
+
+
+
+STORAGES
+========
+
+Un storage est un entité qui permet d'abstraire le stockage de données
+sur un support. 
+
+Un storage contient des associations. Typiquement, on va associer à
+une entité abstraite "personne" un nom et un prénom. Chaque entité
+(objet) doit être distinguable des autres. Chaque objet doit donc
+posséder un identifiant unique qui lui est propre et immuable : un
+OID. Le storage doit donc être capable d'enrgistrer des données
+associées à un objet (OID), de fournier les données associées à un
+objet, de modifier ces données, de les effacer, de créer de nouveaux
+objets (=> nouvel OID), de détruire des objets. 
+
+L'interface de programmation d'un storage a donc l'allure suivante :
+
+	createObject() : OID
+
+	   Retourne un nouvel OID pour un nouvel objet totalement
+	   vierge.
+
+
+	deleteObject(OID)
+
+	   Détruit un objet. Cela entraîne aussi le destruction de
+	   tous les champs enregistrés pour cet objet.
+
+
+	setField(OID, fieldID, fieldValue)
+
+	   Enregistre la valeur d'un champ pour un objet
+
+
+	getField(OID, fieldID) : fieldValue
+
+	   Récupère la valeur d'un champ pour un objet
+
+
+	removeField(OID, fieldID, value)
+
+	   Efface un attribut pour un objet.
+
+
+Il est ensuite possible d'étendre cette interface minimale à des fins
+d'optimisation. On pourrait par exemple avoir un service
+getAllFields() qui retournerai tous les champs d'un objet en une seule
+fois. 
+
+
+Faut-il voir les attributs (champs) d'un objet comme un ensemble ou
+bien comme un multi-ensemble ? Si on choisit les ensembles, on ne peut
+associer à un objet plusieurs fois la même valeur pour le même
+attribut. Il semble donc plus judicieux de considérer des
+multi-ensembles. Le service removeField a donc pour effet de diminuer
+la cardinalité d'un attribut.
+
+
+Wrappers
+========
+
+Il faut au moins un wrapper/role-object par objet persistent qui
+contiennent toutes les informations relatives à la persistence de
+l'objet : OID, champs modifiés depuis le dernier commit ...
+
+
+Quand balancer le SQL ?
+=======================
+
+Une première solution consiste à faire ça au fur et à mesure des
+modifications des attributs. L'inconvénient majeur est que cela ne
+permet pas le rollback de façon triviale. Le SGBD peut rollbacker sa
+transaction, mais tous les objets en mémoire resteront dans l'état non
+rollbacké. Il faut donc si on veut gérer les transactions, maintenir
+un log des modifications d'attributs. A moins qu'on puisse utiliser
+celui du SGBD dans le cas d'un soft libre (postgresql,mysql). Le plus
+simple consiste donc à envoyer tous les ordres au storage au moment du
+commit. 
+
+Cela implique qu'il faut quelque part définir quand commence et quand
+finit une transaction. 
+
+A-t-on besoin de transactions pour l'aspect de persistence ? Peut-on
+avoir un aspect transactionnel sans persistence ? Je pense que la
+réponse à ces 2 question est oui. L'aspect transactionnel doit permettre
+d'avoir l'atomicité et l'isolation adéquate dans le cas d'exécution
+concurrentes. La persistence permet de ne pas perdre toutes les
+données entre deux exécutions d'une application. Cela ne veut pas
+forcément dire qu'on peut faire un aspect de persistence qui soit
+transactionnel rien qu'en tressant l'aspect transactionnel avec lui. 
+
+
+
+Transactions
+============
+
+Fonctionnellement parlant, un aspect transactionnel doit permettre de
+définir des transactions (leur début et leur fin). 
+
+Techniquement parlant, la technologie des wrappers nous contraint à
+une granularité du niveau de la méthode méthode. On peut wrapper des
+méthodes pour dire qu'elles sont transactionnelles. Mais ce n'est pas
+tout; il faut aussi wrapper les accès en écritures aux attributs de
+*tous* les objets. On est pas vraiment obligé de faire ça pour tous
+les objets, mais cela pourrait conduire à des états bizarres et
+"instables". 
+
+Cela met à jour une faiblesse du modèle actuel de wrapping. En effet,
+il n'est pas trivial de wrapper tous les accès en écriture de tous les
+objets. ???? (peut-être me trompe-je).
+
+
+
+Chargement des objets
+=====================
+
+Il faut aussi pouvoir contrôler quand on charge les objets en mémoire
+(c'est le pendant de "quand balancer le SQL"). Il n'est pas
+envisageable de charger tous les objets au lancement de
+l'application. D'une part cela risque de prendre beaucoup de temps, et
+d'autre part on a peut-être pas assez de mémoire pour tous les avoir
+en mémoire en même temps.
+

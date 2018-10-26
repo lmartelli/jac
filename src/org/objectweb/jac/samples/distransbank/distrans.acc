@@ -1,0 +1,9 @@
+/**
+ * Delimit the transaction t0.
+ * It begins before Account#transfert().
+ * It ends after Account#transfert().
+ * The last parameter (jac.samples.distransbank.SampleEndTransactionWrapper)
+ * is the name of the class defining the method for deciding whether the
+ * transaction is to be commited or rollbacked.
+ */
+delimitTransaction t0 org.objectweb.jac.samples.distransbank.Account ".*" "transfert.*" org.objectweb.jac.samples.distransbank.Account ".*" "transfert.*" org.objectweb.jac.samples.distransbank.SampleEndTransactionWrapper;

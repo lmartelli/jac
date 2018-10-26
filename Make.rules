@@ -1,0 +1,33 @@
+# -*- makefile -*-
+
+JAVACMD ?= java
+#JAVACCMD = jikes -g +E -nowarn
+#JAVACCMD = jikes -g +E +P -nowarn -extdirs $(JAC_ROOT)/lib
+JAVACCMD ?= javac
+JARCMD ?= jar
+RMICCMD ?= rmic
+
+WWWROOT = /var/www/jac
+DOCDIR = $(WWWROOT)/doc
+CLASSDIR = $(JAC_ROOT)/classes
+
+ANTLR=runantlr
+
+CLASSPATH = $(JAC_ROOT)/classes:$(JAC_ROOT)/src:$(shell find $(JAC_ROOT)/lib -name "*.jar" -exec echo -n "{}:" \;)
+
+JAVAC_OPTS=-g -encoding UTF-8 -d $(CLASSDIR) -classpath $(CLASSPATH) -sourcepath $(JAC_ROOT)/src
+RMIC_OPTS=-g -d $(CLASSDIR) -classpath $(CLASSPATH)
+
+.SUFFIXES: .java .class .modif
+
+.PHONY: all clean
+
+%.png: %.fig
+	fig2dev -L png -S 2 -b 5 $< $@
+
+.java.class:
+	@echo "Compiling $< ... "
+	@$(JAVACCMD) $(JAVAC_OPTS) $<
+
+%.html: %.php
+	php4 -q $< > $@

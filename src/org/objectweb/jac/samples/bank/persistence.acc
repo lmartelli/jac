@@ -1,0 +1,6 @@
+makePersistent "org.objectweb.jac.samples.bank.*" ALL;
+makePersistent "org.objectweb.jac.samples.contacts.*" ALL;
+
+registerStatic "accountmanager0";
+
+configureStorage "org.objectweb.jac.aspects.persistence.FSStorage" { "data/bank" };

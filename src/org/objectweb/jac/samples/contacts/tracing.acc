@@ -1,0 +1,7 @@
+
+addTrace ".*" ".*" ".* && !get.*";
+
+//addRecording
+//	".*"
+//	"org.objectweb.jac.samples.contacts.Contact || org.objectweb.jac.samples.contacts.Action || org.objectweb.jac.samples.contacts.ContactRepository"
+//	"MODIFIERS";

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Persistence Aspect</title>
+  </head>
+  <body>
+
+    <p>Provides a generic persistence aspect for JAC objects.
+    </p>
+    <p>This aspect is centered around a <code>Storage</code> interface
+      which allows the programmer to adapt the persitence to any kind
+      of storage (file based, databases, and so on).</p>
+
+    <p>A default implementation using the <code>java.sql</code> API
+      (based on JDBC) is provided in the <code>SQLStorage</code>
+      abtsract class. In order to create a concrete class, you only
+      have to define the <code>getNextVal(String sequence)</code>
+      method. As of today, the only storage available is
+      <code>PostgresStorage</code>, which supports the Postgresql
+      database.</p>
+
+    <p>The persitence aspect stores object's attributes in a storage
+    so that a program can stopped and relaunched without losing
+    data.</p>
+
+    <p>Here's a basic configuration for this aspect:</p>
+
+    <pre>
+configureClass "org.objectweb.jac.samples.photos.Photo" "persistent"
+configureClass "org.objectweb.jac.samples.photos.PhotoRepository" "root"
+configureClass "org.objectweb.jac.samples.photos.Person" "root"
+wrapCollection "org.objectweb.jac.samples.photos.PhotoRepository" "photos"
+registerStatic "photorepository0"
+configureStorage "org.objectweb.jac.aspects.persistence.PostgresStorage" { "photo" "jac" "" }
+    </pre>
+
+    <p>Classes can be configured to be persistence root, or just
+      persistent. Instances of root classes are made persistent
+      immediatly after you create them. Instances of persistent
+      classes or made persistent only when they are attached to an
+      already persistent object.</p>
+
+    <p>If you have a attribute of type Collection you want it to be
+      stored in the storage, you should use wrapCollection. This is
+      not very convenient and will not be needed any more in a
+      forthcoming release.</p>
+
+    <p>Static objects are objects which are only created and saved
+      once in the storage. The next time you create them, they will be
+      reloaded  from the storage.</p>
+
+    <p>Consider the following application:</p>
+
+    <pre>
+public static void main( String[] args )
+{
+      PhotoRepository rep = new PhotoRepository();
+}
+    </pre>
+
+    <p>It creates a PhotoRepository to work with. If the
+      PhotoRepository rep is not declared static to the persistence
+      aspect, a new PhotoRepository will be created each time you run
+      this application, which is probably not what you want.</p>
+
+    <p>The configuration methods for this aspect are:</p>
+    
+    <ul>
+      <li><a target="Configuration method" href="PersistenceAC.html#configureClass(java.lang.String, java.lang.String)">configureClass</a></li>
+      <li><a target="Configuration method" href="PersistenceAC.html#wrapCollection(java.lang.String, java.lang.String)">wrapCollection</a></li>
+      <li><a target="Configuration method" href="PersistenceAC.html#registerStatic(java.lang.String)">registerStatic</a></li>
+      <li><a target="Configuration method" href="PersistenceAC.html#configureStorage(java.lang.String, java.lang.String[])">configureStorage</a></li>
+    </ul>
+
+    <h2>Related Documentation</h2>
+    
+    <p>For overviews, sources, tutorials, examples, guides, and tool
+      documentation, please see:</p>
+
+    <ul>
+      <li><a href="../../../../j2h.nojdk">HTML sources</a></li>
+      <li><a href="../../../../">HTML overview</a></li>
+    </ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

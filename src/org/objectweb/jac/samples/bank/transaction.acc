@@ -1,0 +1,5 @@
+
+defineTransactionalMethods org.objectweb.jac.samples.bank.AccountManager 
+	                   "transfer(Account,Account,double):void"
+                           ALL;
+

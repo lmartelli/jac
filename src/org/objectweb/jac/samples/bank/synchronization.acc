@@ -1,0 +1,3 @@
+
+synchronize "org.objectweb.jac.samples.bank.Account" MODIFIERS ALL;
+

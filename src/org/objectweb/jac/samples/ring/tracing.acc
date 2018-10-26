@@ -1,0 +1,2 @@
+
+addTrace ALL "org.objectweb.jac.samples.ring.RingElement" ALL;

@@ -1,0 +1,6 @@
+confirm org.objectweb.jac.samples.photos.PhotoRepository REMOVERS ALL;
+confirm org.objectweb.jac.samples.photos.Photo REMOVERS ALL;
+
+// Local Variables:
+// mode: java
+// End:

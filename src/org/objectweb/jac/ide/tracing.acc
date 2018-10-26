@@ -1,0 +1,4 @@
+//addTrace "ALL" "org.objectweb.jac.ide.Project" ".*generateCode.*";
+//addTrace "ALL" "org.objectweb.jac.ide.CodeGeneration" ".*createEnumCode.*";
+//addNamedTrace "ALL" "org.objectweb.jac.aspects.timestamp.Timestamps" ".*";
+//addTrace "ALL" "org.objectweb.jac.ide.CodeGeneration" "createProjectCode.*";

@@ -1,0 +1,9 @@
+jac.toNotAdapt: \
+	java.* \
+	org.postgresql.* \
+	sun.* \
+	gnu.* \
+	gnu.regexp.* \
+	jac.samples.contacts.ContactGUI \
+	java_cup.* \
+	java_cup.runtime.* 

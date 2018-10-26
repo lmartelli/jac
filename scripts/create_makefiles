@@ -1,0 +1,1097 @@
+#!/usr/bin/tclsh
+# JAC makefiles generator
+
+# this script automatically generates the makefiles for the given
+# distribution tree. Each item is structured as follows:
+# - the name of the directory
+# - the names of the sub-directories to compile before
+# - the names of the java files to compile
+# - the names of the sub-directories to compile after
+# - a list containing lists of files to be compiled together 
+#   (inter-dependencies) (witout the extensions)
+
+# Okay, we should use Ant. But for the moment, this works fine. 
+
+proc getenv {name} {
+    global env;
+    if {[lsearch [array names env] $name] == -1} {
+	return ""
+    } else {
+	return $env($name)
+    }
+}
+
+proc absolute_filename {filename} {
+    if {[string first "/" $filename] != 0} {
+	set retval "[pwd]/$filename"
+	set index [string first "/./" $retval]
+	while {$index != -1} {
+	    set retval "[string range $retval 0 $index][string range $retval [expr $index + 3] [string length $retval]]"
+	    set index [string first "/./" $retval]
+	}
+	return $retval
+    }
+}
+
+proc id {str} {
+    return $str
+}
+
+# equivalent to the well known shell function
+proc dirname {filename} {
+    set index [string last "/" $filename]
+    if {$index != -1} {
+	return [string range $filename 0 [expr $index -1]]
+    }
+}
+
+# set jacroot from $JACROOT env var if it exists,
+# or use the directory of the script
+
+set jacroot [getenv JAC_ROOT]
+if {$jacroot == ""} {
+    set jacroot [dirname [dirname [absolute_filename $argv0]]]
+}
+
+puts "JAC_ROOT = $jacroot"
+
+set base_dir "$jacroot/src"
+if {$argc == 1} {
+    set base_dir [lindex $argv 0]
+}
+puts "base dir = $base_dir"
+
+set tree {
+    {org {jutils objectweb} {} {} {}}
+    {org/jutils {csv} {} {} {}}
+    {org/jutils/csv {} {
+	CSVReader.java
+	CSVWriter.java
+    } {} {}}
+    {org/objectweb {jac} {} {} {}}
+    {org/objectweb/jac {util lib core wrappers aspects samples ide} {} {} {}}
+    {org/objectweb/jac/util {} {
+	Base64.java
+	SharedMap.java
+	LinkedMap.java
+	Predicate.java
+	NotInCollectionPredicate.java
+	WrapLib.java 
+	Log.java 
+	Streams.java
+	Files.java
+	File.java
+	Strings.java
+	MimeTypes.java
+	ExtArrays.java
+	ExtBoolean.java
+	Images.java
+	Exceptions.java
+	Stack.java
+	Repository.java 
+	OrderedRepository.java 
+	Classes.java
+	URLInputStream.java
+	URLClassLoader.java
+	LineNumberWriter.java
+	PushbackReader.java
+	Semaphore.java
+	WrappedThrowableException.java
+	VoidException.java
+	InvalidIndexException.java
+        Enum.java 
+	Thumbnail.java
+	ObjectArray.java
+	Pipe.java
+        WeakList.java
+	AbstractMap.java
+        WeakHashMap.java
+        WeakHashSet.java
+        WeakRepository.java
+	Matrix.java
+	SpeedLog.java } {} {}}
+    {org/objectweb/jac/core {rtti}
+	{
+	WrappingChain.java
+	ConfigMethod.java
+	ImportStatement.java
+	Parser.java
+	Display.java
+	InputStreamParser.java
+	JacPropTools.java
+	JacPropLoader.java
+	ParserImpl.java
+	NameRepository.java
+	Naming.java
+	BaseProgramListener.java
+	Interaction.java
+	Collaboration.java 
+	CompositionAspect.java 
+	Pointcut.java
+	MethodPointcut.java
+	AspectComponent.java 
+	CompositeAspectComponent.java 
+	Wrappee.java 
+	Wrapper.java 
+	SerializedMethodItem.java
+	JacObjectOutputStream.java 
+	JacObjectInputStream.java 
+	Wrapping.java 
+	ACManager.java 
+	Application.java 
+	ApplicationRepository.java 
+	ACConfiguration.java 
+	JacLoader.java 
+	WrappeeTranslator.java 
+	Jac.java 
+	SerializedJacObject.java 
+	ObjectRepository.java 
+	Utils.java
+        rtti/RttiConf.java}
+	{dist parsers translators} 
+	{{NameRepository 
+	ObjectRepository
+	Interaction
+	Collaboration 
+	BaseProgramListener 
+	Wrappee 
+	Wrapper 
+	Wrapping
+        Pointcut
+        MethodPointcut
+	AspectComponent 
+	CompositeAspectComponent 
+	ACManager 
+	Application 
+	ApplicationRepository 
+	ACConfiguration 
+	CompositionAspect 
+	JacObjectOutputStream 
+	JacObjectInputStream 
+	SerializedJacObject 
+	Jac
+	JacPropLoader
+	JacPropTools 
+	JacLoader 
+	WrappeeTranslator} } }
+    {org/objectweb/jac/core/translators {}
+    {	Utils.java
+	VMStack.java
+	WrappeeTranslator_BCEL.java}
+	{} {} }
+    {org/objectweb/jac/core/rtti {} 
+    {	MethodInfo.java
+        RttiConf.java
+        RttiAC.java
+        NoSuchClassException.java
+	InvokeInfo.java
+	ClassInfo.java
+	LoadtimeRTTI.java
+	AttributeController.java
+	InvalidDelegateException.java 
+        NoSuchMethodException.java
+        NoSuchMemberException.java
+	MetaItem.java 
+	MetaItemDelegate.java 
+	MemberItem.java
+	AbstractMethodItem.java 
+	MethodItem.java 
+	ConstructorItem.java 
+	MixinMethodItem.java 
+	FieldItem.java 
+	VirtualClassItem.java 
+	NoSuchFieldException.java
+	ClassItem.java 
+	CollectionItem.java 
+	ClassRepository.java 
+	NamingConventions.java}
+	{} 
+	{{MetaItem 
+	MetaItemDelegate
+	AbstractMethodItem 
+	ConstructorItem 
+	MethodItem 
+	FieldItem
+	CollectionItem 
+	NoSuchFieldException
+	ClassItem 
+	NamingConventions 
+	RttiConf
+	RttiAC
+	ClassRepository}}}
+    {org/objectweb/jac/core/parsers {xml acc} {} {} {} }
+    {org/objectweb/jac/core/parsers/xml {} 
+    {
+	ElementInterpreter.java
+	DocumentInterpreter.java
+	DefaultDocumentInterpreter.java
+	MethodElementInterpreter.java
+	ACElementInterpreter.java
+	XmlParser.java
+	XmlParserJAXP.java
+	JacXmlParser.java
+	XmlConfig.java} {} {} }
+    {org/objectweb/jac/core/parsers/acc {} 
+    {   AccSymbols.java
+	AccScanner.java
+	AccParser.java
+	AccParserWrapper.java
+	SyntaxElement.java
+	Terminal.java
+	NonTerminal.java
+	ToolParser.java
+	ToolSymbols.java
+	ToolParserWrapper.java} {} {} }
+    {org/objectweb/jac/core/dist {} 
+    {	ObjectState.java
+	DistdClassLoader.java 
+	RemoteContainer.java 
+	RemoteRef.java 
+	StubWrapper.java 
+	NonBlockingStubWrapper.java 
+	Distd.java
+        Topology.java
+        Deployment.java} 
+	{rmi} 
+	{{Topology
+        DistdClassLoader 
+	RemoteContainer 
+	RemoteRef 
+	StubWrapper 
+	Distd}}}
+    {org/objectweb/jac/wrappers {} 
+    {	VerboseWrapper.java 
+	ForwardingException.java 
+	ForwardingWrapper.java 
+	CacheWrapper.java 
+	LimiterException.java 
+	LimiterWrapper.java} {} {}}
+    {org/objectweb/jac/aspects {naming session synchronization transaction distribution persistence tracing idGen gui user authentication confirmation integrity cache queue timestamp i18n distrans hibernate export} {} {} {}}
+    {org/objectweb/jac/aspects/authentication {} 
+    {	Authenticator.java
+	TrustingAuthenticator.java
+	SystemAuthenticator.java
+	PasswordAuthenticator.java
+	FilePasswordAuthenticator.java
+	UserPasswordAuthenticator.java
+	AuthenticationFailedException.java 
+	AccessDeniedException.java 
+	TrustingAuthentication.java 
+    	AuthenticationConf.java 
+	AuthenticationAC.java 
+	AuthenticationWrapper.java } 
+	{} 
+	{{AuthenticationAC 
+	AuthenticationWrapper}}}
+    {org/objectweb/jac/aspects/export {}
+    {	Exporter.java
+	Importer.java
+	ExportConf.java
+	ExportAC.java} {} {}}
+    {org/objectweb/jac/aspects/naming {} 
+    {	NoSuchObjectError.java 
+	NameGenerator.java
+	NamingAC.java 
+	BindingErrorException.java 
+	BindingWrapper.java 
+	BindingAC.java} {} {}}
+    {org/objectweb/jac/aspects/session {} 
+    {	SessionConf.java
+	PerSessionObjectWrapper.java
+	SessionWrapper.java 
+        SessionAC.java} {} {{SessionAC SessionWrapper}}}
+    {org/objectweb/jac/aspects/synchronization {}
+    {	SynchronizationConf.java
+	SynchronizationAC.java } {} {}}
+    {org/objectweb/jac/aspects/cache {}
+    {	CacheConf.java
+	MethodCache.java
+	CacheWrapper.java
+	CacheAC.java } {} {}}
+    {org/objectweb/jac/aspects/transaction {}
+    {	Merging.java
+	DispatchTransactionWrapper.java
+	TransactionConf.java
+	TransactionAC.java } {} {}}
+    {org/objectweb/jac/aspects/distribution {consistency}
+    {   ConsistencyConf.java
+	ConsistencyAC.java
+        BroadcastingConf.java
+        BroadcastingAC.java
+        LoadBalancingConf.java
+        LoadBalancingAC.java
+	DeploymentRule.java 
+	DeploymentConf.java
+        DeploymentWrapper.java
+	DeploymentAC.java
+        RemoteAccessConf.java
+        RemoteAccessAC.java} 
+	{bootstrap} {}}
+    {org/objectweb/jac/aspects/distribution/consistency {} 
+    {	Consistency.java 
+	ConsistencyWrapper.java 
+	ClientServerConsistencyWrapper.java 
+	StrongPushConsistencyWrapper.java 
+	StrongPullConsistencyWrapper.java 
+	WeakConsistencyWrapper.java 
+        } {} {{Consistency ConsistencyWrapper}}}
+    {org/objectweb/jac/aspects/distribution/bootstrap {} 
+    {	DistBootstrap.java
+	BindClient.java} {} {}}
+    {org/objectweb/jac/aspects/gui {reports} 
+    {	ClassAppearenceGuiConf.java
+        FieldAppearenceGuiConf.java
+        MethodAppearenceGuiConf.java
+        BehaviorGuiConf.java
+    	GuiConf.java
+	Event.java
+	SubstanceEvent.java
+	InvokeEvent.java
+	CollectionEvent.java
+	AddEvent.java
+	RemoveEvent.java
+	Utils.java
+	Callback.java
+        Transfer.java
+	CustomizedDisplay.java
+	Menu.java
+	Views.java
+	ViewIdentity.java
+	View.java
+	LinkGenerator.java
+	TableCellViewer.java
+	TreeView.java
+	TabsView.java
+	CompositeView.java
+	PanelView.java
+	FieldView.java
+	FieldEditor.java
+	ReferenceEditor.java
+	ObjectChooserModel.java
+	Model.java
+	CollectionModel.java
+	LessAbstractListModel.java
+	ListModel.java
+	ExtendedTableModel.java
+	ComboBoxModel.java
+	TableModel.java
+	SortCriteria.java
+	FilterCriteria.java
+	TableMap.java
+	TableSorter.java
+	TableFilter.java
+	TreeModel.java
+	MethodView.java
+	MenuView.java
+	EditorContainer.java
+	WindowView.java
+	DialogView.java
+	FieldUpdate.java
+	CollectionUpdate.java
+	MethodUpdate.java
+	ObjectUpdate.java
+	Constants.java
+	ViewFactory.java
+	EventHandler.java
+	PanelContent.java
+	Target.java
+	CustomizedGUI.java
+	CustomizedView.java
+	DisplayContext.java
+	InvokeThread.java 
+	AbstractNode.java
+	RelationNode.java
+	ObjectNode.java
+	ObjectView.java
+	GenericFactory.java
+	HandlerResult.java
+	WrappableMap.java
+	CollectionWrapper.java
+        Currency.java
+	Template.java
+        TemplateReader.java
+	InputCanceledException.java 
+	TimeoutException.java
+	InputSequence.java 
+	ClassChooser.java
+	InputWrapper.java 
+	WaitWrapper.java
+	ResourceManager.java 
+	FieldItemView.java
+        AppletView.java
+	ViewControlWrapper.java 
+	CollectionItemView.java
+	Border.java
+	GuiAC.java
+	Actions.java
+	Reports.java
+	CollectionPosition.java
+	AbstractCollectionItemView.java 
+	Format.java
+	DateFormat.java
+	DateHourFormat.java
+	NumberFormat.java
+	IntFormat.java 
+	FloatFormat.java 
+	PercentFormat.java
+	MatrixUtils.java} 
+	{swing web} 
+	{{ViewControlWrapper 
+	GenericFactory
+	CustomizedGUI
+	GuiAC}}}
+    {org/objectweb/jac/aspects/gui/web {html}
+    {	ClasspathResource.java
+	HTMLViewer.java
+	HTMLEditor.java
+	JacRequestReader.java
+	SelectionListener.java
+	CollectionListener.java
+	TableListener.java
+	AbstractView.java
+	AbstractCollection.java
+	AbstractCompositeView.java
+	WindowListener.java
+	DialogListener.java
+	TreeListener.java
+	MenuListener.java
+	ChoiceListener.java
+	AttachmentListener.java
+	ReaderEditor.java
+	InputStreamEditor.java
+	AbstractPage.java
+	Page.java
+	RefreshPage.java
+	Dialog.java
+	Request.java
+	Session.java
+	MultiPartRequest.java
+	JacRequest.java
+	AbstractJacRequest.java
+	MultiMapJacRequest.java
+	RequestPart.java
+	MultiPartJacRequest.java
+	WebDisplay.java
+	JacLocalServlet.java
+	Customized.java
+	Panel.java
+	Container.java
+	SingleSlotContainer.java
+	Label.java
+	Empty.java
+	ReferenceView.java
+	AbstractFieldView.java
+	PrimitiveField.java
+	EnumViewer.java
+	Table.java
+	List.java
+	ChoiceCollection.java
+	MatrixView.java
+	CompactList.java
+	Tree.java
+	TabsListener.java
+	Tabs.java
+	MethodListener.java
+	Method.java
+	EmbeddedMethod.java
+	ImageURLViewer.java
+	FormatViewer.java
+	DateViewer.java
+	DateHourViewer.java
+	FloatViewer.java
+	IntViewer.java
+	FloatEditor.java
+        AttachmentViewer.java
+	EditorContainer.java
+	ObjectView.java
+	AbstractFieldEditor.java
+	PrimitiveFieldEditor.java
+	TextEditor.java
+	TextViewer.java
+	DateEditor.java
+	DateHourEditor.java
+	FormatEditor.java
+	PercentEditor.java
+	PercentViewer.java
+	AttachmentEditor.java
+	ObjectChooser.java
+	IndexSelector.java
+	IndicesSelector.java
+	URLEditor.java
+	BooleanEditor.java
+	PasswordFieldEditor.java
+	AbstractMenu.java
+	Menu.java
+	MenuBar.java
+        StatusBar.java
+	ToolBar.java
+	CollectionItemView.java
+	CollectionSelector.java
+    }
+    {} {} }
+    {org/objectweb/jac/aspects/gui/web/html {}
+    {	Element.java 
+    	Tag.java
+	Image.java
+	Composite.java
+	Text.java
+	Block.java
+	Link.java
+	Button.java  }
+    {} {} }
+    {org/objectweb/jac/aspects/gui/swing {}
+    {   CollaborationInitializer.java
+	JTextField.java
+        CompletionEngine.java
+        DefaultCompletionEngine.java
+        SHEditorConfig.java
+	SearchTool.java
+        SHEditor.java
+        EditorScrollPane.java
+        NumberPanel.java
+	AbstractView.java
+	AbstractCompositeView.java
+	AbstractFieldView.java
+	AbstractCollection.java
+	SwingFieldView.java
+	EnumViewer.java
+	JTable.java
+	SwingTableView.java
+	List.java
+	CompactList.java
+	SwingMethodView.java
+	SwingEmptyView.java
+	SwingContainerView.java
+	SingleSlotContainer.java
+	DesktopView.java
+	ObjectView.java
+	SwingEditorContainer.java
+	SwingPanelView.java
+	SwingTabbedView.java
+	SwingLabel.java
+	ObjectPopup.java
+	SwingEvents.java
+	MenuBar.java
+	Menu.java
+	ToolBar.java
+        StatusBar.java
+	ReferenceView.java
+	AbstractFieldEditor.java
+	PrimitiveFieldEditor.java 
+	AbstractCodeEditor.java
+        JavaCodeEditor.java
+	ObjectChooser.java
+	FormatViewer.java
+	IntViewer.java
+	FloatViewer.java
+	PercentViewer.java
+	DateViewer.java 
+	DateHourViewer.java 
+	DateEditor.java 
+	PointEditor.java
+	DateHourEditor.java 
+        ImageURLViewer.java
+        ImageViewer.java
+	AttachmentViewer.java
+	AttachmentEditor.java
+        CurrencyViewer.java
+	BooleanEditor.java
+	BooleanViewer.java
+	AbstractFileEditor.java
+	FileEditor.java 
+	FilePathEditor.java 
+	DirectoryEditor.java
+	URLEditor.java 
+	DirectoryURLEditor.java 
+        ImageURLEditor.java
+	ArrayEditor.java 
+        CurrencyEditor.java
+        TextEditor.java
+	PasswordFieldEditor.java
+        TextViewer.java
+	Tree.java
+	Dialog.java
+	ObjectViewDialog.java
+	SwingCustomized.java
+	SwingDisplay.java
+	CollectionItemView.java
+    	FormatEditor.java
+    	PercentEditor.java
+    	FloatEditor.java
+	ToStringTableCellRenderer.java
+	}
+	{} {}}
+    {org/objectweb/jac/aspects/gui/reports {}
+    {   JacDataSource.java
+	}
+	{} {}}
+
+    {org/objectweb/jac/aspects/distrans/persistence {}
+    {   PersistenceAC.java
+    PersistenceItf.java
+    ReadWrapper.java
+    SimpleDbPersistence.java
+    WriteWrapper.java
+    XAPoolCache.java
+	}
+	{} {}}
+
+    {org/objectweb/jac/aspects/distrans {}
+    {   BeginTransactionWrapper.java
+    DataSource.java
+    DisTransAC.java
+    EndTransactionWrapper.java
+    JOTMHelper.java
+	}
+	{} {}}
+
+    {org/objectweb/jac/aspects/hibernate {}
+    {   BeginPersistentSessionWrapper.java
+    EndPersistentSessionWrapper.java
+    HibernateAC.java
+    HibernateHelper.java
+	}
+	{} {}}
+
+    {org/objectweb/jac/aspects/persistence {} 
+    {	PersistenceConf.java
+	StorageField.java 
+	OID.java 
+	NoSuchOIDError.java 
+	RootObject.java 
+	Storage.java 
+        StorageIterator.java
+	ListIterator.java
+	MapIterator.java
+	SetIterator.java
+	LongOID.java 
+	StringOID.java 
+	ValueConverter.java
+        StringConverter.java
+        DateStringConverter.java
+        DimensionStringConverter.java
+        PointStringConverter.java
+        RectangleStringConverter.java
+        URLStringConverter.java
+    	FSStorage.java
+	SQLStorage.java     
+	PostgresStorage.java 
+	CollectionWrapper.java 
+	SetWrapper.java 
+	ListWrapper.java 
+	MapWrapper.java 
+	PersistenceWrapper.java 
+	PersistenceAC.java} 
+	{} 
+	{{PersistenceWrapper 
+	CollectionWrapper 
+	SetWrapper 
+	ListWrapper 
+	MapWrapper 
+	PersistenceAC}}}
+    {org/objectweb/jac/aspects/tracing {} {
+	Counter.java
+	Debugger.java 
+	DebuggingWrapper.java 
+	DebuggingAC.java 
+	SimpleCountingWrapper.java 
+	OptimizedCountingWrapper.java 
+	Recorder.java
+	TracingConf.java
+	TracingAC.java
+	RecordingWrapper.java } {} {}}
+    {org/objectweb/jac/aspects/idGen {} {
+	Counters.java
+	IdGenAC.java } {} {}}
+    {org/objectweb/jac/aspects/confirmation {} {
+	ConfirmationConf.java
+	ConfirmationAC.java } {} {}}
+    {org/objectweb/jac/aspects/integrity {} {
+	Constraint.java
+	ConstraintDescriptor.java
+	RoleWrapper.java
+	PrimaryKeyWrapper.java
+	GenericConditions.java
+	IntegrityConf.java
+	RepositoryWrapper.java
+	ConstraintWrapper.java
+	IntegrityAC.java } {} 
+	{IntegrityAC RepositoryWrapper ConstraintWrapper}}
+    {org/objectweb/jac/aspects/i18n {} {
+	I18nAC.java } {} {}}
+    {org/objectweb/jac/aspects/user {} {
+	Rule.java
+	Profile.java
+	UserManager.java
+	UserWrapper.java
+	UserConf.java
+	UserAC.java } {} {}}
+    {org/objectweb/jac/aspects/queue {} {
+	FieldChangeEvent.java
+	MessageQueue.java
+	MessageQueueConf.java
+	MessageQueueWrapper.java
+	MessageQueueAC.java }    
+	{} 
+	{MessageQueueWrapper MessageQueueAC}  }
+    {org/objectweb/jac/aspects/timestamp {} {
+	TimestampConf.java
+	Timestamps.java
+	TimestampAC.java }
+	{} {} }
+    {org/objectweb/jac/lib {java stats} 
+    {Attachment.java} {} {}}
+    {org/objectweb/jac/lib/stats {} 
+    {Stat.java Stats.java} {} {}}
+    {org/objectweb/jac/lib/java {util} {} {} {}}
+    {org/objectweb/jac/lib/java/util {} {Hashtable.java Vector.java HashSet.java HashMap.java} {} {}}
+    {org/objectweb/jac/samples {bank calcul document photos bench ring contacts distransbank} {} {} {}}
+    {org/objectweb/jac/samples/bank {} {
+	Account.java 
+	Bank.java 
+	AccountManager.java 
+	Run.java }
+	{} {}}
+    {org/objectweb/jac/samples/calcul {} {
+	Op.java
+	Calcul.java 
+	Run.java }
+	{} {} }
+    {org/objectweb/jac/samples/document {} {
+	Document.java
+	DocumentServer.java
+	Run.java }
+	{} {} }
+    {org/objectweb/jac/samples/photos {} {
+	CompUserAC.java
+	Person.java 
+	Users.java
+	Photo.java
+	Comment.java
+	PhotoRepository.java 
+	Run.java 
+	Bench.java 
+	}
+	{} {} }
+
+    {org/objectweb/jac/samples/distransbank {} {
+    Account.java
+    SampleEndTransactionWrapper.java
+	}
+	{} {} }
+
+    {org/objectweb/jac/samples/hibernate {} {
+    User.java
+	}
+	{} {} }
+
+	{org/objectweb/jac/samples/bench {} {
+	RTTI.java
+	Translate.java
+	Visualize.java 
+	Bench.java
+	NullAC.java}
+	{} {} }
+    {org/objectweb/jac/samples/ring {} {
+	RingElement.java 
+	Ring.java 
+	Run.java }
+	{} {} }
+    {org/objectweb/jac/samples/contacts {} {
+	Action.java
+	Company.java 
+	Person.java 
+	ContactRepository.java 
+	CompanyRepository.java 
+	FilteredContacts.java
+	Run.java 
+	Create.java }
+	{} {{ContactRepository CompanyRepository}} }
+    {org/objectweb/jac/ide {diagrams swing} 
+    {	CannotGenerateException.java
+	CannotCompileException.java
+	Gui.java
+	Preferences.java
+	Error.java
+	Errors.java
+	ModelElement.java
+	Element.java
+        Projects.java
+        Package.java
+        Project.java
+        Application.java
+        AspectConfiguration.java
+        Diagram.java
+        Type.java
+	ExtendedType.java
+	EnumeratedType.java
+        TypedElement.java
+	Typed.java
+	Class.java
+	Repository.java
+	Interface.java
+        Instance.java
+        Group.java
+        Aspect.java
+	Visibility.java
+        Member.java
+        Field.java
+        Method.java
+	Constructor.java
+        Parameter.java
+	FieldMethod.java
+	Getter.java
+	Setter.java
+        Link.java
+        InheritanceLink.java
+	PointcutLink.java
+	Role.java
+	RelationRole.java
+        RelationLink.java
+	AspectPlugin.java
+        CodeGeneration.java
+	AccGenState.java
+	AbstractPlugin.java
+	IntegrityPlugin.java
+	RttiPlugin.java
+	PersistencePlugin.java
+	GuiPlugin.java
+        TypeRepository.java
+        ClassFigure.java 
+        LinkFigure.java 
+	MethodItemConverter.java
+	Plurals.java}
+	{} {{ModelElement
+	Element
+        Projects
+        Package
+        Project
+	Application
+        AspectConfiguration
+        Diagram
+        Type
+        TypedElement
+	Typed
+	Aspect
+	Class
+        Instance
+        Group
+        Member
+        Field
+        Method
+        Parameter
+	Constructor
+        Link
+	PointcutLink
+        InheritanceLink
+        RelationLink
+        CodeGeneration
+        Figure
+        GenericFigure
+        ClassFigure
+        LinkFigure }}}
+
+    {org/objectweb/jac/ide/swing {}
+    {	
+        AccCodeEditor.java
+	AccCompletionEngine.java
+	MethodBodyCodeEditor.java
+	MethodBodyCompletionEngine.java
+	FieldNameEditor.java
+    } {} { {} {} } }
+
+    {org/objectweb/jac/ide/diagrams {}
+    {	PaletteLayout.java
+	IDEDrawingView.java
+	CircleTip.java
+	Selectable.java
+	GenericObjectFigure.java
+	ModelElementFigure.java
+	TextFigure.java
+	MemberFigure.java
+        FieldFigure.java
+        MethodFigure.java
+        ClassNameFigure.java
+        InstanceNameFigure.java
+        LinkFigure.java
+        RelationLinkFigure.java
+        PointcutLinkFigure.java
+        InheritanceLinkFigure.java
+        ClassFigure.java
+        InstanceFigure.java
+        AspectFigure.java
+	DragTracker.java
+	AbstractTool.java
+	CreationTool.java
+	AbstractActionTool.java
+	ConnectionTool.java
+	SelectionTool.java
+        GroupFigureShowTool.java
+        InstanceFigureCreationTool.java
+        NewInstanceFigureCreationTool.java
+        ClassFigureCreationTool.java
+        NewClassFigureCreationTool.java
+        AspectFigureCreationTool.java
+        NewAspectFigureCreationTool.java
+        FieldCreationTool.java
+        MethodCreationTool.java
+        AttributeValueFigure.java
+        AttachedTextTool.java
+	FloatingTextField.java
+	TextTool.java
+	ToolButton.java
+	ToolPalette.java
+        DiagramView.java
+        AttachedTextLocator.java
+        AttachedTextFigure.java
+        RelationLinkCreationTool.java
+        PointcutLinkCreationTool.java
+        InheritanceLinkCreationTool.java
+        RelationLinkShowTool.java 
+        PointcutLinkShowTool.java 
+        AggregationCreationTool.java }
+	{} { 
+	{PolyLineFigure PolyLineHandle}
+	{ClassFigure 
+	AggregationCreationTool 
+	ClassFigureCreationTool 
+	NewClassFigureCreationTool 
+	RelationLinkFigure 
+	InheritanceLinkFigure}
+	} }
+
+}
+
+proc getJava {l} {
+    set java_files ""
+    foreach f $l {
+	append java_files " $f"
+    }
+    return $java_files
+}
+
+proc getDependencesRules {l} {
+    set compiled_list ""
+    set java_list ""
+    set rules ""
+    foreach d $l {
+	set compiled_list ""
+	set java_list ""
+	foreach f $d {
+	    append compiled_list "$f.class "
+	    append java_list "$f.java "
+	}
+	append rules "
+
+#
+# Production rules specific to the current directory
+#
+
+COMPILED_LIST=$compiled_list
+
+JAVA_LIST=$java_list
+
+\$(COMPILED_LIST): \$(JAVA_LIST)
+	@echo \"Compiling \$?\"
+	@\$(JAVACCMD) \$(JAVAC_OPTS) \$?
+"
+    }
+    return $rules
+}
+
+
+foreach dir $tree {
+    set cur_dir "${base_dir}/[lindex $dir 0]"
+    if {[file exists ${cur_dir}] == 0} {
+	puts "*** Directory not found: ${cur_dir}"
+	continue
+    }
+    puts "Generating makefile for ${cur_dir}"
+    # create the main html page
+    set f [open ${cur_dir}/makefile w]
+    set towrite ""
+    append towrite {
+#
+# This file was automatically generated by org/objectweb/jac/scripts/create_makefiles.
+# Do not edit unless you do not want to use this tool anymore.
+#
+
+.SUFFIXES: .java .class
+JAC_ROOT=} ${jacroot} {
+include $(JAC_ROOT)/Make.rules
+
+vpath %.class $(JAC_ROOT)/classes/} [lindex $dir 0] {
+
+#
+# SUBDIRSBEFORE are compiled before the current directory
+#
+
+SUBDIRSBEFORE = } [lindex $dir 1] {
+
+#
+# SUBDIRSAFTER are compiled after the current directory
+#
+
+SUBDIRSAFTER  = } [lindex $dir 3] {
+
+#
+# Source files
+#
+
+JAVA =} [getJava [lindex $dir 2]] {
+
+#
+# Generic production rules
+#
+
+default: } [if {[llength [lindex $dir 1]] != 0} {concat subfirst}] { all } [if {[llength [lindex $dir 3]] != 0} {concat sublast}] {
+compile: 
+	@echo "Compiling $(JAVA) ... "
+	@$(JAVACCMD) $(JAVAC_OPTS) $(JAVA)
+subfirst:
+	for i in $(SUBDIRSBEFORE); do (make -C $$i); done
+sublast:
+	for i in $(SUBDIRSAFTER); do (make -C $$i); done
+
+all: $(JAVA) } [if {[llength [lindex $dir 1]] != 0} {id {
+	for i in $(SUBDIRSBEFORE); do (make all -C $$i); done}}] {} \
+[if {[llength [lindex $dir 2]] != 0} {id {
+	@echo "Compiling $(JAVA) ... "
+	@$(JAVACCMD) $(JAVAC_OPTS) $(JAVA)} } ] {} \
+[if {[llength [lindex $dir 3]] != 0} {id {
+	for i in $(SUBDIRSAFTER); do (make all -C $$i); done}}] {
+} [getDependencesRules [lindex $dir 4]] {
+
+# local rules
+ifeq (Make.rules,$(wildcard Make.rules))
+include Make.rules
+endif
+
+#
+# Clean up rules
+#
+
+clean::} [if {[llength [lindex $dir 1]] != 0} {id "
+	for i in \$(SUBDIRSBEFORE); \\
+	    do (make clean -C \$\$i); done"}] {
+	rm -fr $(CLASSDIR)/} [lindex $dir 0]/* {}\
+    [if {[llength [lindex $dir 3]] != 0} {id "
+	for i in \$(SUBDIRSAFTER); \
+	    do (make clean -C \$\$i); done"}] {
+
+distclean::} [if {[llength [lindex $dir 1]] != 0} {id "
+	for i in \$(SUBDIRSBEFORE); \\
+	do (make distclean -C \$\$i); done"}] {
+	rm -fr *~ .#* } {}\
+    [if {[llength [lindex $dir 3]] != 0} {id "
+	for i in \$(SUBDIRSAFTER); \
+	do (make distclean -C \$\$i); done"}] {}
+
+    puts $f $towrite
+    close $f
+}
+
+
+# Local variables:
+# tcl-default-application: "tclsh"
+# End:

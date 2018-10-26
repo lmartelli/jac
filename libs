@@ -1,0 +1,41 @@
+# These are always needed
+log4j-1.2 
+bcel 
+gnu-regexp 
+cup 
+aopalliance
+
+# Use only to build JAC (not needed at runtime)
+build/ant 
+build/just4log
+
+# Libraries used by some aspects (optional)
+opt/org.mortbay.jetty
+opt/servlet-2.3 
+opt/jhotdraw 
+opt/postgresql 
+opt/xerces 
+opt/itext 
+opt/jasperreports 
+opt/commons-beanutils 
+opt/commons-collections 
+opt/commons-digester 
+opt/commons-logging
+
+# Librairies used by the HibernateAC (optional)
+# Hibernate also requires commons-beanutils, commons-collections and commons-logging.
+opt/hibernate2/cglib-asm
+opt/hibernate2/commons-lang 
+opt/hibernate2/dom4j 
+opt/hibernate2/hibernate2
+
+# Librairies used by ObjectWeb component (encapsulated in AC) (optional)
+# - distributed transaction AC (DistransAC) based on JOTM
+# JOTM also requires commons-logging.
+# We assume OPT_LIBS are included when OPT_LIBS_OBJECTWEB is.
+opt/objectweb/carol 
+opt/objectweb/jonas_timer 
+opt/objectweb/jotm 
+opt/objectweb/jotm_jrmp_stubs 
+opt/objectweb/jta-spec1_0_1 
+opt/objectweb/xapool

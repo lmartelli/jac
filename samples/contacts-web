@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec $(dirname $0)/run_sample org/objectweb/jac/samples/contacts/contacts.jac web contacts-gui $*
+

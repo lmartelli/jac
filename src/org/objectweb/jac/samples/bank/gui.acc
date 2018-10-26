@@ -1,0 +1,125 @@
+include org/objectweb/jac/aspects/gui/gui.acc
+include org/objectweb/jac/aspects/authentication/gui.acc
+
+setFont SansSerif PLAIN 12;
+
+defineResource ICON icon_contact "org/objectweb/jac/aspects/gui/resources/small_person.gif";
+
+class org.objectweb.jac.samples.bank.Bank {
+   generateDefaultParameterNames;
+   setEmbeddedEditors;
+   setAutoCreateParameters;
+   setTableAttributesOrder { bankNumber };
+   setAttributesOrder { bankNumber, accounts };
+   setParameterNames "Bank(long)" { "bank number" };
+   setParameterNames "addAccount" { "account" };
+   setParameterNames "getAccount" { "account number" };
+   attribute accounts,users {
+      setTableView;
+      setViewOnSelection;
+   }
+}
+
+class org.objectweb.jac.samples.bank.AccountManager {
+   generateDefaultParameterNames;
+   setEmbeddedEditors;
+   setAutoCreateParameters;
+   setParameterNames "addBank" { "bank" };
+   setParameterNames "transfer" { "source account","destination account","amount" };
+   setTableView "banks";
+}
+
+class org.objectweb.jac.samples.bank.Account {
+   generateDefaultParameterNames;
+   setEmbeddedEditors;
+   setAutoCreateParameters;
+   setTableAttributesOrder { accountNumber, balance, owner };
+   setAttributesOrder { accountNumber, balance, owner, allowedDeficit };
+   setParameterNames "credit" { "amount" };
+   setParameterNames "debit" { "amount" };
+   setParameterNames "Account(long)" { "account number" };
+}
+
+// Person
+class org.objectweb.jac.samples.contacts.Person {
+   generateDefaultParameterNames;
+   setIcon icon_contact;
+   setAutoCreateParameters "setCompany(Company)";
+   setAutoCreateState {company};
+   setAttributesOrder {
+      firstName, lastName, phone, email, company,
+         position, lastContact, contactAgain, notes, mailing
+         };
+   setParameterNames "Person(String,String,String,String)" {
+      "Last name", "First name", "Phone", "Email"
+         };
+   setTableAttributesOrder { lastName, firstName, company };
+   
+   setCategories { "General", "Dates", "Misc" };
+   
+   attribute lastName,firstName,phone,email,company,position,mailing {   
+      setCategory "General";
+      setEmbeddedEditor;
+   }
+
+   attribute lastContact,contactAgain {   
+      setCategory "Dates";
+      setEmbeddedEditor;
+   }
+   attribute notes {
+      setBorder true;
+      setEditorWidth 400 30;
+      setEditorHeight 200 10;
+      setCategory "Misc";
+      setEmbeddedEditor;
+   }
+
+   attribute actions {
+      setTableView;
+      setAutoCreate;
+      setViewOnSelection;
+      setCategory "Dates";
+   }
+
+}
+
+// Company
+class org.objectweb.jac.samples.contacts.Company {
+   generateDefaultParameterNames;
+   //setIcon icon_company;
+   setAttributesOrder {
+      name, address, phone, fax, webSiteURL, notes
+   };
+   setParameterNames "Company(String,String,String,String,URL)" {
+      "Name", "Address", "Phone", "Fax", "Web site"
+   };
+   setTableAttributesOrder { name, address, phone };
+
+   attribute name,address,phone,fax,webSiteURL {
+      setEmbeddedEditor;
+   }
+
+   attribute notes {
+      setEmbeddedEditor;
+      setBorder true;
+      setEditorWidth 400 30;
+      setEditorHeight 200 10;
+   }
+}
+
+block bank-gui {
+   registerCustomized;
+   setTitle "JAC Sample: banking application";
+
+   setSubPanesGeometry 3 HORIZONTAL_UP {false,false,false};
+   //   setObjectForPane "accountmanager0" 1;
+   //   addReferenceToPane org.objectweb.jac.samples.bank.AccountManager banks 2;
+   addReferenceToPane org.objectweb.jac.samples.bank.AccountManager banks 1;
+   addReferenceToPane org.objectweb.jac.samples.bank.Bank accounts 2;
+   addReferenceToPane org.objectweb.jac.samples.bank.Bank users 2;
+   addTreeView "accountmanager0/banks/.*/.*/.*" true 0;
+   setPosition 0 0 60 100;
+   setSplitterLocation 0 500;
+
+   showCustomized;
+}

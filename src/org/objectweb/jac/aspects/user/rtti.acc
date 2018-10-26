@@ -1,0 +1,14 @@
+
+class org.objectweb.jac.aspects.user.UserManager {
+   attribute profiles {
+      setIsIndex true;
+   }
+}
+
+class  org.objectweb.jac.aspects.user.Profile {
+   setNullAllowed parent;
+}
+
+// Local Variables:
+// mode: java
+// End:

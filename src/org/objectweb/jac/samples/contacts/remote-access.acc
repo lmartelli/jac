@@ -1,0 +1,6 @@
+
+createRemoteAccess ".*" "org.objectweb.jac.samples.contacts.Contact || org.objectweb.jac.samples.contacts.Action || org.objectweb.jac.samples.contacts.ContactRepository" ".*" "//localhost/s0";
+
+createRemoteAccess "recorder0" ".*" "replay(Vector,Vector):void" "//localhost/s0";
+
+

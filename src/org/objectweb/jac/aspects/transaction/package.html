@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides an aspect that handles transactional operations within JAC
+programs.
+
+<p>For the moment, no hierarchical transactions are supported.
+
+<p>The implementation is really simple and consists in cloning all the
+      objects that take part on the transaction and to work on them on
+      the transactionnal flow. When the transaction is commited, the
+      states of the clones are copied to the original objects.
+
+<p>This transaction implementation also works in distributed mode if
+      the transaction wrapper (that is also a coordinator) can reach
+      the transaction participants from its host.
+
+<p>The configuration of this aspect consists in
+      denoting a set of transactional methods.
+
+<pre>
+defineTransactionalMethods org.objectweb.jac.samples.bank.AccountManager 
+	                   "transfer(Account,Account,double):void"
+                           ALL;
+</pre>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+addBroadcaster contactrepository0 MODIFIERS ".*s0" ".*[1-2]";
+addBroadcaster contactrepository0/contacts/.* MODIFIERS ".*s0" ".*[1-2]";
+addBroadcaster company.* MODIFIERS ".*s0" ".*[1-2]";
+addBroadcaster person.* MODIFIERS ".*s0" ".*[1-2]";

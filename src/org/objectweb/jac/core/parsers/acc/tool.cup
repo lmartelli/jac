@@ -1,0 +1,176 @@
+package org.objectweb.jac.core.parsers.acc;
+
+import java_cup.runtime.*;
+import java.util.Vector;
+import java.util.Arrays;
+
+import org.objectweb.jac.core.ConfigMethod;
+
+terminal String LBRACE, RBRACE, COMMA, EOL, CLASS, IMPORT;
+terminal String ATOMIC_VALUE;
+
+non terminal NonTerminal acc, acc_real, args, value_list, block, class_block, block_params;
+non terminal NonTerminal array_value;
+non terminal NonTerminal value;
+non terminal NonTerminal conf_method;
+non terminal NonTerminal import_statement;
+
+acc ::= /* empty */ {: RESULT = new NonTerminal("EMPTY"); :} | acc_real:l {: RESULT = l; :};
+
+acc_real ::=
+	  acc_real:l block:b 
+		{: if (b!=null) l.addChild(b); RESULT = l; :}
+	| block:b
+		{:
+			RESULT = new NonTerminal("acc_real", new SyntaxElement[] {b} );
+		:}
+	;
+
+block ::= 
+	  class_block:c
+		{: RESULT = c; :}
+	| conf_method:m
+		{: RESULT = m; :}
+	| import_statement:i
+		{: RESULT = i; :}
+	;
+
+class_block ::= 
+	  CLASS:keyword block_params:c LBRACE:lb acc:l RBRACE:rb
+		{: 
+			RESULT = new NonTerminal("class_block");
+                 	RESULT.addChild(
+				new Terminal("BLOCK_KEYWORD",keyword,
+				             keywordleft,keywordright));
+                 	RESULT.addChild(c);
+                 	RESULT.addChild(new Terminal("LBRACE",lb,lbleft,lbright));
+                 	RESULT.addChild(l);
+                 	RESULT.addChild(new Terminal("RBRACE",rb,rbleft,rbright));
+		:}
+	| CLASS:keyword block_params:c error:err
+		{:
+			RESULT = new NonTerminal("class_block");
+                 	RESULT.addChild(
+				new Terminal("BLOCK_KEYWORD",keyword,
+					     keywordleft,keywordright));
+                 	RESULT.addChild(c);
+			RESULT.addChild(new Terminal("ERROR","ERROR",errleft,errright));
+		:}
+	| CLASS:keyword error:err
+		{:
+			RESULT = new NonTerminal("class_block");
+                 	RESULT.addChild(
+				new Terminal("BLOCK_KEYWORD",keyword,
+					     keywordleft,keywordright));
+			RESULT.addChild(new Terminal("ERROR","ERROR",errleft,errright));
+		:}
+	;
+
+block_params ::= 
+	  ATOMIC_VALUE:v COMMA block_params:l
+		{: 
+			l.insertChild(new Terminal("BLOCK_PARAM",v,vleft,vright));
+			RESULT = l;
+		:}
+	| ATOMIC_VALUE:v 
+		{: 
+			RESULT = new NonTerminal("block_params",
+					new Terminal("BLOCK_PARAM",v,vleft,vright));
+		:}
+	| ATOMIC_VALUE:v error:err
+		{: 
+			RESULT = new NonTerminal("block_params");
+			RESULT.addChild(new Terminal("BLOCK_PARAM",v,vleft,vright));
+			RESULT.addChild(new Terminal("ERROR","ERROR",errleft,errright));
+		:}
+	| error:err 
+		{:
+			RESULT = new NonTerminal("block_params",
+					new Terminal("ERROR","ERROR",errleft,errright));
+		:}
+	;
+
+conf_method ::= 
+	  ATOMIC_VALUE:m args:a EOL:e
+		{: 	
+			RESULT = new NonTerminal("conf_method");
+			RESULT.addChild(new Terminal("CONF_METHOD",m,mleft,mright));
+			RESULT.addChild(a);
+			RESULT.addChild(new Terminal("EOL",e,eleft,eright));
+		:}
+	| ATOMIC_VALUE:m EOL:e 
+		{: 
+			RESULT = new NonTerminal("conf_method");
+			RESULT.addChild(new Terminal("CONF_METHOD",m,mleft,mright));
+			RESULT.addChild(new Terminal("EOL",e,eleft,eright));
+		:}
+
+	| ATOMIC_VALUE:m error:err EOL:e
+		{:
+			RESULT = new NonTerminal("conf_method");
+			RESULT.addChild(new Terminal("CONF_METHOD",m,mleft,mright));
+			RESULT.addChild(new Terminal("ERROR","",errleft,errright));
+			RESULT.addChild(new Terminal("EOL",e,eleft,eright));
+		:}
+	| ATOMIC_VALUE:m error:err
+		{:
+			RESULT = new NonTerminal("conf_method");
+			RESULT.addChild(new Terminal("CONF_METHOD",m,mleft,mright));
+			RESULT.addChild(new Terminal("ERROR","",errleft,errright));
+		:}
+	| error:err EOL:e
+		{:
+			RESULT = new NonTerminal("conf_method");
+			RESULT.addChild(new Terminal("ERROR","",errleft,errright));
+			RESULT.addChild(new Terminal("EOL",e,eleft,eright));
+		:}
+	;
+
+import_statement ::=
+	  IMPORT:i ATOMIC_VALUE:m EOL:e
+		{: 
+			RESULT = new NonTerminal("import_statement");
+			RESULT.addChild(new Terminal("IMPORT",i,ileft,iright));
+			RESULT.addChild(new Terminal("import_param",m,mleft,mright));
+			RESULT.addChild(new Terminal("EOL",e,eleft,eright));
+                :}
+	;
+
+args ::= value:v args:l
+		{: 
+			l.insertChild(v);
+			RESULT = l; 
+		:}
+	| value:v
+		{: 
+			RESULT = new NonTerminal("args",v);
+		:}
+	;
+
+value ::= 
+	  ATOMIC_VALUE:v
+		{: RESULT = new NonTerminal("value",new Terminal("ATOMIC_VALUE",v,vleft,vright)); :}
+	| array_value:v
+		{: RESULT = new NonTerminal("value",v); :}
+	;
+
+array_value ::= 
+	  LBRACE value_list:l RBRACE 
+		{: RESULT = new NonTerminal("array_value",l); :}
+	| LBRACE RBRACE
+		{: RESULT = new NonTerminal("array_value"); :}
+	;
+
+value_list ::= 
+	  value_list:l COMMA value:v 
+		{: 
+			l.addChild(new Terminal("VALUE",v.toString(),vleft,vright)); 
+			RESULT = l; 
+		:}
+	| value:v 
+		{: 
+			RESULT = new NonTerminal(
+					"value_list",
+					new Terminal("VALUE",v.toString(),vleft,vright)); 
+		:}
+	;

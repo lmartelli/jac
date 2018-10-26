@@ -1,0 +1,31 @@
+class  org.objectweb.jac.samples.photos.Comment {
+    setFieldType comment text;
+    setFieldType date dateHour;
+}
+
+class  org.objectweb.jac.samples.photos.Photo {
+    setFieldType date dateHour;
+}
+
+class org.objectweb.jac.samples.photos.Person {
+    setFieldType password password;
+}
+
+class org.objectweb.jac.aspects.user.UserManager {
+    setFieldType defaultAdmin org.objectweb.jac.samples.photos.Person;
+}
+
+class org.objectweb.jac.aspects.authentication.PasswordAuthenticator {
+    setParametersFields askUsernameAndPassword 
+        { org.objectweb.jac.samples.photos.Person.email, null };
+}
+
+class org.objectweb.jac.samples.photos.Photo {
+    declareAssociation author org.objectweb.jac.samples.photos.Person.photos;
+    declareAssociation comments org.objectweb.jac.samples.photos.Comment.photo;
+}
+
+
+// Local Variables:
+// mode: java
+// End:

@@ -1,0 +1,5 @@
+addRoot "projects#0";
+addRoot "typerepository#0";
+addRoot "plurals#0";
+
+allowExport ".*";

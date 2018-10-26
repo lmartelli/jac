@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# replace $version$ and $license$ in files
+
+javaFiles=`find .. -name "*.java" -print`
+version=`cat ../.version`
+license=`cat license_header.txt`
+
+for i in $javaFiles
+do
+   sed "s/\\\$version\\\$/JAC version $version/" < $i | sed "s/\\\$license\\\$/$license/" | grep -v "JAC version 0.4" > $i.tmp
+#   grep -v "JAC version 0.4" < $i > $i.tmp
+   mv $i.tmp $i
+done

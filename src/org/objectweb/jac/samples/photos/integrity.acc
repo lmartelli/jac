@@ -1,0 +1,17 @@
+//updateOppositeRoles org.objectweb.jac.samples.photos.*;
+
+declareRepository users0 org.objectweb.jac.samples.photos.Users.users 
+	org.objectweb.jac.samples.photos.Photo.author;
+
+declareConstraint 
+	org.objectweb.jac.samples.photos.Photo author 
+	org.objectweb.jac.samples.photos.Users.users FORBIDDEN;
+
+class org.objectweb.jac.samples.photos.Comment {
+    declareConstraint author org.objectweb.jac.samples.photos.Users.users SET_NULL;
+    declareConstraint photo org.objectweb.jac.samples.photos.Users.users DELETE_CASCADE;
+}
+
+// Local Variables:
+// mode: java
+// End:

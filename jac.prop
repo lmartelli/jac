@@ -1,0 +1,209 @@
+# This file contains global parameters used for all JAC applications.
+# If one particular application needs custom parameters, you can copy
+# this file (and modify it) in the directory where you will run the
+# application.
+
+###############################################################################
+# Choose you bytecode modifier. Current choice is BCEL or javassist10
+
+jac.bytecodeModifier: BCEL
+
+###############################################################################
+# The classes to NOT be adapted when loaded into the VM
+# By default, all classes are adapted excepted:
+# - the classes in the jac.util package or subpackages
+# - the classes in the jac.core package or subpackages
+# - the classes in the jac.aspects package or subpackages
+# - the classes named Run or Main (that are used to launch programs
+# - the wrappers (classes that ends with "Wrapper" by convention)
+# - the aspect components (classes that ends with "AC" by convention)
+# - the classes that are given to the jac.notToAdapt rule (see below)
+#
+# NOTE: to precise that all the classes of a given package must NOT be adapted,
+#       use the * wildcard (e.g.: mypackage.*)
+
+jac.toNotAdapt: \
+	java.* \
+	javax.* \
+	org.postgresql.* \
+	sun.* \
+	com.sun.* \
+	apple.* \
+	gnu.* \
+	antlr.* \
+	java_cup.* \
+	org.w3c.dom.* \
+	org.apache.xerces.* \
+	org.apache.log4j.* \
+	org.xml.sax.* \
+	CH.ifa.draw.* \
+	aspectBlock1.graphic.* \
+	aspectBlock1.data.DataValueVector \
+	aspectBlock1.data.TransferSetVector \
+	aspectBlock1.server.ScheduleServer \
+	org.mortbay.* \
+	org.aopalliance.* \
+	org.apache.* \
+	org.eclipse.* \
+	com.incors.* \
+	dori.jasper.* \
+	com.lowagie.* \
+	EDU.oswego.cs.dl.util.concurrent.* \
+	com.birosoft.liquid.* \
+	org.jutils.* \
+	org.gjt.sp.* \
+	bsh.* \
+	com.microstar.xml.*
+
+###############################################################################
+# The classes to be adapted by force (overloads the previous rules) when loaded
+# into the VM
+#
+# NOTE: to precise that all the classes of a given package must be adapted
+#       by force, use the * wildcard (e.g.: mypackage.*)
+
+jac.toAdapt: \
+	org.objectweb.jac.util.Repository \
+	org.objectweb.jac.util.Thumbnail \
+	org.objectweb.jac.core.ApplicationRepository \
+	org.objectweb.jac.core.ACParser \
+	org.objectweb.jac.core.ParserImpl \
+	org.objectweb.jac.aspects.tracing.Debugger \
+	org.objectweb.jac.aspects.tracing.Recorder \
+	org.objectweb.jac.core.NameRepository \
+      	org.objectweb.jac.core.dist.Topology \
+     	org.objectweb.jac.aspects.distribution.thinclient.AbstractServer \
+	org.objectweb.jac.aspects.gui.Actions \
+	org.objectweb.jac.aspects.gui.WrappableMap \
+	org.objectweb.jac.aspects.gui.CollectionWrapper \
+	org.objectweb.jac.aspects.gui.TableModel \
+	org.objectweb.jac.aspects.gui.swing.SwingDisplay \
+	org.objectweb.jac.aspects.gui.swing.SHEditorConfig \
+	org.objectweb.jac.aspects.gui.web.WebDisplay \
+	org.objectweb.jac.aspects.user.UserManager \
+	org.objectweb.jac.aspects.user.Profile \
+	org.objectweb.jac.aspects.user.Rule \
+	org.objectweb.jac.aspects.idGen.Counters \
+	org.objectweb.jac.aspects.timestamp.Timestamps
+
+#	org.objectweb.jac.aspects.gui.web.JacLocalServlet$ActionThread \
+
+#	org.objectweb.jac.aspects.gui.swing.SwingLabel \
+#	org.objectweb.jac.aspects.gui.swing.Menu \
+#	org.objectweb.jac.aspects.gui.swing.MenuBar \
+
+# Methods that are wrappable (if none specified, all are wrappable by
+# default)
+jac.wrappableMethods: \
+	org.objectweb.jac.core.ApplicationRepository extend unextend addApplication . \
+	org.objectweb.jac.util.Repository . \
+	org.objectweb.jac.core.NameRepository . \
+	org.objectweb.jac.aspects.gui.swing.SwingLabel setLabel . \
+	org.objectweb.jac.aspects.gui.TableModel getColumnName . \
+	org.objectweb.jac.aspects.gui.swing.Menu addAction addSubMenu . \
+	org.objectweb.jac.aspects.gui.swing.MenuBar addAction addSubMenu . \
+	org.objectweb.jac.aspects.gui.web.WebDisplay \
+		showCustomized show openView showModal fullRefresh \
+		showInput refresh showMessage showError applicationStarted
+
+#	org.objectweb.jac.aspects.gui.swing.SwingDisplay showCustomized . \
+#	org.objectweb.jac.lib.java.util.Vector get add clear contains remove size \ 
+#                                 isEmpty equals toArray iterator indexOf \
+#                                 lastIndexOf . \
+#	org.objectweb.jac.lib.java.util.HashSet add clear contains remove size \ 
+#                                  isEmpty equals toArray iterator . \
+#	org.objectweb.jac.lib.java.util.Hashtable clear isEmpty size \
+#                                    containsKey containsValue get put \
+#                                    equals keySet entrySet values
+
+jac.dontTranslateField: \
+	javax.* \
+	org.objectweb.jac.lib.* \
+	org.objectweb.jac.util.Repository \
+	org.objectweb.jac.core.NameRepository \
+	org.objectweb.jac.core.ApplicationRepository \
+	org.objectweb.jac.aspects.gui.TableModel \
+	org.objectweb.jac.aspects.gui.swing.Menu \
+	org.objectweb.jac.aspects.gui.swing.SwingDisplay  \
+	org.objectweb.jac.aspects.gui.web.WebDisplay \
+	org.objectweb.jac.aspects.gui.swing.MenuBar
+
+###############################################################################
+# Aspect composition parametrization
+
+# The default composition aspect class
+
+jac.comp.compositionAspect: org.objectweb.jac.core.CompositionAspect
+
+# This part is very important since it precise the ordering of the wrappers
+# that can be loaded into the system by aspects. If it is wrong, the system
+# can have eratic behaviors. Refer to the documentation to know more about 
+# wrappers ordering
+ 
+jac.comp.wrappingOrder: \
+	org.objectweb.jac.aspects.cache.CacheWrapper \
+	org.objectweb.jac.wrappers.ForwardingWrapper \
+	org.objectweb.jac.aspects.naming.BindingWrapper \
+	org.objectweb.jac.aspects.session.SessionWrapper \
+	org.objectweb.jac.aspects.authentication.AuthenticationWrapper \
+	org.objectweb.jac.aspects.user.UserWrapper \
+	org.objectweb.jac.aspects.integrity.RepositoryWrapper \
+	org.objectweb.jac.aspects.confirmation.ConfirmationAC$ConfirmationWrapper \
+	org.objectweb.jac.aspects.gui.InputWrapper \
+	org.objectweb.jac.aspects.gui.WaitWrapper \
+	org.objectweb.jac.aspects.integrity.ConstraintWrapper \
+	org.objectweb.jac.aspects.i18n.I18n$TranslatorWrapper \
+	org.objectweb.jac.wrappers.VerboseWrapper \
+	org.objectweb.jac.aspects.authentication.OwningWrapper \
+	org.objectweb.jac.core.dist.StubWrapper \
+	org.objectweb.jac.aspects.distribution.BroadcastingAC$BroadcastingWrapper \
+	org.objectweb.jac.aspects.distribution.LoadBalancingAC$LoadBalancingWrapper \
+	org.objectweb.jac.aspects.distribution.consistency.ClientServerConsistencyWrapper \
+	org.objectweb.jac.aspects.synchronization.SynchronizationAC$SynchronizationWrapper \
+	org.objectweb.jac.aspects.transaction.TransactionAC$TransactionWrapper \
+	org.objectweb.jac.aspects.transaction.DispatchTransactionWrapper \
+	org.objectweb.jac.aspects.distribution.consistency.StrongPushConsistencyWrapper \
+	org.objectweb.jac.aspects.distribution.consistency.StrongPullConsistencyWrapper \
+	org.objectweb.jac.aspects.integrity.ConstraintWrapper \
+	org.objectweb.jac.aspects.integrity.PrimaryKeyWrapper \
+	org.objectweb.jac.aspects.integrity.RoleWrapper \
+	org.objectweb.jac.aspects.persistence.PersistenceWrapper \
+	org.objectweb.jac.aspects.gui.ViewControlWrapper \
+	org.objectweb.jac.aspects.timestamp.TimestampAC$Wrapper \
+	org.objectweb.jac.aspects.session.PerSessionObjectWrapper
+
+
+###############################################################################
+#jac.topology: //localhost/s1 //localhost/s2
+
+###############################################################################
+# This property declares all the default aspect components that can be woven 
+# to the JAC applications and their default names
+ 
+jac.acs: \
+	naming org.objectweb.jac.aspects.naming.NamingAC \
+	rtti org.objectweb.jac.core.rtti.RttiAC \
+	binding org.objectweb.jac.aspects.naming.BindingAC \
+	tracing org.objectweb.jac.aspects.tracing.TracingAC \
+	debugging org.objectweb.jac.aspects.tracing.DebuggingAC \
+	gui org.objectweb.jac.aspects.gui.GuiAC \
+	load-balancing org.objectweb.jac.aspects.distribution.LoadBalancingAC \
+	deployment org.objectweb.jac.aspects.distribution.DeploymentAC \
+	remote-access org.objectweb.jac.aspects.distribution.RemoteAccessAC \
+	consistency org.objectweb.jac.aspects.distribution.ConsistencyAC \
+	broadcasting org.objectweb.jac.aspects.distribution.BroadcastingAC \
+	persistence org.objectweb.jac.aspects.persistence.PersistenceAC \
+	authentication org.objectweb.jac.aspects.authentication.AuthenticationAC \
+	session org.objectweb.jac.aspects.session.SessionAC \
+	synchronization org.objectweb.jac.aspects.synchronization.SynchronizationAC \
+	transaction org.objectweb.jac.aspects.transaction.TransactionAC \
+	integrity org.objectweb.jac.aspects.integrity.IntegrityAC \
+	confirmation org.objectweb.jac.aspects.confirmation.ConfirmationAC \
+	i18n org.objectweb.jac.aspects.i18n.I18nAC \
+	user org.objectweb.jac.aspects.user.UserAC \
+	cache org.objectweb.jac.aspects.cache.CacheAC \
+	queue org.objectweb.jac.aspects.queue.MessageQueueAC \
+	idGen org.objectweb.jac.aspects.idGen.IdGenAC \
+	export org.objectweb.jac.aspects.export.ExportAC \
+	timestamp org.objectweb.jac.aspects.timestamp.TimestampAC \
+	null org.objectweb.jac.samples.bench.NullAC

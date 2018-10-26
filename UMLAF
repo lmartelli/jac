@@ -1,0 +1,85 @@
+#!/bin/sh
+
+
+progname=$0
+
+case $progname in 
+   /*) ;;
+   ./*) progname=$(pwd)/$(basename $progname) ;;
+   *) progname=$(pwd)/$progname ;;
+esac
+
+JAC_ROOT=$(dirname $progname)
+
+#echo "JAC_ROOT=$JAC_ROOT"
+
+JAVA=java
+if [ -n "$JAVA_HOME" ]; then
+    JAVA="$JAVA_HOME/bin/java"
+fi
+
+JAR="$JAC_ROOT/jac.jar"
+JVM_OPTS="$JVM_OPTS -Djava.security.policy=$JAC_ROOT/jac.policy -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel -Xms128m -Xmx256m"
+
+GUIFLAG="-G"
+
+ARGS=""
+while [ $# -gt 0 ]; do
+    case $1 in 
+	--swingwt) 
+	    JVM_OPTS="$JVM_OPTS -Xbootclasspath/p:$JAC_ROOT/lib/swingwt.jar:$JAC_ROOT/lib/swt.jar:$JAC_ROOT/lib/swt-pi.jar:$JAC_ROOT/lib/swt-mozilla.jar";;
+	--debug)
+	    JVM_OPTS="$JVM_OPTS -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=4444 -Djava.compiler=NONE";;
+	--debug-suspend)
+	    JVM_OPTS="$JVM_OPTS -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=4444 -Djava.compiler=NONE";;
+	--jmp)
+	    JVM_OPTS="$JVM_OPTS -Xrunjmp:noobjects,nomethods,nomonitors";;
+	--web)
+	    GUIFLAG="-W";;
+	*)
+	    ARGS="$ARGS $1";;
+    esac
+    shift
+done
+
+DESCRIPTOR=org/objectweb/jac/ide/ide.jac
+
+CLASSPATH="."
+if [ -d "$JAC_ROOT/src" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/src"
+fi
+if [ -d "$JAC_ROOT/classes" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/classes"
+fi
+#if  [ -r "$JAR" ]; then
+#    CLASSPATH="$CLASSPATH:$JAR"
+#fi
+
+for jar in $JAC_ROOT/lib/*.jar; do
+    CLASSPATH="$CLASSPATH:$jar"
+done
+for jar in `find $JAC_ROOT/lib/opt -name "*.jar"`; do
+    CLASSPATH="$CLASSPATH:$jar"
+done
+
+JACPATH=""
+if [ -r "$JAC_ROOT/umlaf.jar" ]; then
+    JACPATH="$JACPATH:$JAC_ROOT/umlaf.jar"
+fi
+tools="$JAVA_HOME/lib/tools.jar"
+if [ -r "$tools" ]; then 
+    JACPATH="$JACPATH:$tools"
+fi
+
+JACPATH="$JACPATH:$JAC_ROOT/lib/opt/jhotdraw.jar"
+JAC_OPTS="-C $JACPATH -R $JAC_ROOT -w $GUIFLAG ide $ARGS $DESCRIPTOR"
+
+if [ -r $JAR ]; then
+    exec $JAVA $JVM_OPTS -jar $JAR $JAC_OPTS
+else
+    exec $JAVA $JVM_OPTS -classpath $CLASSPATH org.objectweb.jac.core.Jac $JAC_OPTS
+fi
+
+#exec $JAVA $JVM_OPTS -jar $JAR -R $JAC_ROOT -C $JAC_ROOT/umlaf.jar -w -G ide $ARGS $DESCRIPTOR
+#kaffe  -classpath $CLASSPATH:/usr/local/lib/j2sdk1.4.2/jre/lib/rt.jar org.objectweb.jac.core.Jac -R $JAC_ROOT -w -W ide $ARGS $DESCRIPTOR
+

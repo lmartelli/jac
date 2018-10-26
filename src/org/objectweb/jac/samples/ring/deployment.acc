@@ -1,0 +1,18 @@
+
+// deploy, from s0, each element on one host
+deploy ".*s0" "ringelement0" ".*s1";
+deploy ".*s0" "ringelement1" ".*s2";
+deploy ".*s0" "ringelement2" ".*s3";
+
+// create one stub for each element on the deployement host (s0)
+createStubsFor "ringelement0" ".*s1" ".*s0";
+createStubsFor "ringelement1" ".*s2" ".*s0";
+createStubsFor "ringelement2" ".*s3" ".*s0";
+
+// create one forwarding stub for each element
+createAsynchronousStubsFor "ringelement0" ".*s1" ".*s2";
+createAsynchronousStubsFor "ringelement1" ".*s2" ".*s3";
+createAsynchronousStubsFor "ringelement2" ".*s3" ".*s1";
+
+setTransient org.objectweb.jac.samples.ring.RingElement previousElement;
+

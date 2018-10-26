@@ -1,0 +1,90 @@
+newVirtualClass currency java.lang.Double;
+
+// An URL whose target is an image
+newVirtualClass imageURL java.net.URL;
+
+// An array of bytes representing an image
+newVirtualClass image java.lang.Byte;
+
+// An URL of a directory
+newVirtualClass directoryURL java.net.URL;
+
+newVirtualClass directory java.io.File;
+
+// Name of the path of a file
+newVirtualClass filePath java.lang.String;
+
+// Multiline text
+newVirtualClass text java.lang.String;
+
+newVirtualClass password java.lang.String;
+
+// DD/MM/YYYY HH:mm:ss date
+newVirtualClass dateHour java.util.Date;
+newVirtualClass javaCode java.lang.String;
+newVirtualClass accCode java.lang.String;
+
+// Email address
+newVirtualClass email java.lang.String;
+newVirtualClass percentage java.lang.Float;
+newVirtualClass Enum java.lang.Integer;
+
+// Name of a mime type
+newVirtualClass mimeType java.lang.String;
+
+// Timestamp
+newVirtualClass timestamp java.lang.Long;
+
+ignoreFields org.objectweb.jac.aspects.gui.swing;
+
+class java.lang.Throwable {
+    declareCalculatedField stack getStackTrace;
+    declareCalculatedField message getMessage;
+}
+
+class java.util.Map, java.util.Hashtable, java.util.HashMap {
+    declareCalculatedField entries entrySet;
+    attribute entries {
+        setComponentType java.util.Map$Entry;
+    }
+}
+
+class java.util.Map$Entry {
+   declareCalculatedField key getKey;
+   declareCalculatedField value getValue;
+}
+
+class org.objectweb.jac.lib.stats.Stat {
+   declareCalculatedField average getAverage;
+}
+
+addAllowedCast java.io.File org.objectweb.jac.util.File;
+
+// java.* classes are not analysed, so we do it by hand here
+class java.io.File {
+    declareCalculatedField files listFiles();
+    declareCalculatedField name getName;
+    setGetter path getPath;
+    declareCalculatedField lastModified lastModified;
+    declareCalculatedField length length;
+    declareCalculatedField isHidden isHidden;
+    declareCalculatedField isDirectory isDirectory;
+    attribute lastModified {
+        setFieldType timestamp;
+    }
+    addMixinMethod org.objectweb.jac.util.Files.listDirectories;
+    declareCalculatedField directories listDirectories;
+
+    addMixinMethod org.objectweb.jac.util.Files.listNonHiddenFiles;
+    declareCalculatedField nonHiddenFiles listNonHiddenFiles;
+}
+
+class org.objectweb.jac.lib.Attachment {
+    attribute mimeType {
+        setFieldType mimeType;
+    }
+    attribute data {
+        setFieldType "text";
+        setDynamicFieldType org.objectweb.jac.lib.Attachment.getType;
+    }
+}

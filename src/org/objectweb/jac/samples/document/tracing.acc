@@ -1,0 +1,11 @@
+
+// A basic counter
+addCounter "counter1" ".*" "org.objectweb.jac.samples.document.Document" "printLine(int):void";
+
+// uncomment these lines to optimize the counting aspect
+// (each printAll or printLines calls will be counted globally)
+addOptimizedCounter "counter1" ".*" "org.objectweb.jac.samples.document.Document" "printAll():void" "lines" "";
+addOptimizedCounter "counter1" ".*" "org.objectweb.jac.samples.document.Document" "printLines(int,int):void" "" "1";
+
+
+

@@ -1,0 +1,7 @@
+include org/objectweb/jac/core/rtti/rtti.acc
+include org/objectweb/jac/samples/contacts/rtti.acc
+
+class org.objectweb.jac.samples.bank.Account {
+	addWrittenFields "debit" { "balance" };
+	addWrittenFields "credit" { "balance" };
+}

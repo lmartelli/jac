@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<AspectConfiguration version="1.0">
+  <method name="declareStoredAttributes">
+    <arg type="java.lang.reflect.Array">
+      <item type="java.lang.String" value="Authentication.user" />
+    </arg>
+  </method>
+
+  <method name="defineSessionHandlers">
+    <arg type="java.lang.String" value="jac.samples.contacts.FilteredContacts" />
+    <arg type="java.lang.String" value="ALL" />
+    <arg type="java.lang.String" value="filteredcontacts0" />
+  </method>
+
+  <method name="definePerSessionObjects">
+    <arg type="java.lang.String" value="jac.samples.contacts.FilteredContacts" />
+    <arg type="java.lang.String" value="filteredcontacts0" />
+  </method>
+
+</AspectConfiguration>
+

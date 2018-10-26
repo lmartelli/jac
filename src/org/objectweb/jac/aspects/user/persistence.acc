@@ -1,0 +1,6 @@
+
+makePersistent "org.objectweb.jac.aspects.user.Profile || org.objectweb.jac.aspects.user.Rule" ALL;
+
+// Local Variables:
+// mode: java
+// End:

@@ -1,0 +1,3 @@
+
+addRoundTripLoadBalancer contactrepository0 "find.*" ".*s0" ".*[1-2]";
+

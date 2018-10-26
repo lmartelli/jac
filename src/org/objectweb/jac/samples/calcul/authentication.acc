@@ -1,0 +1,7 @@
+addTrustedUser "renaud" "renaud";
+addTrustedUser "jac" "jac";
+
+class org.objectweb.jac.samples.calcul.Calcul {
+	addRestrictedMethods ALL "add.*";
+	addRestrictedMethods ALL "sub.*";
+}

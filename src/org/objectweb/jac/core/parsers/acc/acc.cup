@@ -1,0 +1,114 @@
+package org.objectweb.jac.core.parsers.acc;
+
+import java_cup.runtime.*;
+import java.util.Vector;
+import java.util.Arrays;
+
+import org.objectweb.jac.core.ConfigMethod;
+import org.objectweb.jac.core.ImportStatement;
+import org.objectweb.jac.util.ExtArrays;
+
+terminal LBRACE, RBRACE, COMMA, EOL, CLASS, IMPORT;
+terminal String ATOMIC_VALUE;
+
+non terminal Vector acc, acc_real, args, value_list, block, class_block, block_params;
+non terminal Object[] array_value;
+non terminal Object value;
+non terminal ConfigMethod conf_method;
+non terminal ImportStatement import_statement;
+
+acc ::= /* empty */ {: RESULT = new Vector(); :} | acc_real:l {: RESULT = l; :};
+
+acc_real ::=
+	  acc:l block:b 
+		{: if (b!=null) l.addAll(b); RESULT = l; :}
+	| block:b
+		{: RESULT = b; :}
+	;
+
+block ::= 
+	  class_block:c
+		{: RESULT = c; :}
+	| conf_method:m
+		{: RESULT = new Vector(); RESULT.add(m); :}
+	| import_statement:i
+		{: RESULT = new Vector(); RESULT.add(i); :}
+	;
+
+class_block ::= 
+	  CLASS block_params:c LBRACE acc:l RBRACE
+		{: 
+			RESULT = new Vector(); 
+			for(int i=0; i<l.size(); i++) {	
+				Object[] args = ((ConfigMethod)l.get(i)).getArgs();
+				for (int k=0; k<c.size(); k++) {
+					ConfigMethod cm = (ConfigMethod)((ConfigMethod)l.get(i)).clone();
+					Object[] new_args = new Object[args.length+1];
+					new_args[0] = c.get(k);
+					for(int j=0; j<args.length; j++) {
+						new_args[j+1] = args[j];
+					}
+					cm.setArgs(new_args);
+					RESULT.add(cm);
+				}
+			}
+		:}
+	;
+
+block_params ::= 
+	  block_params:l COMMA ATOMIC_VALUE:v 
+		{: l.add(v); RESULT = l; :}
+	| ATOMIC_VALUE:v 
+		{: RESULT = new Vector(); RESULT.add(v); :}
+	;
+
+conf_method ::= 
+	  ATOMIC_VALUE:m args:a EOL 
+		{: 	
+			AccScanner scanner = (AccScanner)parser.getScanner();
+			RESULT = new ConfigMethod(m,a.toArray(),
+						  scanner.getLine()); 
+		:}
+	| ATOMIC_VALUE:m EOL 
+		{: 
+			AccScanner scanner = (AccScanner)parser.getScanner();
+			RESULT = new ConfigMethod(m,ExtArrays.emptyObjectArray,
+						  scanner.getLine());
+		:}
+	| ATOMIC_VALUE:m error:err EOL:e
+		{: 
+			RESULT = null;
+		:}
+	;
+
+import_statement ::=
+	  IMPORT ATOMIC_VALUE:m EOL
+		{: RESULT = new ImportStatement(m,((AccScanner)parser.getScanner()).getLine()); :}
+	;
+
+args ::= value:v args:l
+		{: l.add(0,v); RESULT = l; :}
+	| value:v
+		{: RESULT = new Vector(); RESULT.add(v); :}
+	;
+
+value ::= 
+	  ATOMIC_VALUE:v
+		{: RESULT = v; :}
+	| array_value:v
+		{: RESULT = v; :}
+	;
+
+array_value ::= 
+	  LBRACE value_list:l RBRACE 
+		{: RESULT = l.toArray(); :}
+	| LBRACE RBRACE
+		{: RESULT = ExtArrays.emptyObjectArray; :}
+	;
+
+value_list ::= 
+	  value_list:l COMMA value:v 
+		{: l.add(v); RESULT = l; :}
+	| value:v 
+		{: RESULT = new Vector(); RESULT.add(v); :}
+	;

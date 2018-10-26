@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+    <p>Provides an aspect that allows to define persistent data.
+      This aspect encapsulates the
+      <a href="http://hibernate.bluemars.net/">Hibernate</a>
+      framework.</p>
+
+    <p>Hibernate offers persistence over a DBMS using JDBC.
+Hibernate handles basic data types, collections, references.
+Hibernate offers a query language to fetch persistent objects according
+to some given criteria.</p>
+
+<p>Hibernate imposes a number of constraints on the way you write your code:</p>
+
+<ol>
+<li>persistent classes must declare setters/getters for persistent fields</li>
+<li>persistent classes must provide a no-argument constructor</li>
+<li>a persistent descriptor (.xml) must be provided for each persistent class</li>
+</ol>
+
+<p>Point 1. and 2. are related to the way business objects are written.
+This differs from the
+<code>org.objectweb.jac.aspects.<b>persistence</b>.PersistenceAC</code>
+that uses reflection to access fields.
+Hibernate thus imposes some overhead on the business developper
+(even if we could think of automatically generating setter/getter for all fields).</p>
+
+<p>Point 3. is under the responsability of the aspect programmer that has to write
+this .xml file and the traditional .acc file for configuring
+the Hibernate persistence AC.</p>
+
+<p>HibernateAC provides 4 configuration methods:</p>
+
+<ul>
+<li><code>registerPersistentClass</code> allows to register a new persistent
+class with Hibernate,</li>
+<li><code>initStorage</code> is to tell Hibernate to create the tables
+in the database,</li>
+<li><code>registerPersistentObject</code> is to declare which JAC object is
+to be made persistent,</li>
+<li><code>delimitPersistentSession</code> is related to the way Hibernate
+handles persistence: data are written in the database using a transaction
+during a so-called Hibernate session. One may want to define a transaction
+every time a field is written, but it may be too costly and unecessary.
+Hence, Hibernate allows to group reads and writes to perform them transactionaly.
+You can thus benefit from all the usual properties of transactions:
+
+<ol>
+<li>changes (ie writes) can be rollbacked, if for some reasons you need it,</li>
+<li>other transactions don't see the changes before the transaction is committed,</li>
+<li>concurrent updates are locked by the database.</li>
+</ol>
+
+The <code>delimitPersistentSession</code> configuration method defines
+two pointcuts: the first one gives the join point where the Hibernate session
+will begin, and the second one the join point where it will end. Of course,
+several sessions can be defined.
+
+</li>
+</ul>
+
+     
+    <p>The typical usage scenario of this AC is illustrated below
+     (the example can also be found in the
+     <code>org.objectweb.jac.samples.hibernate.Account</code> application).</p>
+
+<pre class=code>
+/** Declare a class (Account) to be persistent. */
+registerPersistentClass Account;
+
+/**
+ * Create tables to hold data for persistent classes.
+ * Only once if you want to keep data between two program runs
+ * (Hibernate drops tables before creating them, even if they exist).
+ */
+initStorage ;
+
+/** Tell which JAC objects (account0 & account1) are to be made persistent. */
+registerPersistentObject account0;
+registerPersistentObject account1;
+
+/**
+ * Delimit the Hibernate persistent session.
+ * The session will begin after the 1st pointcut (parameters 2,3,4),
+ * and end before the 2nd one (parameters 5,6,7).
+ * -> here the session is around method Account.transfert()
+ */
+delimitPersistentSession s0 Account ".*" "transfert.*" Account ".*" "transfert.*";
+</pre>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides a set of wrappers that implement data consistency protocols
+    and that can be installed on objects to make them consistent.
+
+<p>All the wrappers of this package inherit from
+      <code>ConsistencyWrapper</code> that defines the needed
+      interface for the consistency protocols in general
+      (i.e. <code>whenRead</code>, <code>whenWrite</code>,
+      <code>whenCall</code>, <code>acceptRemoteRead</code>,
+      <code>acceptRemoteWrite</code>, <code>acceptRemoteCall</code>).
+
+<p>Consistency wrappers subclass this root definition and can
+      implement various consistency protocols such as:
+
+    <ul>
+      <li>strong-push consistency</li>
+      <li>strong-pull consistency</li>
+      <li>weak consistency</li>
+    </ul>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+addTrace ".*" "org.objectweb.jac.samples.solitaire.Configuration" "createChildren.* || printGame.*";

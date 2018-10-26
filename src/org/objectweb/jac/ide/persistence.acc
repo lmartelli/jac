@@ -1,0 +1,34 @@
+makePersistent "org.objectweb.jac.ide.* && !org.objectweb.jac.ide.diagrams.*" ALL;
+makePersistent org.objectweb.jac.aspects.gui.swing.SHEditorConfig "sheditorconfig#0";
+
+registerStatics org.objectweb.jac.ide.Projects "projects#0";
+registerStatics org.objectweb.jac.ide.TypeRepository "typerepository#0";
+registerStatics org.objectweb.jac.ide.Plurals "plurals#0";
+registerStatics org.objectweb.jac.ide.Preferences "preferences#0";
+registerStatics org.objectweb.jac.aspects.gui.swing.SHEditorConfig "sheditorconfig#0";
+
+configureStorage 
+	org.objectweb.jac.aspects.persistence.FSStorage {"~/umlaf/data"};
+
+
+configureStorage "prefs" 
+	org.objectweb.jac.aspects.persistence.FSStorage 
+    {"~/umlaf/preferences"};
+
+setStorage org.objectweb.jac.ide.Preferences "prefs";	
+setStorage org.objectweb.jac.aspects.gui.swing.SHEditorConfig "prefs";
+
+// Use this if you prefer all projects to loaded on start-up rather
+// than when you access them.
+/*
+class org.objectweb.jac.ide.Project, org.objectweb.jac.ide.Package, 
+      org.objectweb.jac.ide.Class, org.objectweb.jac.ide.Diagram,
+      org.objectweb.jac.ide.Application {
+   preloadAllFields;
+}
+*/
+
+// Tell emacs to use java-mode when editing
+// Local Variables:
+// mode: java
+// End:

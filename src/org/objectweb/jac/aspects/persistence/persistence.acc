@@ -1,0 +1,12 @@
+import org.objectweb.jac.aspects.persistence.*;
+
+// basic converters
+setValueConverter java.util.Date DateStringConverter;
+setValueConverter java.awt.Dimension DimensionStringConverter;
+setValueConverter java.awt.Point PointStringConverter;
+setValueConverter java.awt.Rectangle RectangleStringConverter;
+setValueConverter java.awt.Color ColorStringConverter;
+setValueConverter java.net.URL URLStringConverter;
+
+// default persistent classes
+makePersistent org.objectweb.jac.lib.Attachment ALL;

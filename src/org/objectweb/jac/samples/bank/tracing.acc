@@ -1,0 +1,3 @@
+
+addTrace ALL "org.objectweb.jac.samples.bank.AccountManager || org.objectweb.jac.samples.bank.Account || org.objectweb.jac.samples.bank.Bank"
+	"ALL && !get.*";

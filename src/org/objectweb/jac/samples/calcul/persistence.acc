@@ -1,0 +1,4 @@
+makePersistent "org.objectweb.jac.samples.calcul.*" ALL;
+registerStatics org.objectweb.jac.samples.calcul.Calcul "calcul#0";
+configureStorage "org.objectweb.jac.aspects.persistence.FSStorage" { "~/jac/data/calcul" };
+

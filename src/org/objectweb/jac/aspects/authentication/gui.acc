@@ -1,0 +1,21 @@
+// TrustingAuthentication
+class org.objectweb.jac.aspects.authentication.TrustingAuthentication {
+   setParameterNames "authenticate" {"username"};
+   setParameterNames "authenticateWithPassword" {"username", "password"};
+   setPasswordParameters "authenticateWithPassword" { "false", "true" };
+}
+class org.objectweb.jac.aspects.authentication.TrustingAuthenticator {
+   method askUsername {
+      setParameterNames { "Username" };
+      setDescription "Please, enter you username";
+   }
+}
+class org.objectweb.jac.aspects.authentication.PasswordAuthenticator {
+   method askUsernameAndPassword {
+      setParameterNames { "Username","Password" };
+      setPasswordParameters { "false", "true" };
+      setDescription "Please authenticate yourself";
+   }
+}
+
+askForParameters "org.objectweb.jac.aspects.authentication.*Authenticator";

@@ -1,0 +1,8 @@
+
+defineSessionHandlers org.objectweb.jac.core.Display "ALL && !setRequest.* && !setResponse.* && !getView.* && !getSession.* && !isTimedout.* && !registerView.* && !unregisterView.* && !getServletName.* && !getResponse.* && !getRequest.* && !getFactory.*" ALL;
+defineSessionHandlers org.objectweb.jac.aspects.gui.Actions ALL ALL;
+
+declareStoredAttributes {"GuiAC.SORT_COLUMN"};
+
+// This causes problems with logout
+//defineSessionHandlers "org.objectweb.jac.aspects.gui.web.JacLocalServlet$ActionThread" "handleAction.*" ALL;

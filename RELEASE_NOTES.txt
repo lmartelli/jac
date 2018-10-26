@@ -1,0 +1,49 @@
+JAC version 0.12 (april 20, 2004)
+=================================
+
+Welcome to JAC version 0.12. It adds many enhancements to the IDE and
+adds a few features to the web GUI. See the NEWS.html file in the
+distribution or http://jac.aopsys.com/NEWS.html#0.12 for more details.
+
+
+FILES
+=====
+
+All files are available from SourceForge at
+http://forge.objectweb.org/project/showfiles.php?group_id=73
+
+jac packages on objectweb's forge:
+
+  - jac: ready to use package with IDE, samples.
+
+  - jac-src: bare CVS sources export for hackers and
+    developpers. You'll need at least the patched jhotdraw
+    (see jhotdraw.jar) in order to compile everything. For your
+    convenience, all the jars required to compile are packaged in
+    jac-libs.
+
+  - jac-libs: all the jars of the libs you'll need to compile
+    from the sources. It contains the following files:
+
+        lib/bcel.jar
+        lib/gnu-regexp.jar
+        lib/cup.jar
+        lib/log4j-1.2.jar
+        lib/opt/
+        lib/opt/org.mortbay.jetty.jar
+        lib/opt/servlet-2.3.jar
+        lib/opt/jhotdraw.jar
+        lib/opt/postgresql.jar
+        lib/opt/xerces.jar
+        lib/opt/commons-beanutils.jar
+        lib/opt/commons-collections.jar
+        lib/opt/commons-logging.jar
+        lib/opt/itext.jar
+        lib/opt/jasper-reports.jar
+        lib/opt/commons-digester.jar
+
+  - jac-javadoc: the documentation of the APIin javadoc HTML format.
+
+  - jhotdraw.jar: if you already have the jars in jac-libs-0.10.tar.gz
+    and want to avoid a multi-MB download, you can just download the
+    patched JHotDraw librarie.>>>>>>> 1.5.2.1

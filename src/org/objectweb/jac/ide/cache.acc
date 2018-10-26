@@ -1,0 +1,8 @@
+cacheWithTimeStamps 
+	org.objectweb.jac.ide.CodeGeneration "create\\(Class\\|Package\\|Enum\\)Code.*" "timestamps#0";
+
+// We must ignore File parameters since they are only directory of
+// generation and we don't care if they changed or not
+setIgnoredParameters org.objectweb.jac.ide.CodeGeneration.createEnumCode { 1 };
+setIgnoredParameters org.objectweb.jac.ide.CodeGeneration.createClassCode { 2 };
+setIgnoredParameters org.objectweb.jac.ide.CodeGeneration.createPackageCode { 2 };

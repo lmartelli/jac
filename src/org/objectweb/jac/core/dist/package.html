@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides JAC system core classes for distribution and remote communication.
+
+    <p>A JAC distributed system is composed of several JAC containers
+      accessible with the <code>RemoteContainer</code> class. Each container
+      launches a <code>Distd</code> deamon that listen for remote calls and
+      instantiations.
+      
+    <p>To simply access a remote object located on a remote container, the
+      programmer can instantiate the <code>RemoteRef</code> class.
+      
+    <p>Note that this package is generic. It is specialized in
+      personalities for each
+      communication protocol that need to be supported by JAC (see
+      <code>org.objectweb.jac.core.dist</code> subpackages):
+      
+    <ul>
+      <li>RMI (default)</li>
+      <li>CORBA (not up-to-date anymore)</li>
+      <li>SOAP (should be available soon)</li>
+    </ul>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

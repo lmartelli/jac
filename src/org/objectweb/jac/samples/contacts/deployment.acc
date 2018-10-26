@@ -1,0 +1,3 @@
+
+replicate ".*s0" "contactrepository0" ".*[1-2]";
+

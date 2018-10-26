@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+    <p>Provides an aspect that allows to define persistent data for
+      a distributed transaction. This aspect is used jointly with
+      <code>org.objectweb.jac.aspects.distrans.DistransAC</code>.</p>
+
+    <p>The typical usage scenario of this AC is illustrated below
+     (the example can also be found in the
+     <code>org.objectweb.jac.samples.distransbank</code> application).</p>
+
+<pre class=code>
+/**
+ * Tell which technical API is to be selected for persistence.
+ */
+setStorageType org.objectweb.jac.aspects.distrans.persistence.SimpleDbPersistence;
+
+/**
+ * Define data source names (bank0 & bank1).
+ * These data sources represent persistent storage locations.
+ * Additional parameters are: the JDBC driver class name, the JDBC URL,
+ * the user login, the user password.
+ */
+defineDataSource bank0 org.postgresql.Driver "jdbc:postgresql://localhost/bank0" "Lionel Seinturier" "";
+defineDataSource bank1 org.postgresql.Driver "jdbc:postgresql://localhost/bank1" "Lionel Seinturier" "";
+
+/** If needed, create tables to hold data on these data sources. */
+initStorageIfNeeded org.objectweb.jac.samples.distransbank.Account bank0;
+initStorageIfNeeded org.objectweb.jac.samples.distransbank.Account bank1;
+
+/**
+ * Tell which JAC objects (account0 & account1)
+ * are to be made persistent.
+ * Give also the name of the data source where these objects are stored.
+ */
+registerPersistentRessource account0 bank0;
+registerPersistentRessource account1 bank1;
+</pre>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

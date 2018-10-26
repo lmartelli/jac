@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+<p>Provides an aspect that contructs some RTTI (Run-Time Type
+Informations) for the classes that need it on the top of a structural
+    metamodel (extending <code>java.lang.reflect</code>).</p>
+
+<p>The RTTI are a metamodel that is close to the
+<code>java.lang.reflect</code> metamodel but more precise (actually
+it wraps it and adds some extra informations).</p>
+
+<p>It allows the programmer to easily build some informations that
+can be useful for other aspects such as the Persistence or the Gui
+aspects. Typically, these aspects may want to access some more precise
+informations about which fields are read or written by a given method
+(so that they can decide to update the object storage or the object
+view).</p>
+
+<p>The access point to the runtime informations is
+<code>ClassRepository</code> that allows the client program to
+retrieve <code>ClassItem</code> instances, where the informations are
+stored.</p>
+
+<p>The RTTI configuration API is given by the <code>RttiConf</code>
+interface.</p>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

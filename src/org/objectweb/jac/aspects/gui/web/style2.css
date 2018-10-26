@@ -1,0 +1,36 @@
+.customized {
+  margin-top: 0%;
+  margin-left: 10%;
+  width: 80%;
+  height: 100%;
+  border: 1px solid black; 
+}
+/* CustomizedGUI panels */
+TD.menuBarL {
+  background-color: #bbeebb;
+}
+TD.menuBarR {
+  background-color: #bbbbee;
+}
+TD.menuBarT {
+  background-color: #bbbbee;
+}
+TD.menuBarB {
+  background-color: #bbbbee;
+}
+.toolBar {
+  background-color: #bbbbee;
+}
+BODY, P, TD, TH, DIV, SPAN {
+  font-family: arial,sans-serif;
+  font-size: 12px;
+}
+.mainView table {
+  background-color: #bbbbbb;
+}
+td.left {
+  background-color: #FFFFFF;
+}
+
+
+

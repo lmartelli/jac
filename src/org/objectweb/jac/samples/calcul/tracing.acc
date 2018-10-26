@@ -1,0 +1,4 @@
+//addTrace ".*" "org.objectweb.jac.samples.calcul.*" "ALL";
+
+//addTrace "calcul0" "org.objectweb.jac.samples.calcul.Calcul" "SETTER(value) || GETTER(value)";
+

@@ -1,0 +1,106 @@
+/*
+  JAC-Core version 0.1.6
+
+  Renaud Pawlak, pawlak@cnam.fr, CEDRIC Laboratory, Paris, France.
+  Lionel Seinturier, Lionel.Seinturier@lip6.fr, LIP6, Paris, France.
+
+  JAC-Core is free software. You can redistribute it and/or modify it
+  under the terms of the GNU Library General Public License as
+  published by the Free Software Foundation.
+  
+  JAC-Core is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  This work uses the Javassist system - Copyright (c) 1999-2000
+  Shigeru Chiba, University of Tsukuba, Japan.  All Rights Reserved.  */
+
+module jac {
+
+   module dist {
+   
+      module corba {
+      
+         typedef sequence<octet> seqOfBytes;
+         typedef sequence<string> seqOfStrings;
+         typedef sequence<seqOfBytes> seqOfSeqOfBytes;
+
+
+/** CORBARemoteContainerInterf is the interface of CORBA remote containers. */
+ 
+interface CORBARemoteContainerInterf {
+   
+   /**
+    * This method instantiates a className object.
+    * Clients call it to remotely instantiate an object.
+    * instantiates creates an object and returns its index.
+    *
+    * @param className  the class name to instantiate
+    * @param args       initialization arguments for the instantiation
+    * @param classes    remote classes to load
+    * @param fields     the object fields that are part of the state
+    * @param state      the state to copy
+    * @return           the index of the className object
+    */
+
+   long
+      instantiates(
+         in string className, in seqOfSeqOfBytes args, in seqOfBytes classes,
+	 in seqOfStrings fields, in seqOfSeqOfBytes state
+      );
+   
+
+   /**
+    * Copy a state into a base object.
+    *
+    * @param index   the base object index (see jac.core.JacObject)
+    * @param fields  the object fields that are part of the state
+    * @param state   the state to copy
+    */
+    
+   void copy( in long index, in seqOfStrings fields, in seqOfSeqOfBytes state );
+
+
+   /**
+    * Invoke a method on a base object.
+    * The base object is the remote counterpart of a local object
+    * that has been remotely instantiated by a remote container.
+    *
+    * @param index       the callee index (see jac.core.JacObject)
+    * @param methodName  the called method name
+    * @param methodArgs  the called method arguments
+    */
+   
+   seqOfBytes
+      invoke(
+         in long index, in string methodName, in seqOfSeqOfBytes methodArgs
+      );
+
+
+   /**
+    * Get a client stub wrapping chain for a given object.
+    *
+    * This method is called whenever a daemon receives as a parameter
+    * a reference to a remote object, to get the wrapping chain
+    * (for instance an authentication wrapper, a verbose wrapper, ...)
+    * needed to create a client stub for this remote reference.
+    *
+    * CORBARemoteContainer.getClientStubWrappingChain2 has a different
+    * return type than RemoteContainer.getClientStubWrappingChain
+    * (byte[] instead of Vector).
+    * Nevertheless, the latter is supposed to be the super method of the former.
+    * But because polymorphism on return type is not handled in Java,
+    * The method is called getClientStubWrappingChain2 instead of
+    * getClientStubWrappingChain.
+    *
+    * @param index  the base object index (see jac.core.JacObject)
+    * @return       the client stub wrapping chain as a serialized object
+    */
+   
+   seqOfBytes getClientStubWrappingChain2( in long index );
+
+};
+
+      };
+   };
+};

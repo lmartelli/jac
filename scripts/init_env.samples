@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# This is the default environment to work with JAC 
+
+JAC_ROOT=`pwd`
+export JAC_ROOT
+
+CLASSPATH=.:$JAC_ROOT/jac.jar:/usr/local/share/java/javassist.jar:/usr/lib/j2sdk1.3/jre/lib/rt.jar:/usr/share/java/postgresql.jar:/usr/local/share/java/gnu-regexp.jar:/usr/share/java/servlet-2.2.jar
+export CLASSPATH
+
+PATH=$JAC_ROOT/scripts:$PATH
+export PATH

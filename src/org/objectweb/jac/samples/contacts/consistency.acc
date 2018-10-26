@@ -1,0 +1,3 @@
+
+addStrongPushConsistency "calculrepository0" "MODIFIERS" ".*[1-2]";
+addStrongPushConsistency "calculrepository0/contacts/.*" "MODIFIERS" ".*[1-2]";

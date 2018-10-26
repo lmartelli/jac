@@ -1,0 +1,2 @@
+//addTrace ".*" "org.objectweb.jac.samples.photos.*" "ALL";
+//addNamedTrace "ALL" "org.objectweb.jac.samples.photos.Photo" "SETTERS";

@@ -1,0 +1,10 @@
+A, A:hover { 
+  border:none;
+}
+.header BUTTON {
+  vertical-align: middle;
+  top: 0px;
+}
+BUTTON { 
+  display: inline;
+}

@@ -1,0 +1,5 @@
+
+addTrustedUser "renaud" "renaud";
+addTrustedUser "laurent" "laurent";
+addRestrictedMethods org.objectweb.jac.samples.bank.Bank MODIFIERS ALL;
+addRestrictedMethods org.objectweb.jac.samples.bank.Account MODIFIERS ALL;

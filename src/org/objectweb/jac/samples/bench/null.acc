@@ -1,0 +1,2 @@
+wrap 3 bench0 org.objectweb.jac.samples.bench.Bench "m[1-6].*";
+

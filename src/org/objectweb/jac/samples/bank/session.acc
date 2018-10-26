@@ -1,0 +1,6 @@
+
+declareStoredAttributes {"AuthenticationAC.USER"};
+
+class org.objectweb.jac.samples.bank..* {
+	defineSessionHandlers ALL ALL;
+}

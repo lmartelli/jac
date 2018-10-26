@@ -1,0 +1,4 @@
+#!/bin/sh
+
+java jac.util.WrapLib
+

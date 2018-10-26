@@ -1,0 +1,12 @@
+replicate ".*s0" "calcul0" ".*[1-2]";
+
+
+//createStubsFor "calcul0" ".*0" ".*[1-2]";
+
+//deploy ".*s0" "calcul0" ".*s1";
+
+//createStubsFor "calcul0" ".*s2" ".*s0";
+
+// Local Variables:
+// mode: java
+// End:

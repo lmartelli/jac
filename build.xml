@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE project PUBLIC "-//ANT//DTD project//EN" "project.dtd">
+<project name="jac" default="jar" basedir=".">
+
+  <!-- ============================================================== -->
+  <!--  before compiling, you must set $JAVA_HOME to your java home   -->
+  <!--  directory, for example : export JAVA_HOME=/usr/lib/j2se/1.3/  -->
+  <!-- ============================================================== -->
+  
+  <!-- Allow any user specific values to override the defaults -->
+  <property file="${user.home}/build.properties" />
+  
+  <!-- Allow user defaults for this project -->
+  <property file="build.properties" />
+  
+  <!-- Set default values for the build -->
+  <property file="default.properties" />
+
+  <!-- Set compiler errors to be compatible with emacs -->
+  <property name="build.compiler.emacs" value="true"/>
+
+  <!-- Set compiler to generate debug infos -->
+  <property name="build.compiler.debug" value="on"/>
+
+  <!-- Set compiler to use UTF-8 encoding -->
+  <property name="build.compiler.encoding" value="UTF-8"/>
+
+  <!-- Set compiler to generate debug infos -->
+  <property name="build.compiler.nowarn" value="off"/>
+
+  <!-- jac root directory. New version of $JAC_ROOT -->
+  <property name="jac.root" value="./"/>
+
+  <!-- Build directory -->
+  <property name="build" value="${jac.root}/classes"/>
+
+  <!-- Source directory -->
+  <property name="src" value="${jac.root}/src"/>
+
+  <!-- Resource directory -->
+  <property name="resource" value="${jac.root}/src"/>
+
+  <!-- Doc directory -->
+  <property name="doc" value="${jac.root}/doc"/>
+
+  <!-- jac lib directory -->
+  <property name="jac.lib" value="${jac.root}/lib"/>
+
+  <property name="cvsroot" value="cvs.jac.forge.objectweb.org:/cvsroot/jac"/>
+  
+  <property name="jac.version" value="0.12"/>
+  <property name="jac.version_tag" value="v0_12"/>
+  
+  <condition property="isUnix">
+    <os family="unix"/>
+  </condition>
+  
+  <!-- classpath used by jac to compile -->
+  <path id="jac.classpath">
+    <pathelement path=".:${jac.root}/classes:${jac.root}/jac.jar:${src}"/>
+    <fileset dir="${jac.lib}">
+      <include name="*.jar"/>
+      <include name="opt/**/*.jar"/>
+      <include name="build/**/*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- classpath -->
+  <path id="project.classpath">
+    <pathelement path="${build}"/>
+    <path refid="jac.classpath"/>    
+  </path>
+
+  <!-- Set rmic compiler to be sun's -->
+  <property name="build.rmic" value="sun"/>
+
+  <!-- Create build directory -->
+  <target name="init" depends="initUnix">
+    <mkdir dir="${build}"/>
+    <mkdir dir="${jac.lib}"/>
+  </target>
+
+  <target name="initUnix" if="isUnix">
+    <exec executable="${jac.root}/scripts/find_libs" dir="${jac.root}"/>
+  </target>
+
+  <!-- Target util: compile all in src/org/objectweb/jac/util -->
+  <target name="util">
+    <javac srcdir="${src}" destdir="${build}"
+        includes="org/objectweb/jac/util/**/*.java,org/jutils/**/*.java"
+        encoding="${build.compiler.encoding}"
+	nowarn="${build.compiler.nowarn}" debug="${build.compiler.debug}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <target name="lib" depends="util">
+    <javac srcdir="${src}" destdir="${build}"
+        includes="org/objectweb/jac/lib/**/*.java" 
+        encoding="${build.compiler.encoding}"
+        nowarn="${build.compiler.nowarn}" debug="${build.compiler.debug}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <!-- Target cupTask: compile Cup.java (Ant task) if needed -->
+  <target name="cupTaskBuild">
+    <javac srcdir="${src}" destdir="${build}"
+        includes="org/objectweb/jac/util/ant/**/*.java" 
+        encoding="${build.compiler.encoding}"
+        nowarn="${build.compiler.nowarn}" debug="${build.compiler.debug}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <!-- Target parse: launch cup using Cup.java (cf above) and move files -->
+  <target name="cupTask" depends="cupTaskBuild">
+    <taskdef name="cup" classname="org.objectweb.jac.util.ant.Cup" 
+        classpath="${build}" classpathref="jac.classpath"/>
+  </target>
+
+  <!-- generated in the correct directory                                -->
+  <target name="AccParse" depends="cupTask">
+    <cup filename="${src}/org/objectweb/jac/core/parsers/acc/acc.cup"
+        parser="AccParser" symbols="AccSymbols"
+        options="-expect 6 -nonterms"/>
+  </target>
+
+  <target name="ToolParse" depends="cupTask">
+      <cup filename="${src}/org/objectweb/jac/core/parsers/acc/tool.cup"
+          parser="ToolParser" symbols="ToolSymbols"
+          options="-expect 8 -nonterms"/>
+  </target>
+
+  <target name="parsers" depends="ToolParse,AccParse"/>
+
+  <target name="rmi" depends="rmi-core">
+    <rmic base="${build}" classname="org.objectweb.jac.core.dist.rmi.RMIRemoteContainer">
+      <classpath refid="project.classpath"/>
+    </rmic>
+  </target>
+
+  <target name="rmi-core">
+    <javac srcdir="${src}" destdir="${build}"
+        includes="org/objectweb/jac/core/dist/rmi/**/*.java"
+        nowarn="${build.compiler.nowarn}"
+        encoding="${build.compiler.encoding}"
+        debug="${build.compiler.debug}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <!-- Target core: compile all in src/org/objectweb/jac/core, excluding corba and acc -->
+  <target name="core" depends="rmi,ToolParse,AccParse,util,lib">
+    <javac srcdir="${src}" destdir="${build}" 
+        includes="org/objectweb/jac/core/**/*.java,org/objectweb/jac/aspects/**/*.java,org/objectweb/jac/wrappers/**/*.java"
+        excludes="org/objectweb/jac/core/dist/corba/**/*.java,aspects/i18n/**/*.java" 
+        encoding="${build.compiler.encoding}"
+        deprecation="yes"
+        nowarn="${build.compiler.nowarn}"  debug="${build.compiler.debug}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <!-- Target samples: compile all in src/org/objectweb/jac/samples -->
+  <target name="samples" depends="core">
+    <javac srcdir="${src}" destdir="${build}"
+        includes="org/objectweb/jac/samples/**/*.java"
+        excludes="org/objectweb/jac/samples/solitaire/**/*.java"
+        encoding="${build.compiler.encoding}"
+        nowarn="${build.compiler.nowarn}" debug="${build.compiler.debug}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+  <!-- Target ide: compile all in src/org/objectweb/jac/ide -->
+  <target name="ide" depends="core">
+    <javac srcdir="${src}" destdir="${build}" includes="org/objectweb/jac/ide/**/*.java"
+        encoding="${build.compiler.encoding}"
+        debug="${build.compiler.debug}" nowarn="${build.compiler.nowarn}">
+      <classpath refid="project.classpath"/>
+    </javac>
+  </target>
+
+
+  <taskdef name="just4log"
+    classname="net.sf.just4log.integration.ant.Just4LogTask"
+    classpath="${jac.lib}/build/just4log.jar:${jac.lib}/bcel.jar:${jac.lib}/opt/commons-logging.jar"/>
+
+  <!-- Target compile: compile jac project -->
+  <target name="compile" depends="init,util,AccParse,ToolParse,rmi,core,samples,ide">
+  </target>
+
+  <target name="optimize" depends="compile">
+    <just4log destDir="${build}" enters="false" exits="false">
+    	<src path="${build}"/>
+    </just4log>
+  </target>
+
+  <patternset id="resources">
+    <include name="**/*.gif"/>
+    <include name="**/*.png"/>
+    <include name="**/*.acc"/>
+    <include name="**/*.xml"/>
+    <include name="**/*.jac"/>
+    <include name="**/*.css"/>
+    <include name="**/*.js"/>
+    <exclude name="**/.xvpics/*"/>
+  </patternset>
+
+
+  <target name="jac.jar" depends="core,optimize">
+    <jar jarfile="${jac.root}/jac.jar" basedir="${build}"
+      includes="org/objectweb/jac/core/**,org/objectweb/jac/util/**,org/objectweb/jac/lib/**,org/objectweb/jac/wrappers/**,org/objectweb/jac/aspects/**">
+      <manifest>
+	<attribute name="Main-Class" value="org.objectweb.jac.core.Jac"/>
+	<attribute name="Class-Path" value="lib/log4j-1.2.jar lib/aopalliance.jar lib/bcel.jar lib/cup.jar lib/gnu-regexp.jar lib/opt/org.mortbay.jetty.jar lib/opt/postgresql.jar lib/opt/servlet-2.3.jar lib/opt/xerces.jar"/>
+      </manifest>
+      <fileset dir="${resource}" casesensitive="no">
+	<or>
+	  <filename name="org/objectweb/jac/util/mime.types"/>
+	  <and>
+	    <or>
+	      <filename name="org/objectweb/jac/core/**"/>
+	      <filename name="org/objectweb/jac/util/**"/>
+	      <filename name="org/objectweb/jac/lib/**"/>
+	      <filename name="org/objectweb/jac/wrappers/**"/>
+	      <filename name="org/objectweb/jac/aspects/**"/>
+            </or>
+	    <or>
+              <filename name="**/*.gif"/>
+              <filename name="**/*.png"/>
+              <filename name="**/*.acc"/>
+              <filename name="**/*.xml"/>
+              <filename name="**/*.jac"/>
+              <filename name="**/*.css"/>
+              <filename name="**/*.js"/>
+            </or>
+            <not><filename name="**/.xvpics/*"/></not>
+          </and>
+        </or>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="umlaf.jar" depends="ide,optimize">
+    <jar jarfile="${jac.root}/umlaf.jar" basedir="${build}"
+        includes="org/objectweb/jac/ide/**">
+        <fileset dir="${resource}" casesensitive="no">
+          <and>
+            <filename name="org/objectweb/jac/ide/**"/>
+            <or>
+              <filename name="**/*.gif"/>
+              <filename name="**/*.png"/>
+              <filename name="**/*.acc"/>
+              <filename name="**/*.xml"/>
+              <filename name="**/*.jac"/>
+              <filename name="**/*.css"/>
+              <filename name="**/*.js"/>
+            </or>
+            <not><filename name="**/.xvpics/*"/></not>
+          </and>
+        </fileset>
+    </jar>
+  </target>
+
+  <target name="samples.jar" depends="samples,optimize">
+    <jar jarfile="${jac.root}/samples.jar" basedir="${build}"
+        includes="org/objectweb/jac/samples/**">
+        <fileset dir="${resource}" casesensitive="no">
+          <and>
+            <filename name="org/objectweb/jac/samples/**"/>
+            <or>
+              <filename name="**/*.gif"/>
+              <filename name="**/*.png"/>
+              <filename name="**/*.acc"/>
+              <filename name="**/*.xml"/>
+              <filename name="**/*.jac"/>
+              <filename name="**/*.css"/>
+              <filename name="**/*.js"/>
+            </or>
+            <not><filename name="**/.xvpics/*"/></not>
+          </and>
+        </fileset>
+    </jar>
+  </target>
+
+  <target name="jar" depends="init,jac.jar,umlaf.jar,samples.jar">
+  </target>
+
+  <patternset id="readme">
+    <include name="README.txt"/>
+    <include name="NEWS.html"/>
+    <include name="LICENSE.txt"/>
+  </patternset>
+
+  <!-- source files -->
+  <patternset id="src">
+    <include name="src/**"/>
+    <include name="build.xml"/>
+    <include name="libs"/>
+    <include name="*.dtd"/>
+    <include name="scripts/**"/>
+    <exclude name="**/CVS/**"/>
+  </patternset>
+
+  <patternset id="scripts">
+    <include name="scripts/jac"/>
+    <include name="scripts/find_libs"/>
+    <include name="scripts/go"/>
+    <include name="scripts/speedlog"/>
+  </patternset>
+
+  <patternset id="libs">
+    <include name="lib/**/*.jar"/>
+  </patternset>
+
+  <patternset id="runtime">
+    <include name="jac.jar"/>
+    <include name="jac.policy"/>
+    <include name="jac.prop"/>
+  </patternset>
+
+  <patternset id="javadoc">
+    <include name="doc/javadoc/**"/>
+  </patternset>
+
+  <patternset id="samples">
+    <include name="samples.jar"/>
+    <include name="samples/*.lnk"/>
+    <include name="samples/*.txt"/>
+    <include name="samples/*.bat"/>
+  </patternset>
+
+  <patternset id="samples_exe">
+    <include name="samples/*-web"/>
+    <include name="samples/*-swing"/>
+    <include name="samples/run_sample"/>
+  </patternset>
+
+  <patternset id="umlaf">
+    <include name="umlaf.jar"/>
+    <include name="UML_AF.bat"/>
+    <include name="UML_AF.lnk"/>
+  </patternset>
+
+  <patternset id="umlaf_exe">
+    <include name="UMLAF"/>
+  </patternset>
+
+  <patternset id="icons">
+    <include name="icons/**"/>
+  </patternset>
+
+  <!-- full release which contains the jars, the sources and the docs -->
+  <target name="full_release" depends="jar,javadoc">
+    <tar destfile="jac_bin-${jac.version}.tar.gz" longfile="gnu"
+      compression="gzip">
+      <tarfileset dir="${jac.root}" prefix="jac-${jac.version}">
+        <patternset refid="readme"/>
+        <patternset refid="runtime"/>
+        <patternset refid="libs"/>
+        <patternset refid="umlaf"/>
+        <patternset refid="samples"/>
+        <patternset refid="icons"/>
+        <patternset refid="src"/>
+        <patternset refid="javadoc"/>
+        <exclude  name="**~"/>
+      </tarfileset>
+      <tarfileset dir="${jac.root}" prefix="jac-${jac.version}" mode="755">
+        <patternset refid="scripts"/>
+        <patternset refid="umlaf_exe"/>
+        <patternset refid="samples_exe"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <!-- release which contains the runtime jars (no umlaf, no samples) -->
+  <target name="runtime_release" depends="jar">
+    <tar destfile="jac_runtime-${jac.version}.tar.gz" longfile="gnu"
+      compression="gzip">
+      <tarfileset dir="${jac.root}" prefix="jac-${jac-version}">
+        <patternset refid="readme"/>
+        <patternset refid="runtime"/>
+        <patternset refid="libs"/>
+        <exclude  name="**~"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <!-- Doc release (javadoc API) -->
+  <target name="javadoc_release" depends="javadoc">
+    <tar destfile="jac_javadoc-${jac.version}.tar.gz" longfile="gnu"
+      compression="gzip">
+      <tarfileset dir="${jac.root}" prefix="jac-${jac.version}">
+        <patternset refid="javadoc"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <target name="javadoc">
+    <javadoc sourcepath="${src}" destdir="${doc}/javadoc" encoding="UTF-8"
+     linksource="false" use="true"
+     version="true" author="true" windowtitle="JAC ${jac.version}" >
+      <classpath refid="project.classpath"/>
+      <package name="org.objectweb.jac.*"/>
+      <excludepackage name="org.objectweb.jac.util.ant"/>
+      <excludepackage name="org.objectweb.jac.aspects.distribution.thinclient"/>
+      <excludepackage name="org.objectweb.jac.core.dist.corba"/>
+      <excludepackage name="org.objectweb.jac.aspects.speedo"/>
+      <excludepackage name="org.objectweb.jac.samples.*"/>
+      <link href="http://java.sun.com/j2se/1.3/docs/api/"/>
+      <!--<link href="http://www.cacas.org/java/gnu/regexp/api"/>-->
+      <link href="http://jetty.mortbay.org/javadoc/"/>
+      <link href="http://jakarta.apache.org/bcel/apidocs/"/>
+      <link href="http://aopalliance.sourceforge.net/doc/"/>
+    </javadoc>
+  </target>
+
+  <target name="src_release">
+    <!-- Export cvs in tmp directory -->
+    <cvs command="export" cvsRoot="${cvsroot}" cvsRsh="ssh" dest="tmp"
+      package="jac" tag="${jac.version_tag}"/>
+    <tar destfile="jac_src-${jac.version}.tar.gz" longfile="gnu"
+      compression="gzip">
+      <tarfileset dir="tmp/jac" prefix="jac-${jac.version}">
+	<filename name="**"/>
+      </tarfileset>
+    </tar>
+    <delete dir="tmp"/>
+  </target>
+
+  <target name="tag">
+    <cvs command="tag -F ${jac.version_tag}"/>
+  </target>
+
+  <!-- Target clean: clean all files in the build directory -->
+  <target name="clean">
+    <delete failonerror="false" quiet="true" includeEmptyDirs="true">
+      <fileset dir="${build}"/>
+      <fileset dir="${jac.root}">
+	<include name="jac.jar"/>
+	<include name="samples.jar"/>
+	<include name="umlaf.jar"/>
+	<include name="bigjac.jar"/>
+      </fileset>
+      <fileset dir="${src}/org/objectweb/jac/core/parsers/acc">
+	<include name="AccParser.java"/>
+	<include name="AccSymbols.java"/>
+	<include name="ToolParser.java"/>
+	<include name="ToolSymbols.java"/>
+      </fileset>
+    </delete>
+  </target>
+  
+  <!-- Big jar: generate one big jar file containing the JAC code and all the librairies -->
+  <property name="unjar.tmp" value="${jac.root}/unjar-tmp"/>
+  <target name="bigjar" depends="jar">
+    <delete file="bigjac.jar"/>
+    <unjar dest="${unjar.tmp}">
+      <fileset dir="${jac.root}">
+	<include name="*.jar"/>
+      </fileset>
+      <fileset dir="${jac.lib}">
+	<include name="*.jar"/>
+	<include name="opt/*.jar"/>
+      </fileset>
+    </unjar>
+    <jar destfile="bigjac.jar" basedir="${unjar.tmp}" manifest="${jac.root}/jac.mf"/>
+    <delete dir="${unjar.tmp}"/>
+  </target>
+
+</project>

@@ -1,0 +1,167 @@
+// basic resources
+defineResource ICON edit_icon "org/objectweb/jac/aspects/gui/resources/base/small_edit.gif";
+defineResource ICON view_icon "org/objectweb/jac/aspects/gui/resources/base/small_view.gif";
+defineResource ICON new_icon "org/objectweb/jac/aspects/gui/resources/base/small_new.gif";
+defineResource ICON remove_icon "org/objectweb/jac/aspects/gui/resources/base/small_remove.gif";
+defineResource ICON code_icon "org/objectweb/jac/aspects/gui/resources/base/small_code.gif";
+defineResource ICON info_icon "org/objectweb/jac/aspects/gui/resources/base/small_information.gif";
+defineResource ICON group_icon "org/objectweb/jac/aspects/gui/resources/base/group.gif";
+defineResource ICON next_icon "org/objectweb/jac/aspects/gui/resources/base/next.gif";
+defineResource ICON last_icon "org/objectweb/jac/aspects/gui/resources/base/last.png";
+defineResource ICON previous_icon "org/objectweb/jac/aspects/gui/resources/base/previous.gif";
+defineResource ICON first_icon "org/objectweb/jac/aspects/gui/resources/base/first.png";
+defineResource ICON up_icon "org/objectweb/jac/aspects/gui/resources/base/up_arrow.gif";
+defineResource ICON down_icon "org/objectweb/jac/aspects/gui/resources/base/down_arrow.gif";
+defineResource ICON users_icon "org/objectweb/jac/aspects/gui/resources/base/users.gif";
+defineResource ICON exit_icon "org/objectweb/jac/aspects/gui/resources/base/exit.gif";
+defineResource ICON stop_icon "org/objectweb/jac/aspects/gui/resources/base/stop.gif";
+defineResource ICON reload_icon "org/objectweb/jac/aspects/gui/resources/base/tb_refresh.gif";
+defineResource ICON import_icon "org/objectweb/jac/aspects/gui/resources/base/small_import.gif";
+defineResource ICON export_icon "org/objectweb/jac/aspects/gui/resources/base/small_export.gif";
+defineResource ICON jar_icon "org/objectweb/jac/aspects/gui/resources/base/small_jar.gif";
+defineResource ICON doc_icon "org/objectweb/jac/aspects/gui/resources/base/small_doc.png";
+defineResource ICON open_icon "org/objectweb/jac/aspects/gui/resources/base/small_open.gif";
+defineResource ICON prefs_icon "org/objectweb/jac/aspects/gui/resources/base/small_prefs.gif";
+defineResource ICON history_icon "org/objectweb/jac/aspects/gui/resources/base/small_history.gif";
+
+defineResource ICON blank_icon "org/objectweb/jac/aspects/gui/resources/blank.gif";
+
+defineResource ICON small_down_icon "org/objectweb/jac/aspects/gui/resources/base/down.gif";
+defineResource ICON small_down_icon_selected "org/objectweb/jac/aspects/gui/resources/base/down_selected.gif";
+defineResource ICON small_up_icon_selected "org/objectweb/jac/aspects/gui/resources/base/up_selected.gif";
+
+//captureSystemOut
+
+import org.objectweb.jac.aspects.gui.*;
+
+// Monnaies
+setDefaultCurrency "euro" 2;
+declareCurrency "franc" 2 6.55957;
+
+class CollectionWrapper {
+    attribute collection {
+        setTableView;
+        setAutoCreate;
+        setViewOnSelection;
+    }
+}
+
+// default Date format
+setDateFormat "dd/MM/yyyy";
+
+class WrappableMap {
+    setMethodsOrder { put };
+    setMethodDynamicParameterChoice "put" 
+    	{WrappableMap,WrappableMap}
+    	{getCategories,getLevels}
+    	{true,false};
+    setParameterNames put {"trace","level"};
+}
+
+class java.util.Map$Entry {
+    setTableMembersOrder { key, value };
+}
+
+class java.util.Map, java.util.Hashtable, java.util.HashMap {
+    setAttributesOrder { entries };
+    attribute entries {
+        setTableView;
+    }
+}
+
+askForParameters org.objectweb.jac.aspects.gui.Actions;
+class Actions {
+    setIcon logout exit_icon;
+    setIcon exit exit_icon;
+    method setTrace {
+        setMnemonics "tr";
+        setIcon history_icon;
+        setMethodDynamicParameterChoice 
+            {Actions.getLoggerNames,null} 
+            {true,false};
+        setParameterNames {"Category","level"};
+    }
+    method reloadAspect {
+        setIcon reload_icon;
+        setParameterNames {"Aspect's name"};
+    }
+    method openView {
+        setIcon "view_icon";
+        setDynamicIcon Actions.getOpenViewIcon;
+    }
+}
+
+class org.objectweb.jac.lib.Attachment {
+    setToString "%name%";
+    setIcon doc_icon;
+    attribute data {
+        setBorder;
+    }
+}
+
+setDynamicClassChoice mimeType Actions.getMimeTypes;
+
+class java.lang.Throwable {
+   //   setToString 
+    setAttributesOrder {message,stack};
+    setMethodsOrder {printStackTrace()};
+    setDisplayLabel cause false;
+    setDisplayLabel detailMessage false;
+
+    setEmbeddedView cause;
+    setNumRowsPerPage stack 0;
+}
+
+class ClassChooser {
+    method setChoice {
+        setParameterNames { "Class to instantiate" };
+        setMethodDynamicParameterChoice {ClassChooser} {getChoices} {false};
+    }
+}
+
+class dateHour {
+    setDefaultEditorWidth 25ex;
+}
+
+class javaCode,accCode {
+    //    setDefaultEditorWidth 600 80;
+}
+
+class email {
+    setDefaultEditorWidth 30ex;
+}
+
+class percentage {
+    setDefaultEditorWidth 8ex;
+}
+
+class text {
+    setDefaultEditorWidth 70ex;
+    setDefaultEditorHeight 20em;
+}
+
+class java.io.File {
+    setDefaultEditorWidth 40ex;
+    setToString "%name%";
+    setIcon doc_icon;
+    setDynamicIcon Actions.getFileIcon;
+    setTreeAttributesOrder { directories };
+    setAttributesOrder { path, length, lastModified, files };
+    attribute files {
+        setTableView;
+    }
+    setTableMembersOrder {name,length,lastModified, isHidden, isDirectory};
+}
+
+class org.apache.log4j.Logger {
+    setToString "%getName()%";
+    setDynamicClassChoice Actions.getLoggers;
+}
+
+class org.apache.log4j.Level {
+    setDynamicClassChoice Actions.getLogLevels;
+}
+
+// Local Variables:
+// mode: java
+// End:

@@ -1,0 +1,21 @@
+/** Declare a class to be persistent. */
+registerPersistentClass org.objectweb.jac.samples.hibernate.Account;
+
+/**
+ * Create tables to hold data for persistent classes.
+ * Only once if you want to keep data between two program runs
+ * (Hibernate drop tables, before creating them, even if they exist yet).
+ */
+//initStorage ;
+
+/** Tell which JAC objects are to be made persistent. */
+registerPersistentObject account#0;
+registerPersistentObject account#1;
+
+/**
+ * Delimit the Hibernate persistent session.
+ * The session will begin after the 1st pointcut (parameters 2,3,4),
+ * and end before the 2nd one (parameters 5,6,7).
+ * -> here the session is around method Account.transfert()
+ */
+delimitPersistentSession s0 org.objectweb.jac.samples.hibernate.Account ".*" "transfert.*" org.objectweb.jac.samples.hibernate.Account ".*" "transfert.*";

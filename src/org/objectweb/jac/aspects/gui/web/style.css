@@ -1,0 +1,651 @@
+BODY, P, TD, TH, DIV, SPAN {
+  font-family: arial,sans-serif;
+}
+BODY { 
+  background-color: #eee;
+  color: black;
+  padding: 0;
+  margin: 0;
+}
+A { 
+  color: blue;
+  border: 1px solid transparent;
+}
+A:hover { 
+  /*background-color: #FF8;*/
+  border: 1px dotted blue;
+/*  color: #000;*/
+}
+OBJECT { 
+  vertical-align: middle;
+}
+DIV { 
+  background-color: inherit;
+}
+CAPTION {
+  font-weight: bold;
+  margin-bottom: 1ex;
+  margin-top: 1ex;
+}
+TH {
+  background-color: #80a0ff; 
+}
+input.method { 
+  border-color: #73de69;
+  font-weight: bold;
+  margin: 0;
+}
+.innerButton { 
+  background-color: #73de69;
+}
+DIV.innerButton A { 
+  padding: 3px;
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+DIV.actions { 
+  background-color: #d0d0ff;
+  padding: 1.5ex;
+  margin: 0.6ex;
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+}
+.actions BUTTON { 
+  padding: 0.5ex 0.7ex;
+}
+DIV.InputParameters { 
+  padding: 1.5ex;
+}
+.collection { 
+  background-color: #d0d0ff;
+  padding: 0.5em;
+/*  margin: 2px; */
+  border-style: none;
+  border-width: 1px;  
+}
+FORM.update {
+/*  background-color: transparent; */
+  padding: 0em;
+}
+TABLE, TABLE.collection { 
+  margin-left: auto;
+  margin-right: auto;
+}
+.methods { 
+  margin: 3px;
+  padding: 5px;
+  border: 1px solid black;
+  text-align: center;
+}
+.method { 
+  display: inline;
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+/*  line-height: 150%; */
+  background-color: #CCD9D9;  
+  border: 2px outset #CCD9D9;
+  padding: 0 0.3ex;
+  margin-left: 0.5ex;
+  white-space: nowrap;
+}
+TABLE.method { 
+  line-height: 100%;
+  vertical-align: middle;
+}
+.method A { 
+  color: black;
+  text-decoration: none;
+  margin-right: 2px;
+}
+.method A:hover { 
+  color: white;  
+  background-color: transparent;
+}
+DIV.collection { 
+  border: 1px solid black;
+}
+.innerButton A:hover { 
+  background-color: #93fa89;
+}
+.collName, .paramName { 
+  font-weight: bold;
+  padding: 2px;
+}
+.attrName { 
+  font-weight: bold;
+  padding: 2px;
+  background-color: #80a0ff;
+}
+.attrValue { 
+  background-color: #b0c0ff;
+}
+
+.Object { 
+  padding: 0.5ex;
+}
+
+/* lists and tables */
+
+.table, .list { 
+}
+
+/* table */
+
+TBODY.defaultObject { 
+  margin-top: 2ex;
+}
+TBODY.additionalRow { 
+  margin-top: 2ex;
+}
+TBODY.additionalRow TR, TR.addedObject { 
+  border-top: 2px solid black;
+}
+TABLE.table {
+  border-collapse: collapse;
+  border-style: none;
+  margin-left:auto;
+  margin-right:auto;
+  width: 100%;
+}
+TABLE.table TR.selected, TABLE.list TR.selected { 
+  background-color: orange;
+}
+TABLE.table TR { 
+  background-color: #b0c0ff;
+}
+THEAD { 
+  border-bottom: 2px solid black;
+}
+.addedObject TD, .defaultObject TD, .filters TD { 
+  background-color: #c0ffb0;
+}
+TR.vspace { 
+  height: 1ex;
+}
+TD.index { 
+  text-align: right;
+}
+TABLE.table TD, TABLE.table TH {
+  border: 1px solid black;
+  padding: 0.3ex;
+  vertical-align: middle;
+}
+TABLE.table TH { 
+  empty-cells: hide;
+}
+TABLE.table TH.empty, TABLE.table TD.empty { 
+  border: none;
+  background-color: transparent;
+}
+A.button { 
+  border: 2px outset #ccc;
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0.4ex 1em 0.4ex 1em;
+  margin: 0.4ex;
+}
+
+TD UL { 
+  margin: 0;
+  padding-left: 2ex;
+  padding-top: 0;
+}
+
+TD LI { 
+  margin: 0;
+}
+
+/* list */
+
+TABLE.list {
+  border-collapse: collapse;
+  border-style: none;
+  margin-left: auto;
+  margin-right: auto;
+  /*width: 100%;*/
+}
+TABLE.list TD {
+  border: 1px solid transparent;
+  padding: 0.2em;
+}
+TABLE.list TR {
+  background-color: #b0c0ff;
+}
+
+TABLE.attributes {
+  border-style: none;
+  margin-left: auto;
+  margin-right: auto; 
+}
+TD.attributes {
+  padding: 3px;
+  border-style: solid;
+  border-width: 1px;
+}
+TR.even TD {
+  background-color: #b0c0ff;
+}
+TR.odd TD {
+  background-color: #c0d0ff;
+}
+TBODY.highlight TR:hover, TBODY.highlight TR.odd:hover TD, TBODY.highlight TR.even:hover TD { 
+  background-color: #e0f0ff;
+}
+TBODY.highlight TR.selected:hover { 
+  background-color:  #ffe040;
+}
+
+TR.even TD.innerButton, TR.odd TD.innerButton {
+  padding: 0px;
+  border-style: solid;
+  border-width: 1px;
+  background-color: #73de69;
+}
+TD.innerButton {
+  width: 6ex;
+}
+TD.method { 
+  padding:0;
+}
+.footer { 
+  margin-top: 10px;
+  border-top: medium double black;
+  padding-top: 0.2em;
+  font-size: 10px;
+  font-style: italic;
+  z-index:10;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 15em;
+}
+input, select { 
+  vertical-align: middle;
+  padding: 0px 1px;
+  margin: 0.4ex;
+}
+input { 
+/*  border: 1px solid #333; */
+}
+TD input, TD select { 
+  margin: 1px;
+}
+textarea { 
+  vertical-align: top;
+  width: 99%;
+}
+input[type="text"] { 
+  width: 100%;
+}
+input.editor { 
+  width: 10em;
+}
+FORM.update input, FORM.update select { 
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+input.button, button { 
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0em 0.5em 0em 0.5em;
+}
+
+TABLE.table BUTTON { 
+  margin: 0;
+  padding: 0;
+}
+
+.methods BUTTON { 
+  padding: 0.5ex 0.7ex;
+}
+
+.selected { 
+  font-weight: bold;
+}
+/* Tabs */
+.Tabbed .body { 
+  background-color: white;  
+  border-color: black;
+  border-width: 1px;
+  border-style: solid solid solid solid;
+  padding: 0.5ex;
+} 
+.Tabbed .header, .Tabbed .ieheader { 
+/*  border-collapse: collapse; */
+  margin: 0;
+  padding: 0em 0.5em;
+}
+.Tabbed .ieheader {
+  background-color: transparent;
+}
+
+.header BUTTON/*, BUTTON.method*/ {
+  background-color: #d0d0ff;  
+  display: inline;
+  vertical-align: middle;
+  line-height: 100%;
+  padding: 0.2ex 0.5ex;
+  padding-bottom: 0.3ex;
+  margin: 0;
+  border-style: none;
+  position: relative;
+}
+.method BUTTON { 
+  background-color: transparent;
+  text-decoration: none;
+}
+BUTTON { 
+  padding: 0;
+}
+BUTTON.method:hover {
+  color: white;
+}
+.Tabbed .header .selected, .Tabbed .header A, .header BUTTON, .Tabbed
+  .ieheader .td, .Tabbed .ieheader .td-selected { 
+  margin-left: 0.5ex;
+  margin-right: 0.5ex;
+  padding-left: 0.5ex;
+  padding-right: 0.5ex;
+  border: 1px solid black;
+}
+.Tabbed .header A:hover, .Tabbed .header BUTTON:hover { 
+  background-color: #e8e8ff;
+}
+.Tabbed .header BUTTON.selected:hover { 
+  background-color: white;
+}
+.Tabbed .header .selected { 
+  background: white;
+  position: relative;
+  border-bottom: white 1px solid;
+  color: #000066;
+}
+.Tabbed .ieheader .td-selected, .Tabbed .ieheader .selected {
+  background-color: white;
+}
+
+.Tabbed .header A { 
+  background-color: grey;
+}
+/* Images */
+IMG { 
+  vertical-align: middle;
+}
+/* Icon */
+A .icon { 
+  border-style: none;
+}
+.icon { 
+  margin-left: 0.5ex;
+  margin-right: 0.5ex;
+  vertical-align: middle;
+}
+.first { 
+  margin-left: 0;
+}
+.last { 
+  margin-right: 0;
+}
+BUTTON.method .icon { 
+  vertical-align: -30%;
+}
+.fixed { 
+  font-family: monospace;
+}
+
+/* Tree */
+
+.leafNode { 
+  margin-left: 3ex;
+}
+.nodes { 
+  padding-left: 3ex;
+}
+
+table {
+  margin: 0;
+  padding: 0;
+  border-collapse: collapse;
+  border-style: none;
+}
+
+
+td.left {
+  border-right: 2px solid black;
+}
+
+td {
+  vertical-align: top;
+  margin: 0;
+}
+
+/* CustomizedGUI */
+
+.customized {
+/*  position: fixed; */
+/*  height: 100%; */
+  width: 100%;
+  border: 1px solid black; 
+}
+
+TD.menuBarL {
+  background-color: #bbbbee;
+  margin: 0;
+  padding: 1px;
+  height: 100%;
+  width: 20px;
+  border-right: 2px solid black;
+}
+
+TD.menuBarR {
+  background-color: #bbbbee;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  height: 100%;
+  bottom: 0;
+  border-left: 2px solid black;
+}
+
+TD.menuBarT {
+  background-color: #bbbbee;
+  margin: 0;
+  padding: 1px 0 1px 0;
+  left: 0;
+  width: 100%;
+  border-bottom: 2px solid black;
+}
+
+TD.menuBarB {
+  background-color: #bbbbee;
+  margin: 0;
+  padding:  1px 0 1px 0;
+  left: 0;
+  width: 100%;
+  border-top: 2px solid black;
+}
+
+.menuV { 
+  margin-left: 1em;
+  margin-right: 0;
+}
+
+.menuH div, .menuBarT div, .menuBarB div {
+  display: inline;
+}
+
+.toolBar {
+  background-color: #bbbbee;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  width: 10em; /* == . menuBar { width } */
+  bottom: 0;
+  border-right: 2px solid black;
+}
+
+.statusBar {
+  background-color: #bbbbee;
+  margin: 0;
+  padding: O;
+  left: O;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.mainView {
+  margin: 0;
+  padding: 0;
+  top: 0;
+/*  height: 100%; */
+  left: 0;
+  right: 0;
+  background-color: #eee;
+/*  overflow: scroll; */
+}
+
+.mainView { 
+  background-color: #eee;
+}
+
+.mainView .navTool {
+  text-align: center;
+}
+
+.mainView .navTool .prev, .mainView .navTool .back, .mainView .navTool .next  {
+  display: inline;
+}
+
+.mainView .navTool .remove {
+  display: inline;
+}
+
+.toolBar DIV { 
+  border: 2px outset #bbbbee;
+  padding: 0.3em;  
+  float: left;
+  margin: 0.5ex;
+  height: 1.5em;
+}
+
+.toolBar A { 
+/*  border: 2px outset #bbbbee;
+  padding: 0.3em; */
+/*   line-height: 2.3em; */
+}
+
+.toolBar .icon { 
+  padding: 0;
+  margin: 0;
+}
+
+.Dialog {
+  margin-top: 3ex;
+  margin-left: 1ex;
+  margin-right: 1ex;
+  padding: 0;
+  border: 1px solid black; 
+}
+
+.description {
+  background-color: #bbbbee;
+  padding: 1ex;
+  border-bottom: 1px solid black; 
+}
+  
+DIV.menuBarL {
+  width: 15em;
+}
+
+TD.menuBarL {
+  width: 15%;
+}
+
+.label {
+  display: inline;
+}
+
+.outlinedLabel .label {
+  background-color: #bbeebb;
+  text-align: center;
+  border: 1px solid black;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 0px;
+  margin-right: 0px;
+  display: block;
+}
+
+.titleLabel .label {
+  background-color: transparent;
+  display: inline;
+  border: none;
+  margin: 0px;
+  text-align: left;
+}
+
+.titleLabel {
+  background-color: #bbbbee;
+  text-align: center;
+  border: 1px solid black;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 0px;
+  margin-right: 0px;
+  line-height: 30pt;
+  font-weight: bolder;
+}
+.BORDER_LINE,
+.BORDER_ETCHED,
+.BORDER_RAISED,
+.BORDER_LOWERED {
+  margin-bottom: 0.3ex;
+  margin: 1em 0 2px 0;
+  border: 1px solid black; 
+  padding: 0 3px 3px 3px;
+}
+.BORDER_LINE > .label,
+.BORDER_ETCHED > .label,
+.BORDER_RAISED > .label,
+.BORDER_LOWERED > .label { 
+  top: -0.6em;
+  padding: 0.3ex;
+  position: relative;
+}
+.Object .BORDER_LINE > .label { 
+  background-color: #eee;
+}
+.Tabbed .body .BORDER_LINE > .label { 
+  background-color: white;
+}
+.BORDER_LINE .methods, 
+.BORDER_ETCHED .methods,
+.BORDER_RAISED .methods,
+.BORDER_LOWERED .methods { 
+/*  margin-top: -1em; */
+  border-style: none;
+}
+.BORDER_ETCHED,
+.BORDER_RAISED,
+.BORDER_LOWERED {
+  border: 1px solid black; 
+  padding: 3px
+}
+
+#buttons { 
+  position: fixed;
+  bottom: 0;
+}
+
+.matrix TD, .matrix TH { 
+  border: 1px solid black;
+}
+
+.matrix TD { 
+  background-color: white;
+}

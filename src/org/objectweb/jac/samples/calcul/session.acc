@@ -1,0 +1,2 @@
+defineSessionHandlers org.objectweb.jac.samples.calcul.Calcul ".*" ".*";
+declareStoredAttributes {"Authentication.user"};

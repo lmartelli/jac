@@ -1,0 +1,75 @@
+#!/bin/sh
+# find java libraries (.jar) and create a symlink to them in lib/
+
+# Determine JAC_ROOT
+progname=$0
+case $progname in 
+   /*)  ;;
+   ./*) progname=$(pwd)/$(echo $progname | cut -c 3-) ;;
+   *) progname=$(pwd)/$progname ;;
+esac
+progname=$(dirname $progname)
+JAC_ROOT=$(dirname $progname)
+
+LIBS=`grep -v '^#' $JAC_ROOT/libs`
+
+# where to look for jars
+DIRS="/usr/local/share/java /usr/share/java"
+
+# find_jars [<jarfile> ...]
+#   Locate jar files and create symbolic links pointing to them
+#   <jarfile> name of jar file without the trailing ".jar", 
+#   with the directory to create the symlink, relative to $JAC_ROOT/lib
+find_jars () {
+    old_pwd=$(pwd)
+
+    local jars
+    jars="$@"
+    for j in $jars; do
+	dest_dir=$JAC_ROOT/lib/`dirname $j`
+	j=`basename $j`
+	if [ ! -d $dest_dir ]; then
+	    mkdir -p $dest_dir
+	fi
+	cd $dest_dir
+
+	test -r "$j.jar" && continue
+
+	# first try the exact name
+	find_jar "$j.jar" "$j.jar"
+	test -r "$j.jar" && continue
+	# then try versioned names
+	find_jar "$j-*.jar" "$j.jar"
+	test -r "$j.jar" && continue
+	echo "Could not locate jar FILE: $j"
+    done
+    cd $old_pwd
+}
+
+# find_jar <jarfile> <linkname>
+#   Locate a jar file and create symbolic link pointing to it
+#   <jarfile> name of jar file
+#   <linkname> name of the link to create
+find_jar () {
+    local j=$1
+    local link=$2
+    if [ ! -e $link ]; then
+	unset found
+        for d in $DIRS; do
+	    unset jar
+	    jar=`ls $d/$j 2> /dev/null | sort -n | head -n 1`
+	    if [ -n "$jar" -a -r  "$jar" ]; then
+		ln -s $jar $link
+		echo "found "`pwd`"/$link -> $jar"
+		break
+	    fi
+	done
+    fi
+}
+
+if [ -z "$JAC_ROOT" ]; then
+    echo "JAC_ROOT is not defined"
+    exit 1
+fi
+
+find_jars $LIBS

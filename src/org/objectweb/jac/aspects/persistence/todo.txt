@@ -1,0 +1,12 @@
+Gestion des collections : c'est pas terrible; on wrappe le
+get<collection>s et ensuite il faut aussi wrapper le add et le del qui
+typiquement font : get<collection>s.add() et get<collection>s.del()
+
+Il faudrait juste wrapper le Vector.
+
+Dans makePersistent() il faudrait initialiser aussi loadedVectors et
+loadedReferences. 
+
+delFromVector() enlève toutes les instances d'un objet d'une
+collection. Par exemple, si vec = [ a , a, b, c ], vec.delFromVector(a)
+-> [ b , c ]

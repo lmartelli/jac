@@ -1,0 +1,80 @@
+#!/bin/sh
+# Launch a sample
+# usage: run_sample <jac_file> <gui_type> <gui_name>
+#
+# JAC_ROOT is set to directory above the directory containing this script
+
+if [ $# -lt 3 ]; then
+    echo "usage: run_sample <jac_file> <gui_type> <gui_name> [jac_options...]";
+    echo "	<jac_file> path to .jac file (relative to $JAC_ROOT)"
+    echo "	<gui_type> type of gui: swing or web"
+    echo "	<gui_name> name of the gui window launch"
+    exit 1;
+fi
+
+case $2 in 
+    swing) gui="-G";;
+    web) gui="-W";;
+    *) echo "gui-type must be \"swing\" or \"web\""; exit 1;;
+esac
+
+progname=$0
+
+case $progname in 
+   /*)  ;;
+   ./*) progname=$(pwd)/$(echo $progname | cut -c 3-) ;;
+   *) progname=$(pwd)/$progname ;;
+esac
+
+progname=$(dirname $progname)
+
+JAC_ROOT=$(dirname $progname)
+
+#echo "JAC_ROOT=$JAC_ROOT"
+
+if [ -z "$JAVA" ]; then
+    JAVA=java
+    if [ -n "$JAVA_HOME" ]; then
+	JAVA=$JAVA_HOME/bin/java
+    fi
+fi
+
+guiname=$3
+jacfile=$1
+
+shift 3
+
+JAR="$JAC_ROOT/jac.jar"
+JVM_OPTS="$JVM_OPTS  -Djava.security.policy=$JAC_ROOT/jac.policy -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel"
+
+CLASSPATH="."
+if [ -d "$JAC_ROOT/src" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/src"
+fi
+if [ -d "$JAC_ROOT/classes" ]; then
+    CLASSPATH="$CLASSPATH:$JAC_ROOT/classes"
+fi
+
+if  [ -r "$JAR" ]; then
+    CLASSPATH="$CLASSPATH:$JAR"
+fi
+for jar in `find $JAC_ROOT/lib -name "*.jar" | sort`; do
+    CLASSPATH="$CLASSPATH:$jar"
+done
+
+JAC_OPTS=""
+if [ -r "$JAC_ROOT/samples.jar" ]; then
+    JAC_OPTS="-C $JAC_ROOT/samples.jar"
+fi
+
+#echo "CLASSPATH=$CLASSPATH"
+#echo "JVM_OPTS=$JVM_OPTS"
+
+JAC_OPTS="$JAC_OPTS -R $JAC_ROOT -w $gui $guiname $* $jacfile"
+
+if [ -r $JAR ]; then
+    exec $JAVA $JVM_OPTS -jar $JAR $JAC_OPTS
+else
+    exec $JAVA $JVM_OPTS -classpath $CLASSPATH org.objectweb.jac.core.Jac $JAC_OPTS
+fi
+

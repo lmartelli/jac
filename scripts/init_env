@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# Usage: init_env [JAC_ROOT]
+
+# This is the default environment to work with JAC 
+
+if [ -z "$JAVA_HOME" ]; then
+    echo "Environment variable JAVA_HOME is not set"
+else
+if [ $# = 1 ]; then
+    JAC_ROOT=$1
+else
+    JAC_ROOT=`pwd`
+fi
+
+#echo "JAC_ROOT = $JAC_ROOT"
+export JAC_ROOT
+
+# Set the JRE classpath. You may have to change it to fit your actual
+# JRE path. It is only needed to compile with jikes or other java
+# compilers which don't know where to find rt.jar by default
+
+#CLASSPATH=$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/tools.jar
+
+# This classpath defines all the external library that JAC uses.
+# It assumes that each used jar file is placed to the lib directory of
+# the distribution (this is done by default except if you install the  
+# release with no libs). You may change any of this if needed.
+JAC_LIB=$JAC_ROOT/lib
+
+cd $JAC_ROOT/scripts
+
+LIBS==`grep -v '^#' $JAC_ROOT/libs`
+
+cd -
+
+CLASSPATH=.:$JAC_ROOT/classes:$JAC_ROOT/jac.jar:$JAC_ROOT/src
+
+for jar in $LIBS; do
+    CLASSPATH=$CLASSPATH:$JAC_LIB/$jar.jar
+done
+
+export CLASSPATH
+
+PATH=$JAC_ROOT/scripts:$PATH
+export PATH
+
+fi

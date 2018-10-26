@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides an aspect that handles sessions within JAC programs.
+
+<p>In JAC, sessions are simply handled by saving a defined set of
+attributes of the collaborations and make them corespond to a session
+id.
+
+<p>The current session id is defined as a context attribute called
+"Session.sid". This attribute must be set by the client before
+initiating a collaboration if he wants its collaborations
+characteritics to be memorized and restored for each new interaction.
+
+<p>The session aspect is useful since that if it is not woven, the
+user will have to input several times the same informations again and
+again such as its password to access a restricted method.
+
+<p>A typical configuration for the session aspect is to save the
+      authentication contextual information saved by the
+      authentication aspect (see package
+      <code>org.objectweb.jac.aspects.authentication</code>) so that the user will
+      not have to authenticate on each access to the objects:
+
+<pre class=code>
+declareStoredAttributes {"Authentication.user"}
+</pre>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+-->
+
+<h2>Related Documentation</h2>
+
+For overviews, sources, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="../../../../j2h.nojdk">HTML sources</a>
+  <li><a href="../../../../">HTML overview</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>
