@@ -1,0 +1,49 @@
+I. Technical problems and issues
+
+1. 
+
+Error: 500
+Location: /org/objectweb/jac/servlet/JacServlet
+Internal Servlet Error:
+
+java.lang.NoClassDefFoundError: org/objectweb/jac/core/dist/RemoteContainer
+	at JacServlet.doGet(JacServlet.java:71)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:740)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:853)
+	at org.apache.tomcat.facade.ServletHandler.doService(Unknown Source)
+	at org.apache.tomcat.core.Handler.invoke(Unknown Source)
+	at org.apache.tomcat.core.Handler.service(Unknown Source)
+	at org.apache.tomcat.facade.ServletHandler.service(Unknown Source)
+	at org.apache.tomcat.core.ContextManager.internalService(Unknown Source)
+	at org.apache.tomcat.core.ContextManager.service(Unknown Source)
+	at org.apache.tomcat.modules.server.Http10Interceptor.processConnection(Unknown Source)
+	at org.apache.tomcat.util.net.TcpWorkerThread.runIt(Unknown Source)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(Unknown Source)
+	at java.lang.Thread.run(Thread.java:484)
+
+
+=> check the classpath of tomcat
+
+
+2. java.lang.ClassNotFoundException: jac.core.dist.rmi.RMIRemoteContainer_Stub
+
+=> rebuild all classes or rmiregistry's CLASSPATH is wrong
+
+
+3. 
+
+=> virer "127.0.0.1 <nom_machine>" dans /etc/hosts
+
+
+4. NoClassDefFoundError: org/objectweb/jac/core/dist/DistdClassLoader
+   at jac.core.dist.Distd.<init>
+
+=> .java.policy ou rmiregistry
+
+II. Licence
+
+1. The GPL is known as "infectious". Do I have to distribute my own
+   programs and aspects under the GPL ?
+
+=> No. These are note considered derivative works. This is explicitly
+stated at the beginning of the LICENCE file.

@@ -1,0 +1,638 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Tutorial</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="prev" href="tut_ide.html">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+
+  <body>
+
+    <h1><a name="programming"></a>Advanced Programming</h1>
+    
+    <p>The goal of this section is to introduce advanced features
+      (especially clusturing features and how to program new aspects)
+      of JAC and show how applications can be programmed without
+      UMLAF. Indeed, even if UMLAF is useful, JAC applications
+      (written in pure Java) can be programmed with other
+      IDEs. Moreover, UML is still beta and unstable. If you really
+      use JAC, you'd rather use a stable IDE.</p>
+
+    <p>We have chosen very simple examples. More interesting ones can
+      be found in the JAC tarball (<code>src/org/objectweb/jac/samples</code>). You
+      can also see the UMLAF source (<code>src/org/objectweb/jac/ide</code>) for a
+      complex example.</p>
+
+    <p>For more general overview on the JAC's programming philosophy,
+      see the <a href="programmer_guide_tot.html" target="Prog Guide">JAC
+      Programmer's Guide</a>.</p>
+
+    <h2><a name="prog_base"></a>Programming the base application</h2>
+
+    <p>The base application is the functionnal or core-business
+      application. In other words, it is the simpliest expression of
+      your functionnal needs. Here, we would like to have a class that
+      performs some simple calculi. Wherever you want (in a directory
+      <code>APP_DIR</code>), create a file called
+      <code>Calcul.java</code>. The code is the following:</p>
+
+<pre class=code>
+// Calcul.java file
+// A simple component definition that can perform 
+// add and sub operations...
+public class Calcul {
+   protected float value = 0;
+   public void add(float toadd) {
+      value+=toadd;
+   }
+   public void sub(float tosub) {
+      value-=tosub;
+   }
+   // IMPORTANT: in JAC, each instance-field better have
+   // a getter of the form getFieldName.
+   public float getValue() {
+      return value;
+   }
+   // IMPORTANT: in JAC, each instance-field better have 
+   // a setter of the form setFieldName.
+   public void setValue(float value) {
+      this.value=value;
+   }
+
+   // Program entry-point
+   public static void main( String[] args ) {
+      // Actually launch the calcul program by creating an 
+      // instance of the Calcul class that waits to be used...
+      Calcul myCalcul = new Calcul();
+   }
+}
+</pre>
+
+    <p>Note that the need of the getters and setters comes from the
+      aspects that will use them later-on.</p>
+
+    <p>In JAC, any application must have a program descriptor that we put
+      in a *.jac file. This file declares the new application and the
+      supported aspects to the JAC system.</p>
+
+<pre class=code>
+// calcul.jac file
+applicationName: calcul
+launchingClass: Calcul
+</pre>
+
+    <p>The launching class is a regular class that contains a static
+      <code>main</code> method. For simplicity, we put the <code
+	class=method>main()</code> in the <code class=class>Calcul</code> class.
+
+    <p>Compile these files like you are used to doing in Java
+      (<code>*.jac</code> and <code>*.acc</code> files do not need to
+      be compiled).</p>
+
+<pre class=code>
+javac Calcul.java
+</pre>
+
+    <p>When compiled, run the JAC server and indicate to launch the calcul
+      sample.</p>
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+## LINUX ##
+java -jar org.objectweb.jac.jar -R . 
+     -C &lt;APP_DIR&gt; 
+     APP_DIR/calcul.jac
+
+## WINDOWS ##
+java -jar org.objectweb.jac.jar -R .
+     -C &lt;APP_DIR&gt; 
+     APP_DIR\calcul.jac
+</pre>
+
+    <p>Since no aspects are configured for the application, All you
+    will see is this:</p>
+
+<pre class=output>
+--- Launching Application calcul ---
+JAC system shutdown: notifying all ACs...
+Bye bye.
+</pre>
+
+    <p>This is not very usefull, but is it prooves that JAC is working
+      on your system.</p>
+
+    <h2><a name="conf_rtti_gui"></a>Configuring the RTTI and GUI aspects</h2>
+
+     <p><a href="javadoc/org/objectweb/jac/core/rtti/RttiConf.html"
+	target=Javadoc>org.objectweb.jac.core.rtti.RttiConf</a> is a core aspect that
+      allows the programmer to define extra type information that
+      will be used by other aspects at runtime.</p>
+
+    <p>For instance, it can be very useful for other aspects to be
+      aware that a given method modify the object's state. Since JAC
+      can detect that automatically, we do not need to add specific
+      configurations for our sample application. All you need to do is
+      create an empty file <code class=file>rtti.acc</code>.</p>
+
+    <p>The <a href="javadoc/org/objectweb/jac/aspects/gui/GuiConf.html"
+	target=Javadoc>GUI aspect</a> (extends <a
+      href="javadoc/org/objectweb/jac/aspects/gui/ClassAppearenceGuiConf.html"
+      target="JAVADOC">ClassAppearenceGuiConf</a>, <a
+      href="javadoc/org/objectweb/jac/aspects/gui/FieldAppearenceGuiConf.html"
+      target="JAVADOC">FieldAppearenceGuiConf</a>, <a
+      href="javadoc/org/objectweb/jac/aspects/gui/MethodAppearenceGuiConf.html"
+      target="JAVADOC">MethodAppearenceGuiConf</a>, and <a
+      href="javadoc/org/objectweb/jac/aspects/gui/BehaviorGuiConf.html"
+      target="JAVADOC">BehaviorGuiConf</a>) allows the programmer to define
+      some presentation information, and to parameterize the
+      interactions between the application objects and the user. For
+      instance, by configuring a personal GUI aspect, a programmer
+      can define the names of the method parameters as they will be
+      displayed by a GUI.</p>
+    
+<p>For our example, create a <code>gui.acc</code> file:</p>
+
+<pre class=code>
+// configuration for the Calcul class
+class Calcul {
+   // Show a button for each of these methods
+   setMethodsOrder {add,sub};
+   // Set the names of the parameters of add and sub methods
+   setParameterNames add { "Value to add" };
+   setParameterNames sub { "Value to sub" };
+   // Set a default value for add
+   setDefaultValues add { 1 };
+}
+
+// Says that all the methods of class Calcul can 
+// be called interactively
+askForParameters "Calcul";
+
+// The GUI main window configuration
+window default {
+   registerCustomized;
+   setTitle "Calculator";
+
+   // A real simple GUI
+   setSubPanesGeometry 1 VERTICAL { false };
+   // Display the object named "calcul0" in the 
+   // panel "0" of the window.
+   setPaneContent 0 Object { "calcul0" };
+}
+</pre>
+       
+    <p>Once you have created your ACC files, you must declare them to the
+      application by modifying the <code>calcul.jac</code> file as
+      following:</p>
+
+<pre class=code>
+// calcul.jac file
+applicationName: calcul
+launchingClass: Calcul
+aspects: \
+  rtti rtti.acc true \
+  gui gui.acc true
+</pre>
+ 
+    <p>You can then launch the application with the following command:</p>
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+## LINUX ##
+java -jar org.objectweb.jac.jar -R . 
+     -C &lt;APP_DIR&gt; 
+     -G default
+     APP_DIR/calcul.jac
+
+## WINDOWS ##
+java -jar org.objectweb.jac.jar -R .
+     -C &lt;APP_DIR&gt; 
+     -G default
+     APP_DIR\calcul.jac
+</pre>
+
+    <p>And you should see a window like this:</p>
+
+    <div class=screenshot>
+      <img src="images/calcul1.png" alt="The calcul sample main window">
+    </div>
+    
+    <p>As you can see, the calcul instance is being
+    introspected by the GUI aspect of JAC that offers a default view
+    on it. It shows the fields of the <code>calcul0</code> object
+    (here <code class=field>value</code>, and the methods that can be
+    called on the object (the two buttons <code
+    class=method>add</code> and <code>sub</code>)). The pencil-like
+    button <img src="images/small_edit.gif" alt="Edit icon"> on the right of
+    the field means that you can edit the field value by calling the
+    field's setter. Click on it to change the value of the <code
+    class=field>value</code> field. The following box pops-up. Type
+    a new value:</p>
+
+    <div class=screenshot>
+      <img src="images/calcul2.png" alt="Edit box for value">
+    </div>
+
+    <p>When you click on OK, you can notice that the view is
+      automatically refreshed. Indeed, thanks to bytecode analysis,
+      JAC knows that <code>setValue</code> is a setter for the
+      <code>value</code> field. Thus the MVC (Model-View-Controller)
+      underlying framework of the GUI aspect refreshes the view.</p>
+
+    <p>Let us now try the <code>add</code> button:</p>
+    <div class=screenshot>
+      <img src="images/calcul3.png" alt="Edit box for value">
+    </div>
+
+    <p>You will first notice that the default value to be added is
+    "1". This is because of the <code
+    class=method>setDefaultValues</code> instruction in the <code
+    class=file>gui.acc</code>. When you click on OK, once again the
+    view of the main window is automatically refreshed because JAC
+    detected that the <code class=method>add</code> method modifies
+      the field <code class=field>value</code>.</p>
+
+    <p>All this configuration works also with the WEB. If you launch JAC
+      with the WEB-GUI server:</p>
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+## LINUX ##
+java -jar org.objectweb.jac.jar -R . 
+     -C &lt;APP_DIR&gt; 
+     -W default
+     APP_DIR/calcul.jac
+
+## WINDOWS ##
+java -jar org.objectweb.jac.jar -R .
+     -C &lt;APP_DIR&gt; 
+     -W default
+     APP_DIR\calcul.jac
+</pre>
+
+    <p>You will see the following output on the console:</p>
+
+<pre class=output>
+--- Launching Application calcul ---
+WARNING: Resource rtti.acc not found
+13:34:52.863 EVENT  Starting Jetty/4.1
+13:34:53.832 EVENT  Started HttpContext[/jac]
+13:34:53.841 EVENT  Started HttpContext[/org/objectweb/jac/resources]
+13:34:54.295 EVENT  Started SocketListener on 0.0.0.0:8088
+13:34:54.306 EVENT  Started org.mortbay.http.HttpServer@100bac2
+WARNING: Web server already started
+</pre>
+
+    <p>Then, with you favorite web browser, go to <code class=url>http://localhost:8088/org/objectweb/jac/default</code>:</p>
+
+    <div class=screenshot>
+      <img src="images/calcul4.png" alt="The calcul's view from a web browser">
+    </div>
+
+
+    <h2><a name="conf_other"></a>Configuring other aspects</h2>
+
+    <p>Other aspects are available and can be configured using the
+      same process that the one depicted for the RTTI and GUI
+      aspects.</p>
+
+<p>Usable aspects aliases are declared in the <code>org.objectweb.jac.prop</code>
+      file. These aliases are used in <code>*.jac</code> application
+      descriptors. By default, available aliases are (click on the
+      link to see the corresponding aspect configuration):</p>
+<ul>
+	<li>rtti <a href="javadoc/org/objectweb/jac/core/rtti/RttiConf.html" target="Javadoc">org.objectweb.jac.core.rtti.RttiAC</a></li>
+	<li>binding <a href="javadoc/org/objectweb/jac/aspects/naming/BindingAC.html" target="Javadoc">org.objectweb.jac.aspects.naming.BindingAC</a></li>
+	<li>tracing <a href="javadoc/org/objectweb/jac/aspects/tracing/TracingConf.html" target="Javadoc">org.objectweb.jac.aspects.tracing.TracingAC</a></li>
+	<li>debugging <a href="javadoc/org/objectweb/jac/aspects/tracing/DebuggingAC.html" target="Javadoc">org.objectweb.jac.aspects.tracing.DebuggingAC</a></li>
+	<li>gui <a href="javadoc/org/objectweb/jac/aspects/gui/GuiConf.html" target="Javadoc">org.objectweb.jac.aspects.gui.GuiAC</a></li>
+	<li>load-balancing <a href="javadoc/org/objectweb/jac/aspects/distribution/LoadBalancingConf.html" target="Javadoc">org.objectweb.jac.aspects.distribution.LoadBalancingAC</a></li>
+	<li>deployment <a href="javadoc/org/objectweb/jac/aspects/distribution/DeploymentConf.html" target="Javadoc">org.objectweb.jac.aspects.distribution.DeploymentAC</a></li>
+	<li>remote-access <a href="javadoc/org/objectweb/jac/aspects/distribution/RemoteAccessConf.html" target="Javadoc">org.objectweb.jac.aspects.distribution.RemoteAccessAC</a></li>
+	<li>consistency <a href="javadoc/org/objectweb/jac/aspects/distribution/ConsistencyConf.html" target="Javadoc">org.objectweb.jac.aspects.distribution.ConsistencyAC</a></li>
+	<li>broadcasting <a href="javadoc/org/objectweb/jac/aspects/distribution/BroadcastingConf.html" target="Javadoc">org.objectweb.jac.aspects.distribution.BroadcastingAC</a></li>
+	<li>persistence <a href="javadoc/org/objectweb/jac/aspects/persistence/PersistenceConf.html" target="Javadoc">org.objectweb.jac.aspects.persistence.PersistenceAC</a></li>
+	<li>authentication <a href="javadoc/org/objectweb/jac/aspects/authentication/AuthenticationConf.html" target="Javadoc">org.objectweb.jac.aspects.authentication.AuthenticationAC</a></li>
+	<li>session <a href="javadoc/org/objectweb/jac/aspects/session/SessionConf.html" target="Javadoc">org.objectweb.jac.aspects.session.SessionAC</a></li>
+	<li>synchronization <a href="javadoc/org/objectweb/jac/aspects/synchronization/SynchronizationConf.html" target="Javadoc">org.objectweb.jac.aspects.synchronization.SynchronizationAC</a></li>
+	<li>transaction <a href="javadoc/org/objectweb/jac/aspects/transaction/TransactionConf.html" target="Javadoc">org.objectweb.jac.aspects.transaction.TransactionAC</a></li>
+	<li>integrity <a href="javadoc/org/objectweb/jac/aspects/integrity/IntegrityConf.html" target="Javadoc">integrity org.objectweb.jac.aspects.integrity.IntegrityAC</a></li>
+	<li>confirmation <a href="javadoc/org/objectweb/jac/aspects/confirmation/ConfirmationConf.html" target="Javadoc">org.objectweb.jac.aspects.confirmation.ConfirmationAC</a></li>
+	<li>user <a href="javadoc/org/objectweb/jac/aspects/user/UserConf.html" target="Javadoc">org.objectweb.jac.aspects.user.UserAC</a></li>
+	<li>cache <a href="javadoc/org/objectweb/jac/aspects/cache/CacheConf.html" target="Javadoc">org.objectweb.jac.aspects.cache.CacheAC</a></li>
+</ul>
+
+    <p>These aspects implementations can be found in the
+    <code>org.objectweb.jac.aspects</code> package (see the <a href="javadoc/index.html"
+    target="API">JAC API documentation</a> for further details).</p>
+
+
+    <h2><a name="prog_dist"></a>Using AOP to program distributed applications</h2>
+
+    <p>JAC provides full support for distributed AOP (then, it is easy
+	to implement clusturing features by configuring
+	aspects). Basically, the <a
+	href="javadoc/org/objectweb/jac/aspects/distribution/DeploymentConf.html"
+	target=Javadoc>deployment aspect</a> provides a set of
+	deployment rules that the programmer can use to deploy its
+	application over a set of containers.</p>
+
+    <p>If we take again the calcul example, you may intend to launch JAC
+      in a distributed mode where a set of clients will access to one
+      unique instance of calcul (here, <code>calcul0</code>) located
+      on a server host.</p>
+
+    <p>To allow this, first modify the application descriptor to tell that
+      the application knows a set of two other containers, and
+      activate the deployment aspect.</p>
+
+<pre class=code>
+// calcul.jac file
+applicationName: calcul
+launchingClass: Run
+aspects: \
+    rtti rtti.acc true \
+    gui gui.acc true \
+    deployment deployment.acc true \
+    consistency consistency.acc true
+topology: //localhost/s1 //localhost/s2
+</pre>
+
+    <p>This means that, including the master host (called
+      <code>//localhost/s0</code>), your JAC system will contain three
+      local sites <code>s0, s1, s2</code>. If you want to replicate
+      <code>calcul0</code> on <code>s1</code> and <code>s2</code>,
+      just write an ACC file, <code>deployment.acc</code>:</p>
+
+<pre class=code>
+// replicate the calcul0 object from s0 to s1
+replicate ".*s0" "calcul0" ".*s[12]";
+</pre>
+
+    <p>The deployment aspect only instanciates objects on remote
+    servers. In order to introduce some consistency between those
+    replicas we must configure the consistency aspect in the
+    <code class=file>consistency.acc</code> file:</p>
+
+<pre class=code>
+addStrongPushConsistency "calcul0" "MODIFIERS" ".*[0-2]";
+</pre>
+
+    <p>Thus, any call to a modifier method on a site will also be
+      called on the other ones.</p>
+
+    <p>Then, start 2 JAC slave servers in distributed mode.    
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+java -Djava.security.policy=&lt;jac_dir&gt;/org.objectweb.jac.policy -jar org.objectweb.jac.jar -R . -D s1
+java -Djava.security.policy=&lt;jac_dir&gt;/org.objectweb.jac.policy -jar org.objectweb.jac.jar -R . -D s2
+</pre>
+ 
+    <p>Then start the application in a JAC master server in a
+      distributed mode.</p>
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+## LINUX ##
+java -jar org.objectweb.jac.jar -R . 
+     -Djava.security.policy=&lt;jac_dir&gt;/org.objectweb.jac.policy
+     -C &lt;APP_DIR&gt;
+     -G default
+     -D 
+     APP_DIR/calcul.jac
+
+## WINDOWS ##
+java -jar org.objectweb.jac.jar -R .
+     -Djava.security.policy=&lt;jac_dir&gt;/org.objectweb.jac.policy
+     -C &lt;APP_DIR&gt;
+     -G default
+     -D
+     APP_DIR\calcul.jac
+</pre>
+
+    <p>This will show a GUI for the master server. You can also launch
+      a GUI for the slave servers.</p>
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+java -jar org.objectweb.jac.jar -R . -G calcul@s1:default
+java -jar org.objectweb.jac.jar -R . -G calcul@s2:default
+</pre>
+
+    <p>Now you can check that if you call any modifier method (<code
+	class=method>add</code>,<code class=method>sub</code> or <code
+	class=method>setValue</code>) on any of the servers, the change of
+      the <code>value</code> attribute will spread to the other
+      servers.</p>
+
+    <p>Note that you can change a configuration file and reload it at
+      runtime for any server. For instance, to reload the consistency
+      aspect (in order to change its configuration at runtime).</p>
+
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+java -jar org.objectweb.jac.jar -R . -a calcul consistency s0
+</pre>
+
+    <p>Once you have fully understood how it works, you are ready to
+      play with more advanced features. For instance, you can use the
+      load-balancing aspect (see <a
+      href="javadoc/org/objectweb/jac/aspects/distribution/LoadBalancingConf.html"
+      target="Javadoc">org.objectweb.jac.distribution.aspects.LoadBalancingConf</a>)
+      to increase the load capability of your applications. For
+      instance you can program a load-balanced calculator only by
+      slightly changing the distribution aspects, and by adding a new
+      ACC (<code>load-balancing.acc</code>):</p>
+
+<pre class=code>
+// deployment.acc file
+// replicate calcul0 on s1 and s2
+replicate ".*s0" "calcul0" ".*s[12]";
+</pre>
+
+<pre class=code>
+// consistency.acc
+addStrongPushConsistency "calcul0" "MODIFIERS" ".*[1-2]";
+</pre>
+ 
+<pre class=code>
+// load-balancing.acc
+//                        object    methods  frontend  backends
+addRoundTripLoadBalancer "calcul0"   "ALL"    ".*s0"   ".*[1-2]";
+</pre>
+
+    <p>With these three configurations, the calcul instance of
+      <code>s0</code> is a load-balancer that performs a rountrip
+      load-balancing algorithm to dispatch on <code>s1</code> and
+      <code>s2</code>.
+
+    <h2><a name="prog_aspects"></a>Programming new aspects</h2>
+
+    <p>With the JAC software, we furnish a bunch of useful aspects
+      that can be advantagely used to program distributed
+      applications. However, since JAC is a young project and that we
+      cannot think in advance of all the possible uses you can make
+      out of such a software, most of the aspects we provide may lack
+      useful configuration method or may not work fine for specific
+      usages.</p>
+
+    <p>Next, we show the code for an aspect that checks that the
+      <code>add</code> or <code>sub</code> method invocations on the
+      <code>calcul0</code> instance so that it raises an error if the
+      added value is greater than 100 or if the substracted value is
+      greater than 50.</p>
+
+<pre class=code>
+// CheckingAC.java
+import org.objectweb.jac.core.*;
+
+public class CheckingAC extends AspectComponent {
+
+  // at instantiation-time, you should define the pointcuts
+  public CheckingAC() {
+
+    // this pointcut will make the add method of calcul0 
+    // wrapped by an instance of checkingWrapper (an 
+    // inner wrapper of this aspect), and more specifically 
+    // by the wrapping-method "checkAdd"
+    pointcut("calcul0","Calcul","add(float):void",
+             CheckingWrapper.class.getName(),"checkAdd",
+             null,false);
+    // same principles for sub...
+    pointcut("calcul0","Calcul","sub(float):void",
+             CheckingWrapper.class.getName(),"checkSub",
+             null,false);
+  }
+
+  // then define the wrappers (if you think that these
+  // wrappers can be used by other aspect, you can make 
+  // them public within a standalone class-file)
+  public class CheckingWrapper extends Wrapper {
+    public CheckingWrapper(AspectComponent ac) {
+       super(ac);
+    }
+    // see the programmer's guide for details on the 
+    // wrapping methods semantics...
+    public Object checkAdd(Interaction interaction) throws Error {
+      if (((Integer)interaction.args[0]).intValue()>100) {
+        throw new Error("bound excedeed when calling add!");
+      }
+      return proceed(interaction);
+    }
+    public Object checkSub(Interaction interaction) throws Error {
+      if (((Integer)interaction.args[0]).intValue()>50) {
+        throw new Error("bound excedeed when calling sub!");
+      }
+      return proceed(interaction);
+    }
+  }
+}
+</pre>
+
+    <p>Note that this aspect is very specific since it can only be applied
+      to the <code>calcul0</code> instance. To program generic
+      aspects, you may refer to the <a
+      href="programmer_guide.html" target="Prog Guide">JAC programmer's
+      Guide</a>. Configuration methods are a first step towards
+      genericity since they allow the system to dynamically create the
+      pointcuts with the interpretation of the Aspect-Component
+      Configuration (ACC) files (<code>*.acc</code>).</p>
+
+    <p>In this case, you can parametrize the creation of the pointcuts
+      instead of hardcoding them in the aspect-component
+      constructor. For instance, the following two files have exactly
+      the same effect than the previous hardcoded aspect-component
+      except that a simple change of the object's name in the
+      configuration file allows the user of this aspect component to
+      make it work on other instances of the <code>Calcul</code>
+      class.</p>
+
+<pre class=code>
+// CheckingAC.java:
+public class CheckingAC extends AspectComponent {
+
+  // at configuration-time (just after the instantiation),
+  // this configuration method can be called to define the 
+  // pointcuts
+  public void checkCalcul(String name) {
+
+    // this pointcut will make the add method of the 
+    // instance named "name" wrapped
+    pointcut(name,"Calcul","add(float):void",
+             CheckingWrapper.class.getName(),"checkAdd",
+             null, false);
+    // same principles for sub...
+    pointcut(name,"Calcul","sub(float):void",
+             CheckingWrapper.class.getName(),"checkSub",
+             null, false);
+  }
+
+  // then, same as the hardcoded aspect...
+  Class CheckingWrapper extends Wrapper {
+   (...)
+  }
+}
+</pre>
+
+<pre class=code>
+// my-checking.acc:
+checkCalcul "calcul0";
+</pre>
+
+    <p><b>NOTE:</b> to be able to use and declare your new aspect
+      component in <code>*.jac</code> file, we recommand that you
+      first declare them in the global <code
+      class=file>org.objectweb.jac.prop</code> file located in
+      <code>$JAC_ROOT</code>. Add the following line in the
+      <code>org.objectweb.jac.acs</code> property of <code
+      class=file>org.objectweb.jac.prop</code>(at the end of the file), and do not
+      forget to add a <code>\</code> at the end the preceding line!!!
+      If you do not declare aspects in <code
+      class=file>org.objectweb.jac.prop</code>, you can still use the fully
+      qualified name of the aspect component's class
+      (<code>&lt;myPackage&gt;.&lt;MyAspectComponent&gt;</code>)</p>
+
+<pre class=code>
+	checking CheckingAC
+</pre>
+
+    <p>You should also specify that the <code
+    class=class>CheckingWrapper</code> must be called after the <code
+    class=class>InputWrapper</code> of the GUI aspect because
+    otherwise, when the method is called from the GUI, the check will
+    occur before the user has entered the value. Just add the
+    following line in <code class=file>org.objectweb.jac.prop</code>, in the
+    <code>org.objectweb.jac.comp.wrappingOrder</code> property, just after the <code
+    class=class>org.objectweb.jac.aspects.gui.InputWrapper</code> line.
+    </p>
+
+<pre class=code>
+	CheckingAC$CheckingWrapper \
+</pre>
+
+    <ul class="navbar">
+      <li><a href="tut_ide.html">previous: Programming with UMLAF</a></li>
+    </ul>
+
+    <div class=footer>      
+      JAC is an Open Source software developed by the <a
+      href="http://www.aopsys.com">AOPSYS</a> (TM) company with the
+      collaboration of the the <a href="http://www.lip6.fr">LIP6</a>,
+      the <a href="http://cedric.cnam.fr">CEDRIC</a>, and the <a href="http://www.lifl.fr">LIFL</a> laboratories.<br> JAC is a direct
+      application of the <a
+      href="http://cedric.cnam.fr/~pawlak">Renaud Pawlak</a>'s PhD
+      Thesis.
+    </div>
+
+  </body>
+</html>
+

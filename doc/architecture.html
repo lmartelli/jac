@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Architecture Overview</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+<body>
+
+    <table class=logo cellspacing=0>
+      <tbody>
+	<tr>
+	  <td class=logocap>J</td>
+	  <td class=logo>ava</td>
+	  <td class=logocap>A</td>
+	  <td class=logo>spect</td>
+	  <td class=logocap>C</td>
+	  <td class=logo>omponents</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <div class=subtitle>A flexible framework for Distributed & Dynamic
+      Aspect-Oriented Programming in Java</div>
+
+    <h1>Technical issues summary</h1>
+
+    <h2>Architecture overview</h2>
+
+    <p>JAC aspect-oriented features and framework are based on a
+      dynamic wrapping system that is used to weave the aspects
+      together within the application. The global framework is further
+      explained and represented in the following figure.</p>
+
+    <p>The key feature of the JAC framework are <i>dynamic
+      wrappers</i>, also called <i>generic advices</i> in relation to
+      the aspect-oriented terminology (see
+      <a href="javadoc/org/objectweb/jac/core/Wrapper.html" target=Javadoc>
+      org.objectweb.jac.core.Wrapper</a>). A dynamic wrapper is defined in as a
+      regular stand-alone object (i.e. it contains fields that form its
+      states and methods that define it functionalities). However, a
+      dynamic wrapper can implement several methods that have special
+      semantics. Generally speaking, a dynamic wrapper is an object
+      that defines behaviours that are not stand-alone since they must
+      be applied to a regular object to be activated.
+
+    <p>When a dynamic wrapper (generic advice) wraps (is applied to) a base
+      object, the reference of the base object is not changed so that it
+      does not disturb the clients. A base object can be wrapped by as many
+      wrappers as needed and the set of wrappers is called a <i>wrapping
+	chain</i> (or an advices chain).</p>
+
+    <p>Dynamic wrappers can define 3 kinds of methods in addition to regular
+      methods that defines the functional interface of the advice itself:</p>
+
+    <ul>
+      <li><i>wrapping methods</i>: they can perform treatments
+	<i>before</i> and <i>after</i> the regular objects methods
+	they are applied to.</li>
+      
+      <li><i>role methods</i>: that can extend regular objects
+	interfaces (similarly to the <i>introduce</i> statement in
+	AspectJ).  </li>
+      
+      <li><i>exception handlers</i>: that can handle exceptions that
+	are raised by server objects in the object the wrapper is
+	applied to.  </li>
+    </ul>
+
+    <p>The definition of which generic advice (dynamic wrapper) will
+      be applied to which regular object is done within special
+      components called <b><i>Aspect Components</i></b> (see <a
+      href="javadoc/org/objectweb/jac/core/AspectComponent.html"
+      target=Javadoc>org.objectweb.jac.core.AspectComponent</a>). In the AOP
+      terminology, we say that this components define the pointcuts
+      with-tin the base program.</p>
+
+    <p>In order to allow the aspect components to easily define
+      pointcuts, some extra meta-informations must be constructed by
+      the JAC system. These extra informations are:</p>
+
+    <ul> 
+      <li>a runtime meta-model defined in the <a
+	  href="javadoc/org/objectweb/jac/core/rtti/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.core.rtti</a> package and that the aspects use
+	instead of the <code>java.lang.reflect</code> package since it is more
+	precise, more flexible, faster, and (the last but not the least)
+	aspects compliant</li>
+
+      <li>a internally defined MOP specified by the <a
+	  href="javadoc/org/objectweb/jac/core/BaseProgramListener.html"
+	  target=Javadoc>org.objectweb.jac.core.BaseProgramListener</a>) interface which is
+	implemented by all the aspect components and by the aspect component
+	manager of the JAC system (see <a
+	  href="javadoc/org/objectweb/jac/core/ACManager.html" target=Javadoc>class
+	  org.objectweb.jac.core.ACManager</a>).</li>
+    </ul>
+
+    <p>Thus, a JAC application composed of regular object can be
+      aspectized by programming a set of aspect components that
+      extends its core behaviour. The aspect components install the
+      dynamic wrappers when they receive events from the internal MOP
+      defined by <a
+      href="javadoc/org/objectweb/jac/core/BaseProgramListener.html"
+      target=Javadoc>org.objectweb.jac.core.BaseProgramListener</a>. This
+      installation (creation of new wrappers and linkages with the
+      base objects) create new dedicated MOPs that allow the
+      modification of the base objects behaviours.</p>
+
+    <p>Notice also that the aspect parts of the application implement
+	the <a
+	href="javadoc/org/objectweb/jac/core/CollaborationParticipant.html"
+	target=Javadoc>org.objectweb.jac.core.CollaborationParticipant</a> interface
+	that allows them to retrieve some contextual information about
+	what is happening in the base program (a collaboration is the
+	reification of a set of interactions between some objects).</p>
+
+    <div class=figure>
+      <img src="framework.png" alt="JAC architecture overview">
+    </div>
+
+    <h2>Bytecode translation</h2>
+    
+    <p>JAC uses <a
+	href="http://jakarta.apache.org/bcel/">BCEL</a>
+	to translate the regular object classes of the application so
+	that they become wrappable. BCEL works at bytecode
+	load-time so that the source code of the application is not
+	needed (an aspect can be applied to a previously programmed
+	application). The class files are not changed on disk so that
+	a JAC application class can be used by regular Java programs.</p>
+
+    <p>For more details about how the bytecode translation is
+      performed, see the <a
+      href="javadoc/org/objectweb/jac/core/WrappeeTranslator.html"
+      target=Javadoc>org.objectweb.jac.core.WrappeeTranslator</a> and <a
+      href="javadoc/org/objectweb/jac/core/WrappeeTemplate.html"
+      target=Javadoc>org.objectweb.jac.core.WrappeeTemplate</a> classes.</p>
+
+    <h2>Aspects granularity and dynamicity</h2>
+    
+    <p>JAC is a more framework than a new language. On contrary to <a
+      href="http://aspectj.org">AspectJ</a> that focuses on defining
+      new languages constructs to define crosscutting and aspects, JAC
+      focuses on dynamicity and composition of aspects. Since JAC
+      works at runtime and on a per-object basis, it is more suitable
+      for distributed programming since an aspect can be dynamically
+      applied or removed during the execution of the application and
+      on a subset of instances.</p>
+
+    <h1>Distributed Programming</h1>
+
+    <p>JAC's final goal is to propose an extension that can be used to
+      easily construct distributed applications in an Aspect-Oriented
+      fashion. We are currently working on a programming model for
+      Aspect-Oriented Distributed Programming that is based on groups
+      of objects.</p>
+
+
+    <div class=footer>
+      JAC is a GPL software developed by the CAOLAC group of the
+      CEDRIC Laboratory with the collaboration of the AproDis project
+      of the <a href="http://www.lip6.fr">LIP6</a> Laboratory and of
+      the <a href="http://www.aopsys.com">AOPSYS</a> (TM) company.<br>
+      JAC is a direct application of the <a
+      href="http://cedric.cnam.fr/~pawlak">Renaud Pawlak</a> PhD
+      Thesis.<br> It is written in Java, SUN (TM) and is the
+      continuation of the <a href="http://www.aopsys.com/tos"
+      target=_top>TOS project</a> (written in Tcl).
+    </div>
+
+</body>
+</html>
+

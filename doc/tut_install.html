@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Tutorial</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="next" href="tut_ide.html">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+
+  <body>
+
+    <h1><a name="1"></a>Getting started</h1>
+
+    <p>Make sure that SUN's J2SE 1.3 or greater is installed
+      on your computer. To run the WEB, you must get J2SE 1.4 since the
+      Jetty version used by default is compiled for J2SE 1.4. If you
+      don't have the Java 2 Sandard Environment installed, visit this
+      link before installing JAC: <a
+      href="http://java.sun.com/j2se/1.4/download.html"
+      target="SUN">J2SE</a>.</p>
+    
+    <p>To use JAR version of JAC, download a JAC release at the <a
+      href="http://org.objectweb.jac.aopsys.com/downloads.html"
+      target="JAC">downloads</a> section.  The JAR version of JAC does
+      not require any extra library to work, they are already
+      included.</p>
+
+    <p>Once you have downloaded the archive, install JAC:</p>
+
+    <h2><a name="install_linux">Linux</a></h2>
+
+    <ol>
+      <li>
+        Extract the archive and go in to the jac directory:
+        <pre class=code>
+cd &lt;work_dir&gt;
+tar zxf jac-xxx.tar.gz
+cd jac
+</pre>
+
+	<p>It will create a directory named org/objectweb/jac/ and extract all files
+	in it.</p>
+      </li>
+
+      <li>Run samples using on of the four .sh scripts. For instance, to
+        launch the photo sample with the swing GUI:
+<pre class=code>
+./samples/photos-swing.sh
+</pre>
+        <p>Read the readme file (<code
+        class=file>samples/photos-README.txt</code>) to learn how to
+        use the sample.</p>
+      </li>
+
+      <li>
+        Run UML Aspectual Factory:
+<pre class=code>
+./UML_AF.sh
+</pre>
+	<p>It will run UML Aspectual Factory, which is an IDE that
+	  supports UML-like and UML for aspects. To learn how to create
+	  your own JAC program with UMLAF, see the <a
+	    href="tut_ide.html">IDE Tutorial</a>.</p>
+      </li>
+
+      <li>
+        Run an application that you created for JAC:
+<pre class=code>
+cd jac
+java -jar org.objectweb.jac.jar -R . 
+     -C &lt;application_root_pkg&gt;[:&lt;optional_classpath&gt;] 
+     [&lt;gui_opt&gt; &lt;gui_name&gt;]
+     &lt;jac_file&gt;
+</pre>
+      <p>
+        <ul>
+	  <li>
+	    <code>&lt;application_root_pkg&gt;</code> : path to the
+	    root directory of your application package (the
+	    application directory if it is not in a package).
+	  </li>
+	  <li>
+  	    <code>&lt;optional_classpath&gt;</code> : optional classpath formed by
+	    directories separated by ':'.
+	  </li>
+	  <li>
+  	    <code>&lt;gui_opt&gt;</code> : GUI option to launch
+	    GUI. It must be '<code>-G</code>' for Swing GUI, and
+	    '<code>-W</code>' for web GUI.
+	  </li>
+	  <li>
+	    <code>&lt;gui_name&gt;</code> : name of the GUI window launch (see the
+	    gui.acc file of the application to find possible window names).
+	  </li>
+	  <li>
+	    <code>&lt;jac_file&gt;</code> : path to .jac file
+	    (relative to the current directory)
+	  </li>
+	</ul>
+
+	<p>It will run your application with the selected GUI (if there is
+	  one). You can also run your application from another directory
+	  if you modify paths accordingly.</p>
+      </li>
+    </ol>
+
+    <h2><a name="install_windows">Windows</a></h2>
+    <ol>
+      <li>
+        Extract the archive:
+        <p>Use a compression program such as WinZip to extract files in
+	  <code class=file>C:\</code>.  It will create a directory
+	  <code class=file>C:\jac\</code> and extract all files in it. JAC must
+	  be installed in <code class=file>C:\jac\</code>. Otherwise, you'll have
+	  to change all the shortcuts.</p>
+      </li>
+      <li>
+        Run samples: 
+
+	<p>Go to samples directory (<code class=file>C:\jac\samples</code>) 
+	  and double-click on the shortcut corresponding to the sample
+	  you want to run, with the GUI you want to use. It will run
+	  the associated sample.</p>
+
+        <p>Shortcut names are like this :
+	  <code class=file>&lt;sample_name&gt;-&lt;gui&gt;.pif</code>, where
+	  <code>&lt;sample_name&gt;</code> is the name of the sample and
+	  <code>&lt;gui&gt;</code> is the type of GUI used.</p>
+
+      </li>
+      <li>
+        Run UML Aspectual Factory:
+        <p>Go to jac directory (<code class=file>C:\jac</code>) and
+          double-click on UML_AF shortcut.</p>
+
+        <p>It will run UML Aspectual Factory, which is an IDE that
+	  supports UML-like and UML for aspects. For creating your own
+	  JAC program with UMLAF, go to the <a href="tut_ide.html">IDE
+	  Tutorial</a>.</p>
+
+      </li>
+
+      <li>
+        Run an application that you created for JAC:
+        <p>
+          Go to jac directory (<code class=file>C:\jac</code>) and run
+          a command console (execute command "command" to open a
+          console). Then type:</p>
+
+<pre class=code>
+java -jar org.objectweb.jac.jar -R .
+     -C &lt;application_root_pkg&gt;[;&lt;optional_classpath&gt;] 
+     [&lt;gui_opt&gt; &lt;gui_name&gt;]
+     &lt;jac_file&gt;
+</pre>
+
+      <p>
+        <ul>
+	  <li>
+	    <code>&lt;application_root_pkg&gt;</code> : path to the
+	    root directory of your application package (the
+	    application directory if it is not in a package).
+	  </li>
+	  <li>
+  	    <code>&lt;optional_classpath&gt;</code> : optional
+	    classpath formed by directories separated by ';'.
+	  </li>
+	  <li>
+  	    <code>&lt;gui_opt&gt;</code> : GUI option to launch
+	    GUI. It must be '<code>-G</code>' for Swing GUI, and
+	    '<code>-W</code>' for web GUI.
+	  </li>
+	  <li>
+	    <code>&lt;gui_name&gt;</code> : name of the GUI window
+	    launch (see the gui.acc file of the application to find
+	    possible window names).
+	  </li>
+	  <li>
+	    <code>&lt;jac_file&gt;</code> : path to .jac file
+	    (relative to the current directory)
+	  </li>
+	</ul>
+
+      <p>
+	It will run your application with the selected GUI (if there is
+	one). You can also run your application from another directory
+	if you modify paths accordingly.
+      </p>
+      </li>
+    </ol>
+
+    <ul class="navbar">
+      <li><a href="tut_ide.html">next: Programming with UMLAF</a></li>
+    </ul>
+
+    <div class=footer>      
+      JAC is an Open Source software developed by the <a
+      href="http://www.aopsys.com">AOPSYS</a> (TM) company with the
+      collaboration of the the <a href="http://www.lip6.fr">LIP6</a>,
+      the <a href="http://cedric.cnam.fr">CEDRIC</a>, and the <a href="http://www.lifl.fr">LIFL</a> laboratories.<br> JAC is a direct
+      application of the <a
+      href="http://cedric.cnam.fr/~pawlak">Renaud Pawlak</a>'s PhD
+      Thesis.
+    </div>
+
+</body>
+</html>
+
+

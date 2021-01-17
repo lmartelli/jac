@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Qu'est-ce que l'AOP?</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+<body>
+
+    <table class=logo cellspacing=0>
+      <tbody>
+	<tr>
+	  <td class=logo>Qu'est-ce</td>
+	  <td class=logo>que</td>
+	  <td class=logo>l'AOP?</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <div class=subtitle>Renaud Pawlak et l'équipe de développement de JAC</div>
+
+
+<p>L'AOP (Aspect-Oriented Programming, Programmation Orientée Aspect)
+      a été définie par Gregor Kickzales (du Xerox) en 1996. Tout comme
+      la programmation structurée et la programmation orientée objet
+      ont, dans leur temps, introduit de nouvelles approches pour
+      concevoir les programmes et un ensemble de règles et de
+      conventions pour aider les programmeurs à produire du code plus
+      lisible et plus réutilisable (erradication des "gotos" au profit
+      des boucles, introduction des types et des structurations
+      modulaires autour des classes), l'AOP est une philosophie de
+      programmation qui est essentiellement une question de
+      <i>style</i>. L'AOP résout donc des problèmes qui peuvent être
+      traités dans des approches classiques, mais d'une manière plus
+      élégante. Pour comprendre l'esprit de l'AOP, il est
+      indispensable de bien comprendre les trois points suivants.
+
+<ul><li><b>séparation des préoccupations</b>: si on se réfère à la Loi
+	de Demeter, l'efficacité d'un projet informatique augmente si
+	toutes les préoccupations de nature différentes sont bien
+	modularisées et si un programmeur qui désire faire une
+	modification ne doit parler qu'à ses voisins directs pour la
+	faire tout en étant sur de ne pas introduire de bugs (c'est un
+	principe ancien et la programmation orientée objet ou à base
+	de composants donne des éléments de réponse)</li>
+
+<li><b>dispersion des préoccupations</b>: dans un système informatique
+	complexe, il existe toujours des préoccupations qui ne peuvent
+	pas être facilement modularisées de par leur nature, tout
+	spécialement les préoccupations d'intérêt général qui sont
+	utilisées par plusieurs modules (en d'autres termes, plusieurs
+	modules du programme partagent un même service d'un module
+	commun --- par exemple un service de logging ou de
+	persistance)</li>
+
+<li><b>inversion des dépendances</b>: la meilleure manière d'éviter la
+	dispersion des préoccupations est -- tout simplement -- de ne
+	PAS utiliser le service commun. C'est possible en inversant
+	la dépendance (c'est à dire que ce n'est plus le programme qui
+	utilise le service mais le service qui utilise le
+	programme). Cette inversion des dépendances peut être
+	implémentée par des aspects.</li>
+</ul>
+
+<p>JAC fournit un ensemble de concepts de programmation dérivés de
+      l'AOP et qui permettent au programmeur d'implanter l'inversion
+      des dépendances de façon propre.
+
+<p>Voici une classe métier qui fait des calculs simples:
+
+<pre class=code>
+public class Calcul {
+    int value=0;
+    public void add(int toadd) {
+        value+=toadd;
+    }
+    public void sub(int tosub) {
+        value-=tosub;
+    }
+}
+</pre>
+
+<p>Imaginons maintenant que, pour cette application,
+      l'attribut "value" ne prenne pas de valeurs négatives. Ce sera
+      aussi le cas pour d'autres classes du programme car, dans
+      ce métier, on n'aime pas les valeurs négatives. On se trouve alors
+      devant un problème d'organisation du programme car le
+      test (inférieur à 0) risque de devenir ce qu'on appele "transverse" (en
+      d'autres mots, il n'est pas purement fonctionnel et risque à
+      terme de polluer le code applicatif).
+
+<p>Avec l'AOP, j'ai la possibilité d'externaliser ce code en
+      programmant un <i>composant d'aspect</i>:
+
+
+<pre class=code>
+01> public class TestAC extends AspectComponent {
+02>     public TestAC() {
+03>         pointcut( "Calcul", "sub", LimiterWrapper.class, "limit" );
+04>     }
+05>     public class LimiterWrapper extends Wrapper {
+06>         public void limit(Interaction i) {
+07>             if(((Integer)getFieldValue(i.wrappee,"value")).intValue()
+08>                    - ((Integer)args[0]).intValue() < 0 )
+09>                 throw new Exception("<0 forbidden");
+10>             proceed();
+11>        }
+12>        ...
+13>}   }
+</pre>
+
+<p>C'est plus compliqué que de rajouter une ligne de code mais, à
+terme et pour les programmes complexes, le bénéfice est
+énorme... d'autant plus que les aspects dans JAC peuvent être ajoutés
+ou retirés pendant que l'application tourne (d'où un gain en
+terme de dynamicité et de maintenance).
+
+<p>Explication du code de l'aspect:
+
+<ul><li>ligne 3: un <b>pointcut</b> (coupure) désigne un ensemble de
+points de jonction (joinpoints) du programme ou l'aspect va intervenir (ici,
+l'exemple étant simple, il n'intervient que sur la méthode
+<code>add</code> de la classe <code>Calcul</code>, mais il pourrait
+désigner un ensemble beaucoup plus complexe d'objects ou de classes --
+d'où une possibilité de généraliser le procédé)</li>
+
+<li>ligne 5-6: un <b>wrapper</b> (encapsuleur) est un objet qui va
+	"entourer" les points (désignés par les pointcuts) de
+	nouvelles instructions. Ici, les instructions sont celles qui
+	sont définies par la méthode encapsulante <code>limit</code>
+
+<li>ligne 7-8: le test proprement dit. A l'intérieur d'un wrapper, on
+	a accès aux informations liées aux pointcuts. Ici, on sait que
+	<code>i.args[0]</code> est le paramètre de la méthode liée au
+	pointcut, <code>i.wrappee</code> l'objet encapsulé. On peut
+	donc les tester et jeter une exception si la valeur de
+	l'attribut <code>value</code> va être négative.</li>
+
+<li>ligne 10: le test a échoué... on peut donc exécuter la méthode
+	<code>sub</code>. <code>proceed</code> est une méthode des
+	wrappers pour demander la réalisation du point de jonction
+	courant.</li>
+</ul>
+
+
+<p>JAC présente deux niveaux de détails pour utiliser les aspects.
+
+<ul><li>le <b>niveau programmation</b> (où on peut programmer des
+	    aspects entièrement nouveaux) qui est difficile à
+	    comprendre pour un débutant -- même niveau que AspectJ</li> 
+
+<li>le <b>niveau configuration</b> (où on peut configurer les aspects
+	    existants pour les faire marcher avec une application
+	    donnée). Ce niveau est supporté via un langage de
+	    configuration avec une syntaxe générique (ou toute autre
+	    syntaxe spécifique supportée par JAC) permettant au
+	    programmeur d'invoquer des méthodes de configuration sur
+	    des aspects. Dans 
+	    la philosophie JAC, il est important de comprendre qu'il
+	    n'est pas nécessaire de programmer des aspects pour tirer
+	    parti de l'AOP. En effet, nous fournissons avec JAC un
+	    ensemble d'aspects présentant des méthodes de configuration
+	    faciles à utiliser. Par exemple, imaginons que l'on
+	    programme TestAC de manière a ce qu'il propose une méthode
+	    de configuration plutôt qu'un pointcut hardcodé:
+
+<pre class=code>
+public class TestAC extends AspectComponent {
+    final int bound = 0;
+    public addTest(String classes, String methods, int bound) {
+        pointcut( classes, method, LimiterWrapper.class, "limit" );
+        this.bound = bound;
+    }
+    public class LimiterWrapper extends Wrapper {
+        public void limit(Interaction i) {
+            if(((Integer)getFieldValue(i.wrappe,"value")).intValue()
+	          - ((Integer)i.args[0]).intValue() < bound )
+                throw new Exception("<"+bound+" forbidden");
+            return proceed(i);
+        }
+        ...
+}   }
+</pre>
+
+<p>Alors, on peut utiliser l'aspect de test simplement en écrivant un fichier
+	  de configuration pour cet aspect (et pour l'application de calcul):
+
+	<pre class=code>
+addTest "Calcul" "sub" 0;
+<pre>
+</li>
+</ul>
+
+<p>Pour finir, JAC fournit aussi un ensemble d'aspects et un
+	environnement pour la distribution (déploiement,
+	communications distantes, sessions, authentification,
+	interface web). Tous les aspects fonctionnent aussi bien en
+	centralisé qu'en distribué si bien que l'on peut définir des
+	préoccupations qui ont des influences globales et
+	distribuées. Nous fournissons aussi un ensemble d'aspects
+	permettant de configurer facilement des préoccupations
+	relatives aux protocoles distribués les plus fréquemment
+	rencontrés comme la cohérence, la diffusion ou le
+	load-balancing. Nous espérons que vous trouverez ces aspects
+	utiles pour vos développements!
+
+
+    <hr>
+    <address><a href="mailto:renaud@cedric">Renaud Pawlak</a></address>
+<!-- Created: Sun Feb 17 15:21:17 CET 2002 -->
+<!-- hhmts start -->
+Last modified: Tue Dec  3 01:04:41 CET 2002
+<!-- hhmts end -->
+  </body>
+</html>

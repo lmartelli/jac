@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>JAC's FAQ</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+
+  <body>
+
+    <h1>Java Aspect Component FAQ</h1>
+
+    <p>This FAQ lists a few general interest questions and a few common
+    problems that you may encounter while using JAC. If your question
+    is not listed here, do not hesitate to use the <a
+    href="/contacts.html">mailing lists</a> to ask for some help.</p>
+
+    <h2><a name=general>General interest questions</a></h2>
+
+    <h3><a name=AOP>Aspect-Oriented Programming</a></h3>
+
+    <h4 class=question><a name=whatisAOP>What is Aspect-Oriented
+	Programming?</a></h4>
+
+    <p>Aspect-Oriented Programming (AOP) is a programming paradigm and
+      philosophy that improves Separation of concerns when developping
+      complex softwares. JAC core provides an AOP technology and this
+      is why JAC applications are very simple to develop and very
+      maintanable. AOP also improves reusability of software
+      components.</p>
+
+    <h4 class=question><a name=whatisAC>What is an Aspect Component?</a></h4>
+    
+    <p>An Aspect Component is a reusable technical unit in JAC. For
+      instance, the persistence or the authentication in JAC are
+      implemented whitin Aspect Components which are totally
+      independant from the rest of the code. An Aspect Component can
+      be dynamically added / removed (we say it is woven /
+      unwoven).</p>
+
+    <h4 class=question><a name=oneAC>Can I use only one aspect
+	component for my application (e.g. persistence)?</a></h4>
+
+    <p>This is possible. However, the real advantages of AOP comes
+      when several concerns crosscut. For this reason, we strongly
+      advice to program fully aspect-oriented applications.</p>
+ 
+    <h4 class=question><a name=JACvsAspectJ>What are the differences
+	between JAC and AspectJ?</a></h4>
+
+    <p>JAC is very similar to AspectJ in the employed programming
+      concepts (pointcuts, advices (=wrapping methods), joinpoints).</p>
+
+    <p>The main differences come from the implementation that allows
+    dynamic aspect weaving/unweaving (the aspects can be added/removed
+    without compiling and stopping the application). Moreover, JAC is
+    a framework so it does not defines a new langage or compiler (it
+    can be used as regular Java, in any development environment).</p>
+
+    <p>The dynamic aspect weaving has a cost on performances which is
+      due to the java.lang.reflect use. A joinpoint in JAC has an
+      overhead that is similar to the reflection cost in Java (greatly
+      optimized in java 1.4 but still slower than a regular
+      call). Most of the time, this overhead is very neglectable
+      compared to the aspects inherent overhead (e.g. a persistence
+      aspect). However, it makes JAC not very suited to all the kind
+      of AOSD. This pb will be overcome soon with static joinpoints
+      (made through a compilation process).</p>
+
+    <p>Another main difference is that JAC comes with a set of
+      ready-to-use aspect components. To reuse an aspect component,
+      you just need to write a configuration program that is
+      declarative (not far from a DSL). Thus the final user does not
+      need to know anything about the actual aspect
+      implementation.</p>
+
+    <p>Finally, JAC provides support for distributed pointcuts
+      (pointcuts that can extend programs that are distributed on
+      several JAC containers). This feature can be used to efficiently
+      program distributed aspects such as fault-tolerance,
+      data-consistency, load-balancing, or caching. All these can be
+      useful for clusturing JAC containers.</p>
+
+    <h4 class=question><a name=JACvsAspectJSyntax>Can you give me a
+      brief overview on the differencies between JAC and AspectJ
+      syntaxes?</a></h4>
+
+    <p>The main difference regarding the programming is that AspectJ
+      is a new language and that JAC is a framework.</p>
+
+<p>Let us take a simple aspect:</p>
+
+<pre class=code>
+*** AspectJ version ***
+
+aspect Sample {
+
+  pointcut setter() : target(Point) && 
+      (call(void setX(int)) || call(void setY(int)));
+
+  void around() : setter() {
+     System.out.println("about to set something");
+     proceed();
+     System.out.println("something was set");       }
+}
+</pre>
+
+<pre class=code>
+*** JAC version ***
+
+class SampleAC extends AspectComponent {
+
+   public SampleAC() {
+       pointcut("ALL","Point",
+                "setX(int):void || setY(int):void",
+                new AWrapper(this), "printSomething");
+   }
+
+   public AWrapper extends Wrapper {
+       public AWrapper(AspectComponent ac) { super(ac); }
+       public void printSomething(Interaction interaction) {
+          System.out.println("about to set something");
+          proceed(interaction);
+          System.out.println("something was set");            }
+   }
+}
+</pre>
+
+    <p>But if you want to generically capture all the getters in your
+      pointcut, one of the great advantages of JAC is that you can use
+      generic keywords:</p>
+
+<pre class=code>
+pointcut("ALL","Point","SETTERS", new AWrapper(), "printSomething");
+</pre>
+
+    <p>This feature is possible because of the bytecode analysis of
+      the classes performed at load-time. JAC implements an algorithm
+      that detects which methods read or write fields, references or
+      collections. This feature simplifies the programming of aspects
+      and can be used to implement aspects such as caching aspects
+      (MODIFIERS keyword), persistency, etc.</p>
+
+
+    <h4 class=question><a name=overhead>What is the overhead of
+      bytecode analysis and dynamic weaving?</a></h4>
+
+    <p>The bytecode analysis slows down the classes loading time by a
+      5 factor. However, JAC caches the result of the translation so
+      that this overhead is only noticeable on the first program
+      launch.</p>
+
+    <p>The dynamic aspect weaving has a cost on performances which is
+      due to the java.lang.reflect use. A joinpoint in JAC has an
+      overhead that is similar to the reflection cost in Java (greatly
+      optimized in java 1.4 but still slower than a regular
+      call). Most of the time, this overhead is very neglectable
+      compared to the aspects inherent overhead (e.g. a persistence
+      aspect). However, it makes JAC not very suited to all the kind
+      of AOSD. This pb will be overcome soon with static joinpoints
+      (made through a compilation process).</p>
+
+    <h3><a name=JACvsJ2EE>JAC and J2EE</a></h3>
+    
+    <h4 class=question><a name=AS>Can JAC be regarded as an
+    application server?</a></h4>
+
+    <p>YES, YES, YES!! JAC is a very flexible container that can
+      dynamically add technical services through aspects.</p>
+
+    <h4 class=question><a name=J2EE>Is JAC J2EE compliant?</a></h4>
+
+    <p>The answer is NO! JAC implements its own standards for the
+      moment. Some parts of J2EE implementations could be reused in
+      the future but most of them will simply not fit. In fact, the
+      JAC Aspect-Oriented technology implements generalized and
+      improved separation of concerns compared to J2EE.</p>
+
+    <h4 class=question><a name=POJO>What is a POJO?</a></h4>
+
+    <p>JAC components are not EJBs, they are POJOs (Plain Old Java
+      Objects). A POJO is a component that does not implement any
+      specific interface (on contrary to EJBs that must fullfill
+      specific features to run on a J2EE container). With AOP, it is
+      easy to make componants POJOs because it is the aspects that
+      automatically and dynamically extends the objects to make them
+      run on the JAC container.</p>
+
+    <h4 class=question><a name=JDO>Does JAC implement JDO?</a></h4>
+
+    <p>JAC does not implement JDO since JDO is a particular implementation
+      of a persistence aspect. In JAC, we use a JAC-based persistency
+      aspect that can be compared to JDO in many ways except that it
+      enters into an Aspect-Oriented logic and standardization. Thus, our
+      persistence aspect is fully compliant with other JAC aspects.</p>
+    
+    <p>Several JDO implementation pieces could be reused whithin our
+      persistence aspect such as an O/R mapping or a query engine. For
+      the moment, our implementation is simple, but greatly deals with
+      references and collections (this is easy with aspects:).</p>
+
+    <h4 class=question><a name=interfacing>Can JAC be interfaced whith
+	non-JAC clients?</a></h4>
+
+    <p>JAC can be accessed via RMI using the <code
+      class=package>org.objectweb.jac.core.dist</code> API. However, we encourage
+      developpers to implement full-JAC applications since the
+      benefits of aspects can also be seen at client-side. For
+      instance, at client-side, you can use the GUI aspect, the
+      remote-access aspect (to invoke servers), caching aspect (for
+      performance) and local persistence aspect. Programming
+      distributed applications is not well documented but you can ask
+      for support about it. Anyway, it will be improved in the
+      future.</p>
+
+    <h4 class=question><a name=JSP>Does JAC supports WEB developments?
+	Can we use JSP with JAC?</a></h4>
+
+    <p>JAC generates GUI with the GUI aspect (like any technical
+      concern). JAC distribution includes Jetty so that JAC GUIs can
+      be either Swing or WEB. JSP can be used to access JAC containers
+      but, once again, you lose the benefits of the "all is aspect"
+      philosophy.</p>
+
+    <h3><a name="web">Web issues</a></h3>
+
+    <h4 class="question"><a name="apache">Can JAC be used with Apache?</a></h4>
+
+    <p>Yes, you if you have a site rnning with Apache, you can keep it
+    and just tell Apache to redirect some requests to JAC. Here's how
+    to do it (tested with Apache 1.3).</p>
+
+    <ol>
+      <li>You must have the proxy and rewrite modules enabled in httpd.conf:
+	<pre>
+LoadModule rewrite_module /usr/lib/apache/1.3/mod_rewrite.so
+LoadModule proxy_module /usr/lib/apache/1.3/mod_proxy.so
+</pre>
+      </li>
+      <li>Add a rewrite rule like this:
+	<pre>
+RewriteEngine on
+RewriteRule ^/org/objectweb/jac/(.*) http://localhost:8088/org/objectweb/jac/$1 [P]
+</pre>
+      </li>
+    </ol>
+
+    <h3><a name=license>Licence</a></h3>
+
+    <h4 class=question><a name=GPL>The GPL is known as
+	"infectious". Do I have to distribute my own programs and
+	aspects under the GPL ?</a></h4>
+
+    <p>No. These are not considered derivative works. This is
+      explicitly stated at the beginning of the LICENCE
+      file. Moreover, JAC is now distributed under the LGPL.</p>
+
+    <h2><a name=technical>Technical problems and issues</a></h2>
+
+    <h3><a name="misc_tech">Misc.</a></h3>
+
+    <h4 class=question><a
+	name="misc_ex1">java.lang.IllegalAccessException</a></h4>
+
+    <p>If you get a <code
+      class=class>java.lang.IllegalAccessException</code> such as the
+      following one, it probably means that you have a non public
+      class &lt;myPackage.myClass&gt;.</p>
+
+<pre class="code" style="font-size: smaller">
+java.lang.IllegalAccessException: &lt;myPackage.myClass&gt;
+        at java.lang.Class.newInstance0(Native Method)
+        at java.lang.Class.newInstance(Class.java:237)
+        at org.objectweb.jac.aspects.gui.InputWrapper.askForParameters(InputWrapper.java:88)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at org.objectweb.jac.core.Wrapping.nextWrapper(Wrapping.java:968)
+        at org.objectweb.jac.core.Wrapping.nextWrapper(Wrapping.java:842)
+        at shoubiao.PhotoRepository.addPhoto(PhotoRepository.java)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at org.objectweb.jac.core.rtti.MethodItem.invoke(MethodItem.java:441)
+        at org.objectweb.jac.core.InvokeThread.run(InvokeThread.java:200)
+</pre>
+    
+    <h4 class=question><a name="#acc_keyword">Parser error in acc file</a></h4>
+
+    <p>Some aspect configuration file gives a parser error like that:</p>
+
+<pre class=output>
+Syntax error
+Couldn't repair and continue parse
+ERROR: user.acc:1
+ERROR: Parser error in user.acc : java.lang.Exception: Can't recover from previous error(s)
+--- configuring session aspect ---
+</pre>
+
+    <p>And the line of the error looks fine:</p>
+
+<pre class="code">
+setUserClass calcul.Person email password profile;
+</pre>
+
+    <p>Aspects define block keywords that can be used to group
+      configuration items in .acc files. <code>profile</code> is one
+      of them and is defined by the user aspect. If you want to use
+      such a word not as a keyword, you must enclose it between double
+      quotes:</p>
+
+<pre class="code">
+setUserClass calcul.Person email password "profile";
+</pre>
+
+    <h3><a name=distribution>Distribution</a></h3>
+
+    <h4 class=question><a name="dist_ex1">java.lang.ClassNotFoundException: org.objectweb.jac.core.dist.rmi.RMIRemoteContainer_Stub</a></h4>
+
+    <p>rmiregistry's <code class=envvar>CLASSPATH</code> is probably
+      wrong. You should kill all rmiregistry processes and try
+      again. You may also try to rebuild all classes.</p>
+    
+    <h4 class=question><a name="rmi_bug">RMI does not manage to resolve
+    hosts under Linux</a></h4>
+
+    <p>Because of the way rmi works, you should not have
+    "127.0.0.1&nbsp;&lt;your_local_hostname&gt;" in <code
+    class=file>/etc/hosts</code></p>
+
+
+    <h4 class=question><a name="dist_ex2">NoClassDefFoundError: org/objectweb/jac/core/dist/DistdClassLoader at org.objectweb.jac.core.dist.Distd.&lt;init&gt;</a></h4>
+
+    <p>Check that a <code class=file>.java.policy</code> is properly
+      configured.</p>
+
+  </body>
+</html>
