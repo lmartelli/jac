@@ -19,7 +19,7 @@ JAC is Open Source (LGPL) and free of charges! (see the file LICENSE.txt)
 
 # DOCUMENTATION
 
-All documentation is available online at: http://jac.ow2.org/ and in your local distribution, see the doc directory (open index.html).
+All documentation is available in the doc directory (open index.html).
 
 For a first use of the JAC distribution, first read doc/tutorial.html
 

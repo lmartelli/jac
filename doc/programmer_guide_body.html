@@ -1,0 +1,1313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>JAC Programmer's Guide</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+<body>
+
+<h1><a name="2"></a>Programming with JAC</h1>
+	
+    <h2><a name="2.1"></a>Programming guidelines, restrictions</h2>
+     
+    <p>The programming philosophy of JAC is to let the functional
+      (core-business) program components free from any reference
+      towards all the technical or business extensions that it needs
+      to be effective. Thus, JAC functional components do not have to
+      implement special interface or extend special classes. All this
+      is done seamlessly by the JAC container. In J2EE world, this
+      kind of containers begin to appear with POJOs (Plain Old Java
+      Object) support. However, AOP (the core technology of JAC)
+      allows better separated concern and naturally fully fonctional
+      objects.
+
+    <p>Yt can be troubleshooting for the programmer when s/he makes
+      its first JAC program. The idea is to concentrate on the core
+      functionalities and to make a program as if you were a very
+      beginner in Java. For instance, even if you know that you will
+      need to display a given component or that a given component will
+      need to be persistent, just program a regular Java class and do
+      not try to import any packages that deal with persistence or
+      GUI, all these will be done in a second step and will not
+      require any reengineering.
+
+    <p>This magic stuff is possible because of the aspect-oriented
+      framework implemented by JAC. This framework builds a set of
+      classes and objects that allows the programmer to define new
+      aspects or use existing ones in a very simple fashion.  Once
+      configured, the aspects will be able to deal with your
+      components the way you expect and introduce new concerns on
+      them (e.g. persistence, transaction, distribution,
+      fault-tolerance, ...).
+
+    <p>However, since existing aspects are generic and may be applied
+      to several programs, they have made some assumptions on how your
+      program works and expect the programmer to follow some rules
+      that can be seen as restrictions. Some programming restrictions
+      example are given below (note that most of these restrictions
+      will be overcome in further versions).
+
+    <ul>
+      <li>Access to attributes cannot be intercepted by aspects. As a
+      consequence, the programme should never use public field and
+      provide getters and setters.</li>
+
+      <li>When using collections, the fields must be declared with the
+      interface type. E.g.: <code>List l=new Vector()</code>, or
+      <code>Map m=new Hashtable()</code>. Declarations such as
+      <code>Vector v=new Vector()</code> are forbidden.</li>
+
+    </ul>
+
+<h2><a name="2.2"></a>Configuring the existing aspects</h2>
+
+    <p>In most cases, a regular programmer will find the aspects s/he
+      needs for its application provided by the JAC distribution
+      (well, this will be the case in a close future, we hope). As a
+      consequence, programming an aspect-oriented application is just
+      a matter of choosing the right aspects and configure them to
+      behave properly for the final program.
+
+    <p>Each existing aspect within the distribution corresponds to an
+      <b>aspect component</b>. Each aspect component is documented so
+      that any final programmer is able to use it just by taking a
+      look at its API (in the worst cases, some code reading may be
+      necessary). Here is a list of the most useful aspect components
+      provided by JAC (with a direct link towards their API
+      documentation).
+
+    <p><i><b>NOTE:</b> a useful piece of documentation is also the
+	package that corresponds to a given aspect component. In
+	general, we explain here how it works and make a short summary
+	of its configuration methods (for instance, see <a
+	href="javadoc/org/objectweb/jac/aspects/persistence/package-summary.html"
+	target=Javadoc>persistence</a>, or <a
+	href="javadoc/org/objectweb/jac/aspects/gui/package-summary.html"
+	target=Javadoc>GUI</a>).</i></p>
+      
+    <ul>
+      <li><a href="javadoc/org/objectweb/jac/aspects/tracing/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.tracing.TracingAC</a>: allows the
+	  programmer to switch on/off some verbose mode on its
+	  programs</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/tracing/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.tracing.CountingAC</a>: allows
+	  the programmer to switch on/off invocation counters on the
+	  methods of its application objects</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/tracing/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.tracing.DebuggingAC</a>: allows
+	  the programmer to switch on/off a debugger that allows a
+	  stepped execution of the program</li>
+      
+      <li><a href="javadoc/org/objectweb/jac/aspects/persistence/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.persistence.PersistenceAC</a>: allows the
+	programmer to defined which objects/classes of the application
+	will be stored in a database or not</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/cache/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.cache.CacheAC</a>: a small aspect
+	  that allows the programmer to cache results on its
+	  functional objects</li>
+      
+      <li><a href="javadoc/org/objectweb/jac/aspects/authentication/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.authentication.AuthenticationAC</a>:
+	  allows the programmer to authenticate the application users.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/user/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.user.UserAC</a>: this aspect
+	  handles users and profiles (including access rights).</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/session/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.session.SessionAC</a>: allows the
+	  programmer to make some useful contextual data persistent so
+	  that they will remain at the same value for a set of
+	  interactions that belong to the same user (for the moment,
+	  this aspect just saves the authentication
+	  informations).</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/gui/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.gui.GuiAC</a>: allows the
+	  programmer to define some presentation informations, and to
+	  parameterize the interactions between the application
+	  objects and the user.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/gui/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.integrity.GuiAC</a>: provides
+	  simple implementation of various data integrity schemes
+	  such as associations, repository, and so on.</li>
+
+      <li><a
+	  href="javadoc/org/objectweb/jac/aspects/confirmation/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.confirmation.ConfirmationAC</a>:
+	  allows the programmer to add confirmation dialogs when some
+	  critical methods are invoked.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/transaction/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.transaction.TransactionAC</a>: allows the
+	  programmer to set some methods to be transactional. Typically,
+	  transactional methods involve several participant objects
+	  (e.g. a transfer method between some banking accounts). The
+	  transaction aspect ensures that transactional methods find
+	  and leave the program in a consistent state, even if an
+	  error occurs.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/synchronization/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.synchronization.SynchronizationAC</a>: allows the
+	  programmer to set some methods to be synchronized. When
+	  several methods are synchronized (may belong to different
+	  classes or objects),  they share a monitor that ensures that
+	  only on single thread can enter these method at a given type.<li>
+
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/distribution/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.distribution.DeploymentAC</a>:
+	  allows the programmer to define how the objects of the
+	  application are deployed on the remote JAC servers defined
+	  by the topology when JAC runs in a distributed mode.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/distribution/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.distribution.RemoteAccessAC</a>:
+	  allows the programmer to tell that some objects of the local
+	  containers should act as stubs for some server objects
+	  (located on some server host(s)). Using this aspect does not
+	  require to define a topology for the client application.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/distribution/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.distribution.ConsistencyAC</a>:
+	  once the application is deployed by the deployment aspect,
+	  this aspect can introduce some protocols to make several
+	  remote objects (of the same name) consistent.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/distribution/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.distribution.BroadcastingAC</a>:
+	  once the application is deployed by the deployment aspect,
+	  this aspect can introduce some protocols to perform
+	  broadcasting on remote objects.</li>
+
+      <li><a href="javadoc/org/objectweb/jac/aspects/distribution/package-summary.html"
+	  target=Javadoc>org.objectweb.jac.aspects.distribution.LoadBalancingAC</a>:
+	  once the application is deployed by the deployment aspect,
+	  this aspect can introduce some protocols to perform
+	  load-balancing on remote servers.</li>
+
+    </ul>
+
+    <p>There are two manners to customize an aspect for your own
+      application needs.
+
+    <h3>The simple way</h3>
+
+    <p>You write a configuration file for your aspect and use it to
+      call all the parametrisation methods that you need. These
+      configuration files are usually in the same directory than the
+      application <code>*.java</code> files and are <code>*.acc</code>
+      files (for aspect-component configuration).
+
+    <p>Here is a sample configuration file for the persistence aspect
+      of the photos sample (see <code>persistence.acc</code> in the
+      sample directory).
+      
+<pre class=code>
+configureStorage "org.objectweb.jac.aspects.persistence.FSStorage" { "data/photos" };
+makePersistent "org.objectweb.jac.samples.photos.*" ALL;
+registerStatics org.objectweb.jac.samples.photos.PhotoRepository photorepository0;
+registerStatics org.objectweb.jac.samples.photos.Users users0;
+</pre>
+
+    <p>Note that all the called methods
+      (<code>configureStorage</code>, <code>makePersistent</code>, and
+      <code>registerStatics</code>) are part of the API of the
+      <code>PersistenceAC</code> aspect component.
+
+    <p>Once you have written this file, the advantage is that JAC will be
+      able to parse it dynamically and instantiate the corresponding
+      aspect component. This is a very flexible mechanism since the
+      aspect can be unwoven and woven again with a different
+      configuration while the application is running. The following
+      technique is more static.
+      
+    <h3>The complex way</h3>
+    
+    <p>However, in some cases, the aspect component will not provide
+      the configuration API that you need (our aspect components are
+      more-or-less finalized). In these cases, the programmer needs to
+      add some configuration methods to the aspect component s/he
+      needs to use or to create a new aspect component that extends
+      the existing one so that the configuration is automatically done
+      at the aspect component's construction time (in this case, you
+      MUST declare your new aspect within the <code
+      class=file>org.objectweb.jac.prop</code> file).
+
+    <p><b>Important note:</b> in the case you decide to add extra
+      configuration methods to our existing components and if you
+      think they can be useful for others, then it would be great
+      if you could send us your code so that we include them into
+      the next releases. Thanks.
+
+    <h2><a name="2.3"></a>Programming a JAC application's
+    launcher/descriptor</h2>
+
+    <p>Once all the aspect configurations are made, you must declare
+      to the system that your program uses them. This is done
+      by programming the application's launcher/descriptor.
+
+    <p>The program should be launched by a static main method (as
+      usual). This launching method is declared in a JAC application
+      descriptor (*.jac files) that also registers the program within
+      the applications repository, construct the supported aspects
+      configurations.</p>
+
+<pre class="code">
+public class Run {
+   public static void main( String[] args ) {
+      // create the root object
+      new MyRootClass();
+   }
+}
+</pre>
+
+<pre class="code">
+// the application descriptor (myApp.jac)
+applicationName: myApp
+launchingClass: myAppPath.Run
+aspects: \
+  persistence myPath/persistence.acc true
+</pre>
+
+    <p>By default, all the objects are wrappable except wrappers,
+      aspect components and exceptions. If you need an object to be
+      regular (not wrappable), you need to declare it in the
+      <code>org.objectweb.jac.prop</code> file in your JAC distribution root
+      directory.</p>
+
+
+    <p>To run the application then use org.objectweb.jac.jar.
+
+<pre>
+java -jar org.objectweb.jac.jar -C myClassPath myAppPath/myApp.jac arg1 ...
+</pre>
+
+    <p>To know about the launching options, use the command <code>jac
+-h</code> or refer the JAC launching class <a
+href="javadoc/org/objectweb/jac/core/Jac.html" target=Javadoc><code class=class>org.objectweb.jac.core.Jac</code></a>.
+
+    <h1><a name="3"></a>Programming new aspects</h1>
+    
+    <h2><a name="3.1"></a>Overview on the programming model</h2>
+
+    <p>You must keep in mind that JAC is not a language but a
+      framework. Thus, most of the programming is done by extending
+      the classes or implementing the interfaces that are provided by
+      the <a href="doc/javadoc/org/objectweb/jac/core/package-overview.html"
+      target=Javadoc><code class=package>org.objectweb.jac.core</code>
+      package</a>.</p>
+
+    <p>The next sections present all the programming concepts that are
+      needed to program new aspects from scratch and finally show a
+      simple aspect example.</p>
+      
+    <h2><a name="3.2"></a>Programming features</h2>
+    
+    <h3><a name="3.2.1"></a>Programming a wrapping method</h3>
+    
+    <p>A wrapping method is a regular method that is implemented
+      within a subclass of <a href="javadoc/org/objectweb/jac/core/Wrapper.html"
+	target=Javadoc><code class=class>org.objectweb.jac.core.Wrapper</code></a>.</p>
+      
+<pre class=code>
+public class MyWrapper extends Wrapper {
+   // a wrapper must call the Wrapper(AspectComponent) 
+   // constructor
+   public MyWrapper(AspectComponent ac) {
+       super(ac);
+   }
+   // A wrapping method must always have this prototype
+   public Object myWrappingMethod (Interaction interaction) {...};
+}
+</pre>
+
+    <p>Within the runtime context of wrapping method which is reified
+      by the passed interaction, the programmer can access several
+      informations about the current method call (actually the current
+      collaboration's interaction).</p>
+
+    <ul>
+      <li><i>interaction.wrappee</i> is the base object that contains
+	the method that is being wrapped by this wrapping method (it
+	implements the <a href="javadoc/org/objectweb/jac/core/Wrappee.html"
+	target=Documentation><code
+	class=class>org.objectweb.jac.core.Wrappee</code></a> interface,</li>
+	<li><i>interaction.method</i> is the base method name,</li>
+	<li><i>interaction.args</i> are the arguments passed to the
+	base method</li>
+    </ul>
+
+    <p>A wrapping method can wrap several base object methods. The
+      arguments are seamlessly set to the values corresponding to a
+      given base-level call.</p>
+
+    <p>Within a wrapping method, the wrapper can perform treatments
+      and manipulate its arguments. A wrapper task is partitioned in
+      two parts: the <i>before</i> part, that is called before the
+      base method is called, and the <i>after</i> part, that is called
+      after it. Between the <i>before</i> and <i>after</i> parts, the
+      wrapper programmer must call the base object. Since many
+      wrappers can wrap a base object, the call process to the base
+      object is a special process that continues the wrapping chain if
+      needed (and calls the base object if there is no wrappers
+      left). To perform it, the wrapper programmer must use the
+      <i>proceed</i> method provided by the <i>Wrapper</i> class. A
+      wrapper must return an object that stands for the return value
+      of the base function (it has to be a compatible type).</p>
+
+    <p>Thus, a typical body of a wrapping method is:
+      
+<pre class=code>
+Object ret = null;
+// before job
+...
+ret = proceed(interaction);
+// after job
+...
+return ret;
+</pre>
+
+    <p>To show how wrappers can be used, here are ten simple examples
+      of very classical wrapping function bodies. Note that a wrapping
+      method can access the wrapper state that is not represented in
+      the following examples.</p>
+
+    <h4 class=example>Example 1:</h4>
+    
+    <p>A verbose wrapping method (that prints a trace on the screen
+      --- easily modifiable to print in a log file).</p>
+
+<pre class=code>
+Object ret = null;
+System.out.println("<< calling "+interaction.method+
+                   " with "+interaction.args+" >>");
+ret = proceed(interaction);
+System.out.println("<< "+interaction.method+" returned "+ret+" >>");
+return ret;
+</pre>
+
+    <h4 class=example>Example 2:</h4>
+
+    <p>A wrapping method that checks the type of the client and raises
+      an exception if the client is not allowed (note, this exception
+      should be handled by an exception handler).</p>
+
+<pre class=code>
+Object ret = null;
+if ( attr("cient") instanceof AllowedType ) {
+  ret = proceed(interaction);
+} else {
+  throw new NotAllowedTypeException();
+}
+return ret;
+</pre>
+
+    <h4 class=example>Example 3:</h4>
+
+    <p>A wrapping method that performs some precondition test on the
+      arguments (here, the first argument is an integer and must be
+      bounded within 1-100).</p>
+
+<pre class=code>
+Object ret = null;
+if (((Integer)interaction.args[0]).intValue() >= 0 &&
+    ((Integer)interaction.args[0]).intValue() <= 100) {
+  ret = proceed(interaction);
+} else {
+  throw new ArgOutOfBoundsException();
+}
+return ret;
+</pre>
+
+    <h4 class=example>Example 4:</h4>
+    
+    <p>Almost the same wrapping method but, that corrects the argument
+      value instead of throwing an exception.</p>
+
+<pre class=code>
+if (((Integer)interaction.args[0]).intValue() < 0) 
+  interaction.args[0] = 0;
+if (((Integer)interaction.args[0]).intValue() > 100) 
+  interaction.args[0] = 100;
+return proceed(interaction);
+</pre>
+
+
+    <h4 class=example>Example 5:</h4>
+
+    <p>A wrapper that stores the object state within a database (to
+      make it persistent).</p>
+
+<pre class=code>
+Object ret = null;
+ret = proceed(interaction);
+Database d = new Database();
+d.connect();
+d.write(interaction.wrappee, Utils.getObjectState(interaction.wrappee)); 
+return ret;
+</pre>
+
+
+    <h4 class=example>Example 6:</h4>
+
+    <p>A wrapping method that performs a postcondition test on the
+      return value (in this case, the return value must be an integer
+      bounded within 0 and 100).</p>
+
+<pre class=code>
+Object ret = null;
+ret = proceed(interaction);
+if (((Integer)ret).intValue() < 0 || ((Integer)ret).intValue() > 100) {
+  throw new RetOutOfBoundsException()
+}
+return ret;
+</pre>
+
+    <h4 class=example>Example 7:</h4>
+
+    <p>A wrapping method that performs a test on the state of the
+      wrappee after the base function has been called.</p>
+
+<pre class=code>
+Object ret = null;
+ret = proceed(interaction);
+if (  ((Integer)ClassRepository.get()
+   .getClass(interaction.wrappee)
+   .getField("aField").get()).intValue() < 0
+   || ((Integer)ClassRepository.get()
+   .getClass(interaction.wrappee)
+   .getField("aField").get()).intValue() > 100)
+{
+  throw new FieldOutOfBoundsException();
+}
+return ret;
+</pre>
+
+
+    <h4 class=example>Example 8:</h4>
+
+    <p>A wrapping method that forwards the call to a set of replicas
+      (e.g. to implement a fault-tolerance aspect).</p>
+
+<pre class=code>
+Object ret = null;
+// replicas is a RemoteRef[] field of the wrapper
+for (int i = 0; i < replicas.length; i++) {
+  interaction.invoke(replicas[i]);
+}
+return proceed(interaction);
+</pre>
+
+    <h4 class=example>Example 9:</h4>
+
+    <p>A wrapping method that forwards the call to a remote object
+      (acts like a proxy). Note that this wrapper does not call the
+      <code class=method>proceed</code> method so that the wrappee is
+      never called.</p>
+
+<pre class=code>
+return remoteRef.invoke(interaction.method,interaction.args);
+</pre>
+
+    <h4 class=example>Example 10:</h4>
+
+    <p>A wrapping method that caches the results of the wrappee and
+      that uses the cached values when the arguments and the wrappee
+      state have already been used.</p>
+
+<pre class=code>
+Object ret = null;
+if (isCacheHit(interaction.wrappee, interaction.args)) {
+  ret = getCachedValue(interaction.wrappee, interaction.args);
+} else {
+  ret = proceed(interaction);
+  setCachedValue(interaction.wrappee, interaction.args, ret);
+}
+return ret;
+</pre>
+
+    <h3><a name="3.2.2"></a>Programming a role method</h3>
+
+    <p>A role method is a regular public method of a wrapper.</p>
+
+<pre class=code>
+public <i>ret_type</i> myRoleMethod(Wrappee wrappee, <i>user_defined_args...</i> );
+</pre>
+
+    <p>The goal of the role method is to extend the wrappee
+      functionalities. A role method can be invoked by using the
+      <code>Wrapping</code> API (class <a
+      href="javadoc/org/objectweb/jac/core/Wrapping.html"
+      target=Documentation><code class=class>org.objectweb.jac.core.Wrapping</code></a>) as
+      follows:</p>
+
+<pre class=code>
+ret = Wrapping.invokeRoleMethod(o, "myRoleMethod", 
+                                <i>user_defined_args_values</i>);
+</pre>
+
+    <p>Within the runtime context of a role method the wrappee
+      parameter is the object on which the role method is invoked.</p>
+
+    <p>We will not give any precise example of role methods since role
+      methods are exactly regular methods except that they are
+      implemented in wrappers. Using role method is a great
+      alternative to inheritance since they can be dynamically added
+      or removed on a per-object basis. As an example, if you want to
+      implement a transactional aspect, you could add <i>prepare</i>,
+      <i>commit</i> and <i>rollback</i> role methods to the set of
+      objects that need to participate a transaction (even if they do
+      not belong to the same class).</p>
+
+    <h3><a name="3.2.3">Programming an exception handling method</a></h3>
+
+    <p>An exception handling method is a regular method (of a wrapper)
+      that presents a prototype which is the following:</p>
+
+<pre class=code>
+public Object myHandler(Interaction interaction, AnException e);
+</pre>
+
+
+    <p>Within its runtime context, <i>interaction.wrappee</i> is a
+      reference to the object that is wrapped. The
+      <i>interaction.method</i> and <i>interaction.args</i> are the
+      wrappee method where the exception occurs and the arguments with
+      which it was called.</p>
+
+    <p>The exception handling method is automatically notified if one
+      of the method called by the wrappee raises an exception that is
+      of the type of the one declared in the exception handling
+      method.</p>
+
+    <p>Exception handlers are really useful when programming aspects
+      since some exceptions can be raised by the wrappers (so that
+      they are not declared in the <i>throws</i> clause of the wrappee
+      interface and are consequently not handled by the client). For
+      instance, in the wrapping method examples 2, 3, 6, and 7, the
+      wrapping methods throw some exceptions that will stop the
+      program execution if they are not handled.</p>
+
+    <p>As an example, here is an exception handling method for the 7th
+      sample. This exception handler should wrap the clients of the
+      7th wrapper wrappees. To make it not so trivial than just
+      printing a error message, this handler retries once to call the
+      originally called method when it receives an
+      <i>RetOutOfBoundsException</i>. This can be an implementation
+      basis for fault-detection and tolerance aspect for an
+      application that needs it.</p>
+
+<pre class=code>
+public class RetCheckingWrapper extends Wrapper {
+   int nRetry = 0;
+   public Object handler(Interaction interaction, 
+                         RetOutOfBoundsException e) {
+
+      Object ret = null;
+      // retry to call the method once
+      nRetry ++;
+      if (nRetry < 1) {
+         ret = interaction.invoke(interaction.wrappee);
+      } else {
+         System.out.println ("We retried once but there is still a " + e);
+	 throw new InconsistencyError( 
+            interaction.wrappee, 
+            interaction.method,
+            interaction.args);
+      }
+      return ret;
+  }
+}
+</pre>
+
+    <p>Even if the caught exception is not raised by an aspect,
+      exception handlers can be useful when you want to have a clean
+      code that is not polluted by catching all the runtime exceptions
+      that can be thrown by the environment. For instance, you can
+      wrap all the object of the application by exception handlers
+      that catch the file system full exceptions so that your
+      application is secure and readable.</p>
+
+    <h3><a name="3.2.4"></a>Reflective features and contextual attributes</h3>
+
+    <p>To be aspect compliant, the reflective code must use the <a
+	href="javadoc/org/objectweb/jac/core/rtti/package-summary.html"
+	target=Javadoc><code class=package>org.objectweb.jac.core.rtti</code></a> package instead of the
+	<code>java.lang.reflect</code> one.
+
+    <p>The JAC system offers the ability to introspect and query
+      objects by using the <a
+      href="javadoc/org/objectweb/jac/core/ObjectRepository.html"
+      target=Javadoc><code
+      class=class>org.objectweb.jac.core.ObjectRepository</code></a> class.
+
+    <p>Moreover, JAC allows the programmer to access the running
+      collaboration. A running context is composed of thread local
+      attributes (that can be dynamically defined at runtime). The
+      collaboration propagates with the method calling flow.</p>
+
+    <p>The attributes are part of the collaboration and can be set in
+      any object that implements the <a
+      href="javadoc/org/objectweb/jac/core/CollaborationParticipant.html"
+      target=Javadoc><code
+      class=class>org.objectweb.jac.core.CollaborationParticipant</code></a>
+      interface, i.e. the wrappers and the aspect components. When an
+      attribute has been set, all the subsequently called methods will
+      also have access to this attribute value. For instance:</p>
+
+<pre class=code>
+// no attributes are defined...
+...
+// defines an attribute 'a'
+attrdef("a", "aValue1");
+try {
+  ...
+  // "a" is equal to "aValue1" for all the following calls
+  // of the same thread
+  attr("a"); // ==a
+  ...
+} finally {
+  // resets it
+  attrdef("a", null);
+}
+</pre>
+
+    <h3><a name="3.2.5"></a>Pointcuts expressions and definitions</h3>
+    
+    <h4><a name="3.2.5.1"></a>How to use pointcuts?</h4>
+    
+    <p>A pointcut is an object that belongs to an aspect component and
+      that is able to be parametrized to automatically wrap or perform
+      aspect-actions on a set of base-objects regarding four pointcut
+      expressions.</p>
+
+    <p>A pointcut expression is an expression based on regular
+      expressions and can include other keywords or operators as it
+      will be explained later on. For a given method of any base
+      object, the pointcut is activated if all the pointcut
+      expressions match.</p>
+
+    <p>Thus, all the methods of all the objects in the system are
+      checked once by the pointcut. A given method will be extended by
+      the pointcut if:</p>
+
+    <ul>
+      <li>the first expression (the <b>object-pointcut-expression</b>)
+	matches the name of the object the checked method belongs
+	to</li>
+      
+      <li>the second expresion (the <b>class-pointcut-expression</b>)
+	matches the class full name</li>
+
+      <li>the third expression (the <b>method-pointcut-expression</b>)
+	matches the method prototype (for instance, to match a method
+	"void get(int i)", then the expression should be
+	"get(int):void" or any regular/pointcut expression that
+	matches this string)</li>
+
+      <li>the last expression (the <b>host-pointcut-expression</b>)
+	matches the container name where the owner object is located
+	(optional expression... default is ".*" so that the aspect is
+	applied, by default, on all the hosts of the topology)</li>
+    </ul>
+
+    <p>When a method matches these four pointcut-expressions, then
+      either the object(s)/method(s) are wrapped by a wrapper, either
+      an action is performed at the construction of the matching
+      object. There are two ways to tell which wrapper should be used
+      by a pointcut:</p>
+
+    <ul>
+      <li>you can pass a wrapper instance at the pointcut
+	construction</li>
+
+      <li>you can let the pointcut deal with the wrapper contruction and then you
+	just pass the wrapper class name; in this case, you must specify the
+	<code>"one2one"</code> flag:
+  
+	<ul>
+	  <li>if <code>one2one==true</code>, then the wrapper is
+	    constructed as many times as the pointcut is applied
+	    (there is one wrapper per base method)</li>
+
+	  <li>if <code>one2one==false</code> (default), then the
+	    wrapper is constructed only once and shared between all
+	    the wrappees</li>
+	</ul>
+    </ul>
+
+    <p>The recommanded entry point to use poincuts are the factory
+      methods of the aspect components that allow the programmer to
+      create relevant pointcuts (see the <code>pointcut</code> methods
+      in <a href="javadoc/org/objectweb/jac/core/AspectComponent.html"
+      target=Javadoc><code
+      class=class>org.objectweb.jac.core.AspectComponent</code></a>.</p>
+
+    <p>Here is a sample of use of the pointcut feature for a tracing
+      aspect.</p>
+
+    <p>If you got a tracing wrapper such as:</p>
+
+<pre class=code>
+public class TracingWrapper extends Wrapper {
+    public TracingWrapper(AspectComponent ac) {
+        super(ac);
+    }
+    public Object verboseCall(Interaction i) {
+        System.out.println(i.method+" is called");
+        Object ret = proceed();
+        System.out.println(i.method+" is returning "+ret);
+    }
+}
+</pre>
+
+    <p>Then, the handy way of programming a verbose aspect that traces
+      all the calls within the system is:</p>
+
+<pre class=code>
+public class Tracing_1_AC extends AspectComponent {
+    TracingWrapper wrapper = new TracingWrapper(this);
+    public void whenUsingNewInstance(Interaction i) {
+        if(i.wrappee!=null) {
+            Wrapping.wrapAll(i.wrappee, wrapper, "verboseCall");
+        }
+    }
+}
+</pre>
+
+    <p>This is nice but very low-level since you have to overload the
+      <code>whenUsingNewInstance</code> method and you have to know
+      the <code>Wrapping</code> API to wrap the object by
+      hand. Moreover, if you want to make more subtil filters on which
+      objects or methods to wrap, it becomes tedious. For instance,
+      imagine you want to make verbose only one instance called "o1",
+      and one method of this instance called "m1":</p>
+
+<pre class=code>
+public class Tracing_2_AC extends AspectComponent {
+    TracingWrapper wrapper = new TracingWrapper(this);
+    public void whenUsingNewInstance(Interaction i) {
+        String name = NameRepository.get().getName(i.wrappee);
+        if(name!=null && name.equals( "o1" ) ) {
+            Wrapping.wrap( i.wrappee, wrapper, "verboseCall", "m1" );
+        }
+    }
+}
+</pre>
+
+    <p>Pointcuts offer an interesting, powerful, and simple
+      alternative to this technique (that can still be used if
+      pointcuts do not work). Let us rewrite <code>Tracing_1_AC</code>
+      and <code>Tracing_2_AC</code>:</p>
+
+<pre class=code>
+public class Tracing_1_AC extends AspectComponent {
+    Tracing_1_AC() {
+        pointcut(".*",".*",".*",TracingWrapper.class.getName(),
+                 "verboseCall",false,null);
+    }
+}
+</pre>
+
+<pre class=code>
+public class Tracing_2_AC extends AspectComponent {
+    Tracing_2_AC() {
+        pointcut("o1",".*","m1.*",TracingWrapper.class.getName(),
+                 "verboseCall",false,null);
+    }
+}
+</pre>
+
+    <p>Please note that all the concision of the pointcut notation
+      comes from the regular expression syntax that is very powerful
+      (we use GNU regexp for the actual implementation).</p>
+
+<h4><a name="3.2.5.2"></a>Object-Pointcut-Expression Paths</h4>
+
+    <p>Let us recall that the naming aspect of JAC names the objects
+      that are created in the program with the following
+      convention:</p>
+
+<pre class=code>
+newObject.getClass().getShortName().lowerCase() + 
+newObject.getClass().getInstanceCount()
+</pre>
+
+    <p>Thus, if <code>newObject</code> is of the
+      <code>org.objectweb.jac.samples.Calcul</code>, then the first created calcul
+      instance name is <code>calcul0</code>, the second is
+      <code>calcul1</code>, and so on.</p>
+
+    <p>When you want to weave a given aspect to some objets, you can
+      refer their names instead of their class. For instance, in a
+      pointcut definition, writing:</p>
+      
+<pre class=code>
+object expression = ".*"
+class expression  = "org.objectweb.jac.samples.Calcul"
+</pre> 
+
+<p>Is equivalent to:
+
+<pre class=code>
+object expression = "calcul[0-9]*"
+class expression =  ".*"
+</pre> 
+
+    <p>But the point here is to be able to treat objects differently
+      even if they are instances of the same class. For instance, the
+      following pointcut expressions activates the pointcut *ONLY* on
+      the three first calcul instances (and not on the other
+      instances).</p>
+
+<pre class=code>
+object expression = "calcul[0-2]"
+class expression =  ".*"
+</pre> 
+
+    <p>In simple cases, programs use objects as components and
+      instantiate (or bind to), a set of well-known objects with
+      simple and predictible creation order so that it is simple to
+      know their names.</p>
+
+    <p>However, in more dynamic cases, when programs instantiate
+	objects regarding a more complex algorithm, aspects may be in
+      trouble to find out the name of a particular object and it
+      might be difficult or impossible to write the right pointcut
+      expression with a regular expression.</p>
+
+    <p>A first simple means to overcome this issue is to custom the
+      naming of the created objects so that the naming conventions are
+      relevant and you can refer to an object unambigously. This can
+      be done by telling the naming aspect to force the name of the
+      objects.</p>
+
+    <p>For instance, imagine a double loop that dynamically creates
+      objets:</p>
+
+<pre class=code>
+class MyContainer {
+    Vector elements = new Vector();
+    public addElement( MyElement element ) {
+        elements.add( element );
+    }
+}
+class MyElement {...}
+
+[...]
+for( int i=0; i&lt;max1; i++ ) {
+    MyContainer container = new MyContainer();
+    for( int j=0; j&lt;max2; j++ ) {
+        container.addElement( new MyElement() );
+    }
+}
+</pre>
+
+    <p>Now, imagine that you want to wrap each first element of the
+      containers. You are in trouble to know its name since
+      <code>max1</code> and <code>max2</code> are only known at
+      runtime (and can take any value depending on the program). A way
+      to solve the problem is to force the names of the elements:</p>
+
+<pre class=code>
+[...]
+for( int i=0; i&lt;max1; i++ ) {
+    MyContainer container = new MyContainer();
+    for( int j=0; j&lt;max2; j++ ) {
+        NamingAC.forceName("element_"+i+"_"+j);
+        container.addElement( new MyElement() );
+    }
+}
+</pre>
+
+    <p>It then becomes easy to write an object pointcut-expression
+      that matches only the first elements of the containers:</p>
+      
+<pre class=code>
+"element_[0-9]*_0"
+</pre> 
+
+    <p>However, this solution is not really satisfying for AOP since
+      your base program now handles a naming issue. In some cases,
+      this dependency can be avoided. JAC provides an original feature
+      to do this called the Object-Paths (OPaths). With the OPath
+      feature, you can access objects by traveling through the
+      relations. This feature was widely inspired from XPaths.</p>
+
+    <p>An OPath is of the following form:</p>
+
+<pre class=code>
+objectExpr/relationExpr/objectExpr/relationExpr/ ... /objectExpr
+</pre>
+
+    <p>Each sub-expression of an OPath is separated from the next one
+      using <code>/</code> is either an object regular expression, or
+      a relation regular expression where:</p>
+
+    <dl>
+      <dt>objectExpr:</dt>
+      <dd>an expression that matches a set of objects in the path's 
+	context (the root of the path matches in all the objects
+	of the system) - it can be an index (e.g. 0 matches the 
+	first object in the path's context)</dd>
+      <dt>relationExpr:</dt>
+      <dd>an expression that matches all the references and all 
+	the collections of the objects set matched by the parent
+	path expression</dd>
+    </dl>
+
+    <p>For instance, if you want to match all the users that own an
+      account within a bank called <code>bank0</code>, then
+      you simply write:</p>
+
+<pre class=code>
+bank0/accounts/.*/owners/.*
+</pre>
+
+    <p>Finally, in our previous containers-elements sample, you can
+      denote all the first elements of the containers so that
+      configuring the names is not needed anymore:</p>
+      
+<pre class=code>
+mycontainer[0-9]*/elements/0
+</pre>
+
+    <h4><a name="3.2.5.3"></a>Method-Pointcut-Expressions Keywords</h4>
+
+    <p>In method pointcut-expressions, you can use keywords to very
+      easily denote sets of methods.</p>
+
+    <p>For instance, to match all the setters of a class, instead of
+      having to write the following regular expression on the method
+      pointcut-expression:</p>
+
+<pre class=code>
+set.*([^,]+):void  // all the methods that start with "set"
+                   // and take only one argument (no comma 
+                   // in the parameter types)
+</pre>
+
+<p>You can simply write:</p>
+
+<pre class=code>
+SETTERS
+</pre>
+    
+    <p>There are two reasons for using keywords in method
+      pointcut-expressions. First it is simplier and you do not need
+      to know regular expressions. Second, you do not need to rely on
+      naming conventions anymore!! Indeed, you can ask, for instance,
+      to retrieve all the methods that modify the object's state (even
+      if the names do not follow any conventions). This is possible
+      because of the RTTI metadata (see <a
+      href="javadoc/org/objectweb/jac/core/rtti/package-summary.html"
+      target=Javadoc><code
+      class=package>org.objectweb.jac.core.rtti</code></a>). RTTI metadata are
+      automatically set through BCEL bytecode analysis.</p>
+    
+    <p>Here are the implemented keywords (some can take arguments):</p>
+
+    <ul>
+      <li><code>ALL</code>: equivalent to the <code>.*</code> regular
+	expression</li>
+      <li><code>MODIFIERS</code>: all the methods that modify the object's
+	state (write a field) -- including the setters</li>
+      <li><code>ACCESSORS</code>: all the methods that access the object's
+	state (read a field) -- including the getters</li>
+      <li><code>SETTERS(<i>field_names</i>)</code>: the setter for the fields
+	  of the list <code>fieldnames</code> (parameters are
+	optional => SETTERS matches all the setters)</li>
+      <li><code>GETTERS(<i>field_names</i>)</code>: the getter for the fields
+	of the list <code>fieldnames</code> (parameters are
+	optional)</li>
+      <li><code>ADDERS(<i>collection_names</i>)</code>: some adders</li>
+      <li><code>REMOVERS(<i>collection_names</i>)</code>: some removers</li>
+      <li><code>FIELDGETTERS/FIELDSETTERS</code>: primitive fields
+	getters/setters</li>
+      <li><code>REFGETTERS/REFSETTERS</code>: references
+	getters/setters</li>
+      <li><code>COLGETTERS/COLSETTERS</code>: collections
+	getters/setters</li>
+    </ul>
+
+    <h4><a name="3.2.5.4"></a>Pointcut Operators</h4>
+
+    <p>A pointcut expression can be composed of pointcut
+      sub-expressions (expressions of the over-depicted forms)
+      composed with the && (logical and), || (logical or), and the !
+      (NOT) operators. So, let's give some configuration example of
+      the tracing aspect that uses pointcut expressions as an input
+      for the "trace" configuration method:</p>
+
+<pre class=code>
+// traces all the calls on all the objects of the system
+trace ".*" ".*" ".*";
+</pre>
+
+<pre class=code>
+// traces all the calls on all the objects of the system (alt.)
+trace "ALL" "ALL" "ALL";
+</pre>
+
+<pre class=code>
+// traces all the calls on all the methods of all the instances of
+// classes A and B
+trace ".*" "A || B" ".*";
+</pre>
+
+<pre class=code>
+// traces all the calls on all the methods of the first instances
+// of classes A and B (their names ends with 0)
+trace ".*0" "A || B" ".*";
+</pre>
+
+<pre class=code>
+// restricts the trace to the f field setters and the f field
+// getters
+trace ".*0" "A || B" "GETTERS(f) || SETTERS(f)";
+</pre>
+
+<pre class=code>
+// restricts the trace to all the methods minus the methods that
+// modify the state of the instances
+trace ".*0" "A || B" ".* && !MODIFIERS";
+</pre>
+
+<pre class=code>
+// traces all the instances of all classes except a0 and only the
+// methods that read the state of the instances or the getName
+// method
+trace ".* && !a0" ".*" "ACCESSORS || getName():String";
+</pre>
+
+<p><b>Note:</b> parenthesis are not yet available.
+
+<h2><a name="3.3"></a>Hello world example</h2>
+
+    <p>The hello world example of Aspect-Oriented Programming is often
+      the trace example where the aspect prints on the screen the
+      methods that are called in the base program. The following steps
+      show how to program this simple aspect and how to configure and
+      weave it to a simple application.</p>
+	      
+    <p><b>Step 1:</b> programming or reusing the wrappers</p>
+
+    <p>This aspect is really simple and only needs one wrapper that
+      can be found in the <code>org.objectweb.jac.wrapper</code> package (you can
+      copy it and adapt it to the kind of trace you want to see):</p>
+
+<pre class=code>
+import org.objectweb.jac.core.*;
+import java.util.*;
+public class VerboseWrapper extends Wrapper {
+   public VerboseWrapper(AspectComponent ac) {
+      super(ac);
+   }
+   public Object printCallingInfos(Interaction i) {
+      System.out.println(
+         "<<< Calling '"+i.method+" on '"+i.wrappee.toString()+
+         "' with "+Arrays.asList(i.args)+" >>>"
+      );
+      Object ret = proceed(i);
+      System.out.println(
+         "<<< Returning from '"+i.method+" on '"+i.wrappee.toString()+
+         "' with "+Arrays.asList(args)+" >>>"
+      );
+      return ret;
+   }
+}
+</pre>
+
+    <p><b>Step 2:</b> programming an aspect component</p>
+
+    <p>To weave the trace aspect, you must define an aspect component
+      that wraps all the methods of all the base objects that need to
+      be verbose. To specify the objects that need to be verbose, the
+      aspect programmer should add some configuration capability of
+      the aspect component. Here the configuration of the AC can be
+      done with the <code>addVerboseClass</code> that allows the user
+      to specify that all the instances of the classes that are added
+      to the <code>verboseClasses</code> list are verbose.</p>
+
+    <p><b><i>Simple version</i></b></p>
+
+<pre class=code>
+import org.objectweb.jac.core.*;
+class TracingAC extends AspectComponent {
+   VerboseWrapper wrapper = new VerboseWrapper(this);
+   Vector verboseClasses = new Vector();
+   public void addVerboseClass(String className) {
+      verboseClasses.add(className);
+   }  
+   public void whenUsingNewInstance(Interaction i) {
+      if(isVerboseClass(wrappee().getClass())) {
+         Wrapping.wrapAll(i.wrappee, wrapper, "printCallingInfos");
+      }
+   }
+   protected boolean isVerboseClass(String className) {
+      Iterator it = verboseClasses.iterator();
+      while(it.hasNext()) {
+         if(it.next().equals(className)) return true;
+      }
+      return false;
+   }
+}
+</pre>
+
+    <p>An alternative to the redefinition of the
+      <code>whenUsingNewInstance</code> method is to use the pointcut
+      feature provided by the aspect components (see <a
+      href="javadoc/org/objectweb/jac/core/MethodPointcut.html"
+      target=Javadoc>org.objectweb.jac.core.MethodPointcut</a>). A pointcut can be
+      defined by any aspect component at construction-time or at
+      configuration-time and allows the aspect programmer to easily
+      denote a set of base objects to wrap and how they are
+      wrapped. Pointcuts can be added with the
+      <code>AspectComponent.pointcut(...)</code> methods.</p>
+
+    <p>The following code is extracted from the tracing aspect that is
+      furnished with the JAC distribution. It uses the pointcut
+      feature to define a configuration method that allows the user
+      to define which method must be traced in a very concise and
+      precise way.</p>
+
+    <p><b><i>Pointcut-based version</i></b>
+
+<pre class=code>
+import org.objectweb.jac.core.*;
+public class TracingAC extends AspectComponent {
+   public void addTrace(String wrappeeExpr, 
+                        String wrappeeClassExpr, 
+                        String wrappeeMethodExpr) {
+      pointcut(wrappeeExpr,wrappeeClassExpr,wrappeeMethodExpr,
+               VerboseWrapper.class.getName(),"printCallingInfos",
+               null,false);
+   }
+</pre>
+
+<p>The expressions given are pointcut expressions.
+
+    <p><b>Step 3:</b> register the aspect component so that its name
+      is "tracing" (to do this, edit the <code>org.objectweb.jac.prop</code> file of
+      the root directory of the distribution).</p>
+
+    <p><b>Step 4:</b> program the base application.</p>
+
+    <p>This aspect can be applied to an application you have already
+      programmed. For instance, if the application is composed of one
+      class.</p>
+
+<pre class=code>
+package hello;
+public class Hello {
+   public void printHello() {
+      System.out.println("Hello!");
+   }
+}
+</pre>
+
+    <p><b>Step 5:</b> configure the aspect(s)</p>
+
+    <p>The configuration of the aspect can be handled within the
+      <code>main</code> method by calling the configuration methods of
+      the aspect components (here <code>addVerboseClass</code>) but
+      the programmer must then re-compile this class each time a
+      configuration changes. Thus, the best way to configure an aspect
+      is to specify a configuration file for each aspect. Each line of
+      the configuration file represents a invocation on a
+      configuration method of the aspect. Here is the configuration
+      file for the tracing aspect of the hello application
+      (<code>tracing.acc</code>).</p>
+
+ 
+<pre class=code>
+// each line is:
+// methodName parameters (where each parameter is double-quoted and
+// arrays are of the form : { item1, item2, ... itemN } 
+
+addVerboseClass hello.Hello;
+</pre>
+
+    <p>If you use the pointcut-based version, then the configuration
+      file can look like:</p>
+
+<pre class=code>
+addTrace ".*" "myClass1" ".*(float,float).*";
+addTrace "anObjectName" ".*" "set.*([^,]+):void";
+addTrace "anObjectName" ".*" "MODIFIERS && !set.*([^,]+):void";
+</pre>
+
+    <p>This configuration is more precise thanks to the pointcut
+      expressions. The first line tells that all the methods within
+      any instance of the class named <code>"myClass"</code> and that
+      take 2 floats must be traced. The second line tells that all the
+      methods that begin with the <code>"set"</code> prefix, that have
+      one and only one argument and that return nothing must be traced
+      (this expression matches all the setters of a single object
+      named <code>anObjectName</code> by the naming aspect. The third
+      line uses a keyword to denote a set of methods, here the full
+      expression means "all the methods that modify the object's state
+      excluding all the setters.
+
+    <p>Then, you can specify this file name to configure the tracing
+      aspect (declared in your application descriptor).</p>
+
+    <p><b>Step 6:</b> program the launcher and the application
+      descriptor file</p>
+
+    <p>Then you must write a launching class and an application
+      descriptor that registers the application within the system and
+      creates the supported aspects configurations (here the tracing
+      aspect) -- see section <a href="#2.3">Programming a JAC
+      application's launcher/descriptor</a>.</p>
+
+<pre class=code>
+package hello;
+public class Run {
+   public static void main(String[] args) {
+      Hello hello = new Hello();
+      hello.printHello();
+  }
+}
+</pre>
+
+<pre class=code>
+// hello.jac file
+applicationName: hello
+launchingClass: hello.Run
+aspects: \
+  tracing hello/tracing.acc true
+</pre>
+
+<p>Then run the program.
+
+<pre class=code>
+java -jar org.objectweb.jac.jar -C %helloClassPath% hello.jac
+</pre>
+
+    <p>You should see the trace printing around the hello method call.
+     
+
+    <div class=footer>
+      JAC is a LGPL software developed by the CAOLAC group of the
+      CEDRIC Laboratory with the collaboration of the AproDis project
+      of the <a href="http://www.lip6.fr">LIP6</a> Laboratory and of
+      the <a href="http://www.aopsys.com">AOPSYS</a> (TM) company.<br>
+      JAC is a direct application of the <a
+      href="http://cedric.cnam.fr/~pawlak">Renaud Pawlak</a> PhD
+      Thesis.<br> It is written in Java, SUN (TM) and is the
+      continuation of the <a href="http://www.aopsys.com/tos"
+      target="_top">TOS project</a> (written in Tcl).
+    </div>
+
+</body>
+</html>
+

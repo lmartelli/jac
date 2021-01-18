@@ -1,0 +1,633 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Tutorial</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="prev" href="tut_install.html">
+    <link rel="next" href="tut_programming.html">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+
+  <body>
+
+    <h1><a name="ide"></a>Programming with UMLAF</h1>
+
+    <p>JAC provides an IDE that supports UML-like editors so that it
+      greatly simplifies the programmer's task. This IDE is called
+      UMLAF for <b>UML</b> <b>A</b>spectual <b>F</b>actory</p>
+
+    <p>UMLAF is entirely programmed with JAC itself. It is a good
+    example of what can be done using JAC. Sources of UMLAF are
+    located in <code>src/org/objectweb/jac/ide</code> of the sources tarball.</p>
+
+    <p>Using UMLAF to program with JAC is not mandatory. Since JAC is
+    a framework, JAC programs are written in pure Java (excepting the
+    <code>*.acc</code> files). Thus, your favorite IDE can be used
+    instead of UMLAF.
+
+    <h2><a name="warnings">Warnings</a></h2>
+    
+    <p>UMLAF is still in a beta version. The core model is quite stable
+      and you should be able to read your projects with upcomming JAC
+      releases, however, class diagrams could be lost.</p>
+
+    <p>The supported modeling language is a subset of UML (it only
+      supports class diagram), plus a set of new concepts to model
+      aspects (aspect classes, pointcut relations, and groups). These
+      concepts should not be used for actual softwares since they are
+      experimental (for the moment).</p>
+
+    <p>We claim that when using aspect-oriented technology, the whole
+      UML language is not actually needed since the program is
+      expressed with its simpliest core-business form. All the
+      complexity related to implementation and design is handled in
+      the provided aspects. As a consequence, you might be disapointed
+      if you try to use this IDE whithin a regular development process
+      on regular OO or CB technologies. In the future, other useful
+      UML concepts (such as collaboration diagrams) will be
+      implemented.</p>
+
+    <h2><a name="getting_started">Getting started</a></h2>
+
+    <p>Refer to the <a href="tut_install.html">installation guide</a> to
+    launch UMLAF.</p>
+
+    <p>When launched for the first time, the IDE appears as a window
+      separated in 4 sub-panels. In the upper-left pannel, one can see
+      a treeview that contains one single node called "projects". This
+      sub-panel is the most important since it allows you to navigate
+      in your projects and all the projects entities such as packages,
+      diagrams, classes, or applications. The following list shows the
+      hierachy of all the different entities manipulated by the
+      IDE:</p>
+
+    <ul>
+      
+      <li><b>project</b> (<img src="images/project.gif"
+      alt="Project icon">): An entity that represents a given project
+	(packages and applications).
+
+	<ul>
+
+	  <li><b>package</b> (<img src="images/package.gif"
+      alt="Package icon">): A package is a container for classes or
+	    aspect classes. It can also contains subpackages if
+	    needed.
+
+	    <ul>
+	      
+	      <li><b>subpackage</b> (<img src="images/package.gif"
+      alt="Package icon">): A child package (can have other
+		children).</li>
+	      
+	      <li><b>class</b> (<img src="images/class.gif"
+      alt="Class icon">): A class as defined in UML. In JAC, a
+		class should represent a purely fonctional component
+		dedicated to one precise task. It contains methods and
+		attributes and can be related to other classes through
+		relation links or inheritence links.
+		
+		<ul>
+		  
+		  <li><b>attribute</b> (<img src="images/attribute.gif"
+      alt="Attribute icon">): An attribute is a data in a
+		    class.</li>
+		  
+		  <li><b>method</b> (<img src="images/method.gif"
+      alt="Method icon">): A method defines a treatment that
+		    can be perfomed on the instances of the owning
+		    class.</li>
+		  
+		  <li><b>relation link</b> (<img src="images/relation.gif"
+      alt="Relation icon">): A relation link relates a
+		    class to another class. In a method body, the ending
+		    class can be reached by using the end role name.</li>
+		  
+		</ul>
+	      </li>
+	      
+	      <li><b>aspect</b> (<img src="images/aspect.gif"
+      alt="Aspect icon">): An aspect represents an aspect
+		component in JAC. An aspect should be used to model
+		crosscutting behaviors on a set of classes or
+		instances. It can be defined in the same way as a
+		class (attributes, methods, and relation links) but
+		can also use pointcut links.
+
+		<ul>
+		  <li><b>pointcut link</b> (<img src="images/pointcut.gif"
+      alt="Pointcut icon">): A pointcut link relates an
+		    aspect to a class, an instance, or a set of
+		    instances (a group). The end role of a pointcut
+		    link defines a set of methods using a <a
+		    href="programmer_guide.html#3.2.5">method pointcut definition</a>. The start
+		    role must be equal to a method name in the aspect
+		    so that this method can wrap all the methods
+		    denoted by the end role.</li>
+		</ul>
+	      </li>
+    
+	      <li><b>instance</b> (<img src="images/instance.gif"
+      alt="Instance icon">): This entity represent an instance
+		of a class (as defined in UML). An instance can be
+		defined by its name regarding the JAC naming
+		conventions (i.e. the lowercased class name followed
+		by the index of the instance regarding its creation
+		order).</li>
+
+	      <li><b>group</b> (<img src="images/group.gif"
+      alt="Group icon">): This entity represents a set of
+		instances denoted by two expressions: an <a
+		href="programmer_guide.html#3.2.5">object pointcut definition</a> and a <a
+		href="programmer_guide.html#3.2.5">class pointcut definition</a>. Groups allows
+		the user to define heterogenous sets of objects that
+		can be extended by an aspect if a pointcut link ends
+		to the group.</li>
+      
+	      <li><b>diagram</b> (<img src="images/diagram.gif"
+      alt="Diagram icon">): A diagram is the graphical representation of
+		a set of package entities such as classes or aspects. It
+		roughly correspond to an UML class diagram but with some
+		features added and some other removed. The diagram is
+		consistent with the entities of packages.</li>
+	    </ul>
+    
+	</ul>
+
+      <li><b>application</b> (<img src="images/application.gif"
+      alt="Application icon">): An application represents a launchable
+	piece of software. It defines a lauching code that should
+	instanciate one of the classe defined in one of the project's
+	packages. It also defines and configures the aspects that are
+	woven to the application when it is run.
+      
+	<ul>
+	  
+	  <li><b>aspect configuration</b> (<img src="images/configAspect.gif"
+      alt="Aspect configuration icon">): This entity represent the
+	configuration of a given aspect for a given application.</li>
+	  
+	</ul>
+      </li>
+    
+    </ul>
+    
+    <p>Using the treeview is simple. You can double-click on a given node
+      to open it. You can use the right-click to show the available
+      treatements on the entity. For instance, to create a new
+      project, just right-click on the "projects" node and choose the
+      "Add project" item.</p>
+
+    <p>The upper-right panel is used to edit diagrams. Once you have
+      created a package in your project (using right-click on the
+      treeview), create a diagram in this package. The upper-right
+      panel will show a diagram editor that allows you to create and
+      edit the entities of the owning package.</p>
+
+    <p>The two lower panels are used to provide a Widget-based
+      representation of the currently selected entity in a
+      diagram. The left one shows classes, aspects, instances, or
+      groups. The right one shows relation and pointcut links,
+      attributes, or methods. These two panels can be used to edit the
+      model elements without using a graphical diagram editor (which
+      is sometimes useful to avoid using the mouse to much).</p>
+
+
+    <h2><a name="creating_application">Creating an application</a></h2>
+
+    <h3><a name="core_business">Modeling the core business</a></h3>
+
+    <p>First create a new project using the right click on the "projects"
+      node of the treeview. Call it "myProject" and choose the
+      generation path (the directory where the Java code will be
+      generated).</p>
+
+    <p>You then need to create a new package in your project to define the
+      business classes. Right-click on "myProject" node and add a
+      package that you can call "invoices".</p>
+
+    <p>Since it is nicer to model graphically, right-click on
+      "invoices" and add a new diagram. Call it "business" since it
+      will represent the core-busines model of the application. A
+      diagram editor component should then open in the upper-right
+      sub-panel.</p>
+
+    <div class=screenshot>
+      <img src="images/ide1.png" alt="The JAC IDE">
+    </div>
+
+    <p>Click on the "New class" button (<img src="images/class.gif"
+      alt="New class icon">) of the diagram editor toolbar and then
+      click on the desktop where you want to locate the new class. A
+      popup should appear to enter the class' name. Note that you can
+      modify names later on by using the "Text tool" (<img
+      src="images/TEXT1.gif" alt="Text tool icon">) button or by using
+      the other sub-panels. Just call the new class "Invoices". This
+      class represents a container for a set of invoices.</p>
+
+    <p>Now create in the same way an "Invoice" class. You can add an
+      attribute by using the "Add attribute" button (<img
+      src="images/attribute.gif" alt="Add attribute icon">) of the
+      toolbar or by right-clicking on the class in the tree view or in
+      the diagram. Set the name of the field to "amount" and its type
+      to "double".</p>
+
+    <div class=screenshot>
+      <img src="images/ide-newField.png" alt="Adding a new field to a class">
+    </div>
+
+    <p>Attributes can be read-only, which means that no method to set
+      its value will be generated, or calculated which means to no
+      real java field will be generated to store it value. A calulated
+      field should usually be read-only.</p>
+
+    <p>With the same process, create an attribute named "date" of type
+    "Date".</p>
+
+    <p>You can now create another class "Client" with an attribute
+      named "name" of type "String".</p>
+
+    <div class=screenshot>
+      <img src="images/ide2.png" alt="Classes are created">
+    </div>
+
+    <p>We can now relate the three classes together. Use the "New
+      relation" button (<img src="images/relation.gif" alt="New
+      relation icon">). Press the left button down on the "Invoices"
+      class and, without releasing, move to the "Invoice" class and
+      let the button up. A new relation link should be created with
+      its default roles, names, and cardinalities. You can edit them
+      on the diagram using the text tool, or in the lower-right
+      sub-panel after you have selected one in the diagram. Set the
+      end cardinality to "0-*" and the start cardinality to "1". Do
+      the same to create a relation between "Invoice" and "Client" set
+      the start cardinality to "0-*" and the cardinality to "1".</p>
+
+    <p>Set the role names as shown in the following
+      screenshot.</p>
+
+    <div class=screenshot>
+      <img src="images/ide3.png" alt="The invoices.business
+	class diagram">
+    </div>
+
+    <p>We also set the orientation of the relation between Invoices
+      and Invoice to "start->end" so that it is only navigable from
+      Invoices to Invoice. No collection field will be generated in
+      the Invoice class for this relation.</p>
+    
+    <h3><a name="application">Creating the application</a></h3>
+
+    <h4><a name="app_global_conf">Global configuration</a></h4> 
+
+    <p>Once the core business is modeled, you should create a new
+    application to make a running JAC program.</p>
+
+    <p>Right-click on the "myProject" node and choose "Add
+    application". Call it "myFirstApplication" for instance. You can
+    also program the launching code of the program (this code
+    corresponds to the <code>static void main(String[] args)</code>
+    method that is used as an entry point for the Java program).</p>
+
+    <p>In JAC, the idea of a lauching code is to create the root
+      objects of the application that can be used to reach or create
+      other objects via collections (relation links with "0-*" end
+      cardinality) or references (relation links with "0-1" end
+      cardinality).</p>
+
+    <p>In this case, we only need to create an "Invoices" instance
+    since all the other objects are reachable from it (regarding the
+    model). Thus, in the launching code editor, type the line:</p>
+
+<pre class=code>
+new invoices.Invoices();
+</pre>
+
+    <div class=screenshot>
+      <img src="images/ide4.png" alt="My first application
+	global configuration">
+    </div>
+
+    <p>Note that the full name of the class is as expected the parent
+      package path concated with the class name (this follows the Java
+      conventions).</p>
+
+    <p>At this step, the application is ready to run. Validate and use the
+      "Generate code" and the "Compile" commands by right-clicking on
+      the "myProject" node. If something goes wrong, some error
+      message(s) should appear in an errors dialog. If you do not
+      figure out how to solve the problem, do not hesitate to <a
+      href="mailto:jac-dev@org.objectweb.jac.aopsys.com">contact us</a>.</p>
+
+    <p>Since the application does not perform any treatment, it is not
+      very interesting to launch it as is. Thus, we should add at
+      least a GUI aspect so that the user of the application can
+      create and manipulate the business objets.</p>
+ 
+    <h4><a name="app_gui">Configuring the RTTI/GUI aspect</a></h4>
+
+    <p>The GUI aspect is one of the most useful aspect provided by JAC
+      since it allows the programmer to configure how the business
+      objects should be rendered and how the final user can interact
+      with the application.</p>
+
+    <p>As any aspect in JAC, the GUI aspect provides a configuration
+      interface <a href="javadoc/org/objectweb/jac/aspects/gui/GuiConf.html"
+      target="JAVADOC">GUIConf</a> (extends <a
+      href="javadoc/org/objectweb/jac/aspects/gui/ClassAppearenceGuiConf.html"
+      target="JAVADOC">ClassAppearenceGuiConf</a>, <a
+      href="javadoc/org/objectweb/jac/aspects/gui/FieldAppearenceGuiConf.html"
+      target="JAVADOC">FieldAppearenceGuiConf</a>, <a
+      href="javadoc/org/objectweb/jac/aspects/gui/MethodAppearenceGuiConf.html"
+      target="JAVADOC">MethodAppearenceGuiConf</a>, and <a
+      href="javadoc/org/objectweb/jac/aspects/gui/BehaviorGuiConf.html"
+      target="JAVADOC">BehaviorGuiConf</a>) that defines all the configuration
+      methods that can be used during the configuration process. The
+      programmer can refer these interfaces to know the available
+      commands that can be used.</p>
+
+    <p>To add an aspect configuration to an application, right-click
+      on the application node of the treeview and add a new aspect
+      configuration.</p>
+
+    <p>An RTTI aspect configuration is automatically added when you
+      create a new application. No configuration is required for the
+      moment since the RTTI aspect automatically import a default
+      configuration that is sufficent for this application. To know
+      more about RTTI and what can be configured in it, see <a
+      href="javadoc/org/objectweb/jac/core/rtti/RttiConf.html"
+      target="JAVADOC">RttiConf</a>.</p>
+
+    <p>Do not forget to check the woven checkbox. Otherwise, the
+      aspect will be disabled when running the application.</p>
+
+    <p>Then, create and configure the GUI aspect as shown in the
+      following screenshots.</p>
+
+    <p>For more details on <a href="aspects_config.html"
+    target="Aspect Configuration">aspect configurations and
+    syntaxes</a>.</p>
+
+    <div class=screenshot>
+      <img src="images/ide6.png" alt="The GUI aspect configuration">
+    </div>
+
+    <div class=screenshot>
+      <img src="images/ide7.png" alt="The GUI aspect configuration">
+    </div>
+
+<pre class=code>
+setEmbeddedEditors;
+setAutoCreateAll;
+</pre>
+
+    <div class=screenshot>
+      <img src="images/ide8.png" alt="The GUI aspect configuration">
+    </div>
+
+<pre class=code>
+setTableView invoices.Invoices invoices;
+
+window myGUI {
+    registerCustomized;
+    setTitle "Invoices";
+    setSubPanesGeometry 2 HORIZONTAL {false,false};
+    setPaneContent 0 Object {"invoices0"};
+    addReferenceToPane invoices.Invoices invoices 1;
+    setPosition 0 0 60 60;
+    setSplitterLocation 0 0.6;
+}
+</pre>
+
+    <h3><a name="starting_app">Starting the application</a></h3>
+    
+    <p>Before starting, ensure that the code generation is ok by
+      right-click on the project's node and "Generate
+      code" then "Compile".</p>
+      
+    <p>The application code and classes is then available in the
+      generation directory (GEN_DIR) that you have choosen when you
+      have created the project (you can change it by asking a view on
+      the project).</p>
+
+    <p>We are now almost ready to start the application. We just need
+      to configure a few options before we can do so. Right-click on
+      the application and "View", then in the "Run options" tab,
+      configure as below: </p>
+        
+    <div class=screenshot>
+      <img src="images/ide-runOptions.png" alt="Run options tab of an application">
+    </div>
+
+    <p>You can now right-click on the application and "start"!</p>
+
+    <p>Alternatively, you can start your application by hand with the
+      application's desciptor that was automatically generated:</p>
+
+    <dl>
+      <dt>Under Unix</dt>
+      <dd>
+<pre class=code>
+cd &lt;jac_dir&gt;
+
+java -jar org.objectweb.jac.jar -R . 
+     -C GEN_DIR:GEN_DIR/classes 
+     -G myGUI
+     GEN_DIR/myFirstApplication/myFirstApplication.jac
+</pre>
+      </dd>
+
+      <dt>Under windows</dt>
+      <dd>Create a shortcut for the following command:
+<pre class=code>
+java -jar org.objectweb.jac.jar -R .
+     -C "GEN_DIR;GEN_DIR\classes" 
+     -G myGUI
+     "GEN_DIR\myFirstApplication\myFirstApplication.jac"
+</pre>
+    And set its start directory to <code>&lt;jac_dir&gt;</code>.
+      </dd>
+    </dl>
+
+    <p>To stop the application, use the "stop" action in the
+      application popup menu. Closing the window will not kill the
+      process by default.</p>
+
+    <h3><a name="finalizing_app">Finalizing the application</a></h3>
+
+    <p>On the following model (please, update your current one):
+
+<div class=screenshot>
+   <img src="images/final_diagram.png" alt="The final diagram">
+</div>
+
+    <p>Note that the navigability of the relation between <code
+    class="class">Invoices</code>  and <code
+    class="class">Client</code> is only navigable from <code
+    class="class">Invoices</code> to <code
+    class="class">Client</code>.</p>
+
+    <p>Do not forget do generate the code of the project and compile
+    it after you modified the classes.</p>
+
+    <p>We are now showing all the aspect configurations that are needed
+      for the full application (exept the RTTI that is also needed at
+      first place).
+
+    <h4><a name="final_gui">Final GUI aspect (configuration tab)</a></h4>
+    
+    <p>For details on configuration commands, see the entire configuration
+      interface at <a href="javadoc/org/objectweb/jac/aspects/gui/GuiConf.html"
+      target="JAVADOC">GUIConf</a> (extends <a
+      href="javadoc/org/objectweb/jac/aspects/gui/ClassAppearenceGuiConf.html"
+      target="JAVADOC">ClassAppearenceGuiConf</a>, <a
+      href="javadoc/org/objectweb/jac/aspects/gui/FieldAppearenceGuiConf.html"
+      target="JAVADOC">FieldAppearenceGuiConf</a>, <a
+      href="javadoc/org/objectweb/jac/aspects/gui/MethodAppearenceGuiConf.html"
+      target="JAVADOC">MethodAppearenceGuiConf</a>, and <a
+      href="javadoc/org/objectweb/jac/aspects/gui/BehaviorGuiConf.html"
+      target="JAVADOC">BehaviorGuiConf</a>).</p>
+
+<pre class=code>
+class invoices.Invoices {
+  setCategories {"invoices","clients"};
+  attribute invoices {
+    setTableView;
+    setCategory "invoices";
+    setDisplayLabel false;
+  }
+  attribute clients {
+    // setTableView;
+    setCategory "clients";
+    setDisplayLabel false;
+  }
+}
+
+class invoices.Invoice {
+  setTableMembersOrder {amount,date};
+  setAttributesOrder {amount,date,client};
+}
+
+class invoices.Client {
+  setToString "%name%";
+  setAttributesOrder {name,invoices};
+  setTableView invoices;
+}
+
+window myGUI {
+   registerCustomized;
+   setTitle "DEMO";
+   setSubPanesGeometry 2 HORIZONTAL {false,false};
+   setPaneContent 0 Object {invoices0};
+   addReferenceToPane invoices.Invoices invoices 1;
+   addReferenceToPane invoices.Invoices clients 1;
+   setPosition 0 0 60 60;
+   setSplitterLocation 0 0.6;
+}
+</pre>
+
+    <h4><a name="integrity">Integrity aspect configuration</a></h4>
+
+    <p>With this configuration, you can declare some data dependencies and
+      some conditions on their values.</p>
+
+    <p>For details on configuration commands, see the entire configuration
+      interface at <a
+      href="javadoc/org/objectweb/jac/aspects/integrity/IntegrityConf.html"
+      target="JAVADOC">IntegrityConf</a>.</p>
+
+    <p>Associations need to be declared. This is done automatically
+      when the code is generated for each relation, depending on its
+      direction.</p>
+
+    <p>Add an aspect configuration named "integrity" to your
+      application, and write the following code in the "Configuration"
+      tab:</p>
+
+<pre class=code>
+// clients are automatically added to the repository collection
+declareRepository invoices0 invoices.Invoices.clients 
+   invoices.Invoice.client;
+
+// add a condition
+addPostCondition invoices.Invoice amount 
+   org.objectweb.jac.aspects.integrity.GenericConditions.isGreaterThan {0} 
+   "The amount must be positive";
+</pre>
+
+    <h4><a name="persistence">Persistence aspect configuration</a></h4>
+
+    <p>With this aspect, your datas are automatically made persistent.</p>
+
+    <p>For details on configuration commands, see the entire configuration
+      interface at <a
+      href="javadoc/org/objectweb/jac/aspects/persistence/PersistenceConf.html"
+      target="JAVADOC">PersistenceConf</a>.</p>
+
+    <p>Add a "persistence" aspect configuration to your application
+    with the following configuration code:</p>
+
+<pre class=code>
+// we use a file-system storage (path is from the root JAC dir)
+configureStorage org.objectweb.jac.aspects.persistence.FSStorage {"data/invoices"};
+makePersistent invoices.* ALL;
+registerStatics invoices.Invoices invoices0;
+</pre>
+
+    <h3><a name="result">Result</a></h3>
+
+    <p>Regenerate the code for the application by right-clicking on
+      the application in the tree view. You need not regenerate the
+      java code for the classes nor recompile it: this is the power of
+      aspect oriented programming.</p>
+
+    <p><a href="#starting_app">Launch the application</a>.</p>
+
+    <p>The resulting application should look as following.</p>
+
+<div class=screenshot>
+   <img src="images/demo-invoices.png" alt="The invoices demo application">
+</div>
+
+    <p>It works also on the WEB: you just need to use the "start web
+      GUI" and "Web GUIs" options in the "Run options" tab or replace the
+      <code>-G</code> option with <code>-W</code> in the command line
+      or windows shortcut.</p>
+
+    <p>You can then access your application at <a
+	href="http://localhost:8088/org/objectweb/jac/myGUI">http://localhost:8088/org/objectweb/jac/myGUI</a></p>
+
+<div class=screenshot>
+   <img src="images/demo-invoices-web.png" alt="The invoices demo application">
+</div>
+
+    <h2><a name="notes">Important notes</a></h2>
+
+    <p>UMLAF helps the programmer to design JAC applications
+    and allows him to easily configure existing aspects (the ones that
+    are provided by the JAC distribution). However, for the moment,
+    the knowlege of the aspect configuration interfaces is still
+    needed. In a short future, the IDE will provide some graphical
+    customization means that will make the programmer task easier.</p>
+
+    <p>With UMLAF, the programmer can also create entirely new
+      aspects despite it is not documented yet.</p>
+
+    <ul class=navbar>
+      <li><a href="tut_install.html">previous: Getting started</a></li>
+      <li><a href="tut_programming.html">next: Advanced programming</a></li>
+    </ul>
+
+    <div class=footer>      
+      JAC is an Open Source software developed by the <a
+      href="http://www.aopsys.com">AOPSYS</a> (TM) company with the
+      collaboration of the the <a href="http://www.lip6.fr">LIP6</a>,
+      the <a href="http://cedric.cnam.fr">CEDRIC</a>, and the <a href="http://www.lifl.fr">LIFL</a> laboratories.<br> JAC is a direct
+      application of the <a
+      href="http://cedric.cnam.fr/~pawlak">Renaud Pawlak</a>'s PhD
+      Thesis.
+    </div>
+
+</body>
+</html>
+

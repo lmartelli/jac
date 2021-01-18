@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>What is AOP?</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+<body>
+
+    <table class=logo cellspacing=0>
+      <tbody>
+	<tr>
+	  <td class=logo>What is</td>
+	  <td class=logo>AOP?</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <div class=subtitle>Renaud Pawlak and the JAC development team</div>
+
+<p>AOP has been first introduced by Gregor Kickzales in 1996. Like
+      structured programming and Object-Oriented programming
+      introduced a new approach for designing programs and a set of
+      guidelines to make more readable and reusable code, AOP is a
+      philosophy that is related to style of programming. It addresses
+      issues that can be solved in other approaches, but in a more
+      elegant way. To understand the spirit of AOP, you must
+      understand the following issues: 
+
+<ul><li><b>separation of concerns</b>: referring the Law of Demeter, a 
+project's efficiency increases if all the concerns are well modularized
+and if you only have to speak to your direct friends to make a
+modification of the program (this is a very old principle and the OOP
+gives some answers)</li>
+
+<li><b>crosscutting</b>: in a complex system, there are always some
+concerns that are not easily modularized, especially common-interest
+concerns that, by essence, are used by several modules (i.e. several
+modules use/share a well-known service of a module -- such as a
+logging or a persistence service)</li>
+
+<li><b>dependencies inversion</b>: the best way to avoid crosscutting is to
+NOT use the well-known services that crosscut. This is possible by
+reversing the dependencies (i.e. the well-known service shall use the
+other modules instead of the contrary). This dependency inversion is
+implemented by aspects</li>
+</ul>
+
+<p>JAC furnishes a set of programming concepts that allows the user to
+      implement the dependency inversion in a clean way.
+
+<p>Here is a core business class that performs simple calculi:
+
+<pre class=code>
+public class Calcul {
+    int value=0;
+    public void add(int toadd) {
+        value+=toadd;
+    }
+    public void sub(int tosub) {
+        value-=tosub;
+    }
+}
+</pre>
+
+<p>Let us imagine that, in the application, we do not want the <code>value</code>
+      field to be negative. This is a constraint that will also be
+      applicable to all the other classes of the application since, in
+      this business, we don't want to see negative values.
+
+<p>Thus, the test that will be added to check that the value is never
+      negative will <i>crosscut</i> all the business classes and pollute
+      the code that will be harder to read an maintain. Moreover, in an
+      application where the constraint is different or where there is
+      no constraints at all, my business classes will be harder to
+      re-use as is.
+
+<p>JAC and its AOP features allows you to externalize all the tests
+      within a well modularized code called an <i>aspect
+      component</i>. The effect of this code is to actually reverse
+      the dependency between the code that performs the business
+      calculi and the code that tests the constraints. Here is the
+      aspect code:  
+
+<pre class=code>
+01> public class TestAC extends AspectComponent {
+02>     public TestAC() {
+03>         pointcut( "Calcul", "sub", LimiterWrapper.class, "limit" );
+04>     }
+05>     public class LimiterWrapper extends Wrapper {
+06>         public void limit(Interaction i) {
+07>             if(((Integer)getFieldValue(i.wrappee,"value")).intValue()
+08>                    - ((Integer)args[0]).intValue() < 0 )
+09>                 throw new Exception("<0 forbidden");
+10>             proceed();
+11>        }
+12>        ...
+13>}   }
+</pre>
+
+<p>Of course it is more complex than adding a simple line of test but
+      in the long term and for real complex applications the benefits
+      are huge.
+
+<p>Aspect code explaination:
+
+<ul><li>line 3: a <i>pointcut</i> denotes a set of points of the
+	application where the aspect will change something (here, the
+	example is so simple that it only affects the <code>sub</code>
+	method of the <code>calcul</code> class, but it could denote a
+	much more complex set of objects or methods --- hence a
+	possibility to generalize the process to all the business
+	classes)</li>
+
+<li>line 5-6: a <i>wrapper</i> is an object that wraps the points
+	defined by the pointcuts with new code.
+	Here, the code is the one that is defined by the wrapping
+	method <code>limit</code></li>
+
+<li>line 7: the actual test. Within a wrapper, we have access to the
+	interaction-related information (or joinpoint). Here, we know
+	that <code>i.args[0]</code> is the parameter of the method
+	that is associated to the interaction and that
+	<code>i.wrappee</code> is the calcul object. So we can test
+	them and throw an exception if the <code>value</code> field is
+	negative.</li>
+
+<li>line 9: the test failed, so we can run the <code>sub</code>
+	method. <code>proceed</code> is a special method of wrappers
+	that allows the programmer to ask for the realization of the
+	current joinpoint (continue the interaction).</li>
+</ul>
+
+<p>JAC provides 2 levels to play with aspects:
+
+<ul><li>the <b>programming level</b> (where you can program totally
+new aspects) that is hard to understand for a beginner -- this is the
+same level as AspectJ</li> 
+
+<li>the <b>configuration level</b> (where you can customize existing
+aspects to make them work with your application). This level is
+supported by a configuration language with a generic syntax (or any
+supported by JAC such as XML) that allows the programmer to call
+configuration methods on existing aspects. In the JAC philosophy, it
+is very important to understand that you do not need to program
+aspects to use AO features. We furnish a set of aspects with
+easy-to-use configuration methods so that even the programmers that
+don't know anything about AOP can use aspects. For instance, imagine
+that we program the <code>TestAC</code> aspect so that it provides a
+configuration method instead of a hardcoded pointcut:
+
+<pre class=code>
+public class TestAC extends AspectComponent {
+    final int bound = 0;
+    public addTest(String classes, String methods, int bound) {
+        pointcut( classes, method, LimiterWrapper.class, "limit" );
+        this.bound = bound;
+    }
+    public class LimiterWrapper extends Wrapper {
+        public void limit(Interaction i) {
+            if(((Integer)getFieldValue(i.wrappe,"value")).intValue()
+	          - ((Integer)i.args[0]).intValue() < bound )
+                throw new Exception("<"+bound+" forbidden");
+            return proceed(i);
+        }
+        ...
+}   }
+</pre>
+
+Then you can use the aspect just by writing a configuration file such
+	  as (this is easy so I do not explain it):
+
+	<pre class=code>
+addTest "Calcul" "sub" 0;
+	<pre>
+</li>
+</ul>
+
+<p>Finally, JAC furnishes a set of aspects and an environment for
+	distribution (deployment, remote communication, sessions,
+	authentication, web interface). All the aspect features also
+	work when the application is distributed so that you can write
+	aspects that have global and distributed influence on the
+	application. A set of aspects that implement
+	distribution-related concerns such as consistency,
+	broadcasting or load-balancing are provided by JAC. We hope
+	that you'll enjoy them and find them useful!
+
+
+    <hr>
+    <address><a href="mailto:renaud@cedric">Renaud Pawlak</a></address>
+<!-- Created: Sun Feb 17 15:21:17 CET 2002 -->
+<!-- hhmts start -->
+Last modified: Tue Dec  3 00:58:16 CET 2002
+<!-- hhmts end -->
+  </body>
+</html>

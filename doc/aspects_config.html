@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Aspects configuration</title>
+    <link rel="stylesheet" type="text/css" href="../basic.css" title="basic style">
+  </head>
+  <body>
+    
+        <table class=logo cellspacing=0>
+      <tbody>
+	<tr>
+	  <td class=logocap>J</td>
+	  <td class=logo>ava</td>
+	  <td class=logocap>A</td>
+	  <td class=logo>spect</td>
+	  <td class=logocap>C</td>
+	  <td class=logo>omponents</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <h1>Aspects configuration</h1>
+
+    <h2>Introduction</h2>
+    
+    <p>Aspects of in the JAC framework are configured with files. Two
+      syntaxes for these files are currenctly supported :
+      <code>acc</code> and <code>xml</code>. The <code>acc</code>
+      syntax is used when the filename ends with
+      <code>.acc</code>. The <code>xml</code> syntax is used when the
+      filename ends with <code>.xml</code>.</p>
+
+    <p>The <code>acc</code> syntax is more concise and is intended to
+      be edited by hand. The <code>xml</code> notation was introduced
+      to allow easier communication with other programs.</p>
+
+    <h2>Search path</h2>
+
+    <p>Aspect configuration files are first searched relative to the
+    current directory, then as ressources in the classpath.</p>
+
+    <h2><a name="acc">Acc syntax</a></h2>
+    
+    <h3>Basics</h3>
+    
+    <p>An acc file consists of calls to aspect configuration methods
+    defined by the aspect component that you wish to configure. </p>
+
+<pre class=syntax>
+&lt;configuration_method&gt; [&lt;value&gt; ...] ;
+</pre>
+
+    <p>Parameters are separated by spaces. If special characters such
+      as <code>'{' '}' ',' ';' '"'</code> or <code>' '</code>(space)
+      are to be used in a value, you should quote the value:</p>
+
+<pre class=code>
+addRestrictedMethod mypackage.MyClass "myMethod(String,int)";
+</pre>
+
+    <p>Values can be arrays :</p>
+
+<pre class=syntax>
+{ &lt;value&gt; [ , &lt;value&gt; ] }
+</pre>
+
+    <p>For instance:</p>
+<pre class="code">
+setAttributesOrder Customer { lastName, firstName, phone, email };
+</pre>
+
+    <h3>Includes</h3>
+
+    <p>It is often useful to share some configurations between
+    applications, so an include mecanism is provided:</p>
+
+<pre class=syntax>
+include &lt;file_name&gt;
+</pre>
+
+    <p>Note that there is no ; after te include directive. The </p>
+
+    <p>Some aspects provide useful default settings that you can reuse
+    in your applications. For instance:</p>
+
+<pre class=code>
+include "org/objectweb/jac/aspect/gui/gui.acc"
+</pre>
+
+    <h3><a name="grouping">Grouping</a></h3>
+
+    <p>Since you are likely to call several methods with some common
+    paramaters, you can use grouping syntax:</p>
+
+<pre class=syntax>
+class &lt;group_value&gt; {
+  &lt;configuration_method&gt; [&lt;value&gt; ...] ;
+  ...
+}
+</pre>
+
+    <p>The <code>&lt;group_value&gt;</code> will be prepended to the
+      parameter list of each configuration inside the
+      <code>class</code> block. Therefore, the two following
+      configurations are equivalent:</p>
+
+<pre class=code>
+class Customer {
+  setAttributesOrder { lastName, firstName, phone, email };
+  setParameterNames "Customer(String,String)" { "Last name","First name" };
+}
+</pre>
+
+<pre class=code>
+setAttributesOrder Customer { lastName, firstName, phone, email };
+setParameterNames Customer "Customer(String,String)" { "Last name","First name" };
+</pre>
+
+    <p>You can also provide a comma separated list of arguments to the
+    group constructor.</p>
+
+<pre class=code>
+class Customer,Employee {
+  setAttributesOrder { lastName, firstName, phone, email };
+}
+</pre>
+
+    <p>is equivalent to</p>
+
+<pre class=code>
+setAttributesOrder Customer { lastName, firstName, phone, email };
+setAttributesOrder Employee { lastName, firstName, phone, email };
+</pre>
+
+    <p>You can nest grouping block:</p>
+
+<pre class=code>
+class Customer {
+  attribute lastName {
+    setCategory "General";
+    setEmbeddedEditor;
+  }
+  attribute firstName {
+    setCategory "General";
+    setEmbeddedEditor;
+  }
+}
+</pre>
+
+<p>is equivalent to</p>
+
+<pre class=code>
+setCategory Customer lastName "General";
+setEmbeddedEditor Customer lastName;
+
+setCategory Customer firstName "General";
+setEmbeddedEditor Customer firstName;
+</pre>
+
+    <p>In fact the <code>class</code> and <code>attribute</code>
+      keywords can be substituted for one another. You can also use
+      <code>method</code> and <code>block</code> to create an
+      arbitrary number of nested bocks.</p>
+
+    <h3>Comments</h3>
+
+    <p>You can of course include comments in your configuration files:</p>
+
+<pre class=code>
+// Settings for the Customer class
+class Customer {
+  setAttributesOrder { lastName, firstName, phone, email };
+  setParameterNames "Customer(String,String)" { "Last name","First name" };
+}
+/*
+ * Multi-line c-style comments
+ * are also supported
+ */
+</pre>
+
+    <h2><a name="xml">Xml syntax</a></h2>
+
+    <p>Here is a sample of an XML configuration file for the session
+    aspect of the contacts sample:</p>
+
+<pre class=code>
+&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;AspectConfiguration version="1.0"&gt;
+  &lt;method name="declareStoredAttributes"&gt;
+    &lt;arg type="java.lang.reflect.Array"&gt;
+      &lt;item type="java.lang.String" value="Authentication.user" /&gt;
+    &lt;/arg&gt;
+  &lt;/method&gt;
+
+  &lt;method name="defineSessionHandlers"&gt;
+    &lt;arg type="java.lang.String" value="org.objectweb.jac.samples.contacts.FilteredContacts" /&gt;
+    &lt;arg type="java.lang.String" value="ALL" /&gt;
+    &lt;arg type="java.lang.String" value="filteredcontacts0" /&gt;
+  &lt;/method&gt;
+
+  &lt;method name="definePerSessionObjects"&gt;
+    &lt;arg type="java.lang.String" value="org.objectweb.jac.samples.contacts.FilteredContacts" /&gt;
+    &lt;arg type="java.lang.String" value="filteredcontacts0" /&gt;
+  &lt;/method&gt;
+
+&lt;/AspectConfiguration&gt;
+</pre>
+
+
+  </body>
+</html>
