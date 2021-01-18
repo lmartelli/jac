@@ -38,7 +38,9 @@ tar zxf jac.tar.gz
 
 JAC depends on a number of librairies in order to compile and run. The ant build script assumes they are in the lib/ directory. The easiest way to get all of them is to download the jac-libs package. 
 
-*Note: JAC is an old project and you may have trouble finding the libs again. It would be interesting to Mavenize it :)*
+The jac-libs package can be downloaded from https://download.forge.ow2.org/jac/jac_libs-0.12.tar.gz
+
+*Note: JAC is an old project. It would be interesting to Mavenize it :)*
 
 3. Compile
 
